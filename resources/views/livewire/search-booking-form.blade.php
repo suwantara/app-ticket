@@ -9,7 +9,7 @@
                     <label for="origin" class="block mb-2 text-sm font-semibold text-gray-700">
                         <i class="fa-solid fa-ship mr-1 text-blue-600"></i> Keberangkatan
                     </label>
-                    <select wire:model.live="origin" id="origin" 
+                    <select wire:model.live="origin" id="origin"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3">
                         <option value="">Pilih Lokasi</option>
                         @php
@@ -38,7 +38,7 @@
                     <label for="destination" class="block mb-2 text-sm font-semibold text-gray-700">
                         <i class="fa-solid fa-location-dot mr-1 text-red-500"></i> Tujuan
                     </label>
-                    <select wire:model="destination" id="destination" 
+                    <select wire:model="destination" id="destination"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3">
                         <option value="">Pilih Tujuan</option>
                         @if(isset($grouped['island']))
@@ -78,7 +78,7 @@
                     <label for="passengers" class="block mb-2 text-sm font-semibold text-gray-700">
                         <i class="fa-solid fa-users mr-1 text-blue-600"></i> Penumpang
                     </label>
-                    <select wire:model="passengers" id="passengers" 
+                    <select wire:model="passengers" id="passengers"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3">
                         @for($i = 1; $i <= 20; $i++)
                             <option value="{{ $i }}">{{ $i }} Orang</option>
@@ -100,7 +100,7 @@
 
                 <!-- Search Button -->
                 <div class="lg:col-span-1">
-                    <button type="submit" 
+                    <button type="submit"
                             wire:loading.attr="disabled"
                             wire:loading.class="opacity-75 cursor-wait"
                             class="w-full text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 p-3 text-center transition-all duration-200 shadow-lg hover:shadow-xl">
@@ -134,50 +134,164 @@
         <!-- Search Results -->
         @if($showResults)
         <div class="mt-6 pt-6 border-t border-gray-200">
+            <!-- Outbound Results -->
             <h3 class="text-lg font-bold text-gray-800 mb-4">
-                <i class="fa-solid fa-list mr-2 text-blue-600"></i> Hasil Pencarian
+                <i class="fa-solid fa-ship mr-2 text-blue-600"></i>
+                Jadwal Keberangkatan
+                <span class="text-sm font-normal text-gray-500">
+                    ({{ \Carbon\Carbon::parse($date)->translatedFormat('l, d F Y') }})
+                </span>
             </h3>
-            
+
             @if(count($searchResults) > 0)
-            <div class="space-y-3">
-                @foreach($searchResults as $route)
-                <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors border border-gray-200">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div class="flex items-center gap-4">
-                            <div class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-semibold">
-                                {{ $route['code'] }}
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2 font-medium text-gray-800">
-                                    <span>{{ $route['origin'] }}</span>
-                                    <i class="fa-solid fa-arrow-right text-gray-400"></i>
-                                    <span>{{ $route['destination'] }}</span>
+            <div class="space-y-4">
+                @foreach($searchResults as $schedule)
+                <div class="bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-200 overflow-hidden">
+                    <div class="p-4">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <!-- Ship & Operator Info -->
+                            <div class="flex items-start gap-4">
+                                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-3 rounded-xl">
+                                    <i class="fa-solid fa-ship text-2xl"></i>
                                 </div>
-                                <div class="text-sm text-gray-500">
-                                    <i class="fa-regular fa-clock mr-1"></i> {{ $route['duration'] }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="text-right">
-                                <div class="text-xs text-gray-500">{{ $passengers }} penumpang</div>
-                                <div class="text-xl font-bold text-blue-600">
-                                    Rp {{ number_format($route['total_price'], 0, ',', '.') }}
+                                <div>
+                                    <div class="font-bold text-gray-800">{{ $schedule['ship_name'] }}</div>
+                                    <div class="text-sm text-gray-500">{{ $schedule['operator'] }}</div>
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                        @foreach(array_slice($schedule['facilities'], 0, 4) as $facility)
+                                        <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{{ $facility }}</span>
+                                        @endforeach
+                                        @if(count($schedule['facilities']) > 4)
+                                        <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">+{{ count($schedule['facilities']) - 4 }}</span>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                            <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
-                                Pilih
-                            </button>
+
+                            <!-- Time & Route -->
+                            <div class="flex items-center gap-3 lg:gap-6">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-gray-800">{{ $schedule['departure_time'] }}</div>
+                                    <div class="text-sm text-gray-500">{{ $schedule['origin'] }}</div>
+                                </div>
+                                <div class="flex flex-col items-center px-4">
+                                    <div class="text-xs text-gray-400">{{ $schedule['duration'] }}</div>
+                                    <div class="flex items-center gap-1 my-1">
+                                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                                        <div class="w-16 h-0.5 bg-gradient-to-r from-blue-500 to-green-500"></div>
+                                        <i class="fa-solid fa-location-dot text-green-500"></i>
+                                    </div>
+                                    <div class="text-xs text-gray-400">Langsung</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-gray-800">{{ $schedule['arrival_time'] }}</div>
+                                    <div class="text-sm text-gray-500">{{ $schedule['destination'] }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Price & Action -->
+                            <div class="flex items-center gap-4 lg:border-l lg:pl-6 lg:ml-auto">
+                                <div class="text-right">
+                                    <div class="text-xs text-gray-500">{{ $passengers }} penumpang</div>
+                                    <div class="text-2xl font-bold text-blue-600">{{ $schedule['total_price_formatted'] }}</div>
+                                    <div class="text-xs text-gray-400">
+                                        <i class="fa-solid fa-chair mr-1"></i>{{ $schedule['available_seats'] }} kursi tersedia
+                                    </div>
+                                </div>
+                                <button type="button"
+                                        class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
+                                    Pilih
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
                 @endforeach
             </div>
             @else
-            <div class="text-center py-8">
-                <i class="fa-solid fa-ship text-4xl text-gray-300 mb-3"></i>
-                <p class="text-gray-500">Tidak ada rute tersedia untuk pencarian ini.</p>
+            <div class="text-center py-8 bg-gray-50 rounded-xl">
+                <i class="fa-solid fa-calendar-xmark text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500 font-medium">Tidak ada jadwal tersedia untuk tanggal ini.</p>
                 <p class="text-sm text-gray-400">Coba ubah lokasi atau tanggal perjalanan Anda.</p>
+            </div>
+            @endif
+
+            <!-- Return Results (if round trip) -->
+            @if($returnTrip && count($returnResults) > 0)
+            <h3 class="text-lg font-bold text-gray-800 mb-4 mt-8">
+                <i class="fa-solid fa-rotate-left mr-2 text-green-600"></i>
+                Jadwal Kepulangan
+                <span class="text-sm font-normal text-gray-500">
+                    ({{ \Carbon\Carbon::parse($returnDate)->translatedFormat('l, d F Y') }})
+                </span>
+            </h3>
+
+            <div class="space-y-4">
+                @foreach($returnResults as $schedule)
+                <div class="bg-white rounded-xl border border-gray-200 hover:border-green-300 hover:shadow-lg transition-all duration-200 overflow-hidden">
+                    <div class="p-4">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <!-- Ship & Operator Info -->
+                            <div class="flex items-start gap-4">
+                                <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-3 rounded-xl">
+                                    <i class="fa-solid fa-ship text-2xl"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-gray-800">{{ $schedule['ship_name'] }}</div>
+                                    <div class="text-sm text-gray-500">{{ $schedule['operator'] }}</div>
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                        @foreach(array_slice($schedule['facilities'], 0, 4) as $facility)
+                                        <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{{ $facility }}</span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Time & Route -->
+                            <div class="flex items-center gap-3 lg:gap-6">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-gray-800">{{ $schedule['departure_time'] }}</div>
+                                    <div class="text-sm text-gray-500">{{ $schedule['origin'] }}</div>
+                                </div>
+                                <div class="flex flex-col items-center px-4">
+                                    <div class="text-xs text-gray-400">{{ $schedule['duration'] }}</div>
+                                    <div class="flex items-center gap-1 my-1">
+                                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                        <div class="w-16 h-0.5 bg-gradient-to-r from-green-500 to-blue-500"></div>
+                                        <i class="fa-solid fa-location-dot text-blue-500"></i>
+                                    </div>
+                                    <div class="text-xs text-gray-400">Langsung</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-gray-800">{{ $schedule['arrival_time'] }}</div>
+                                    <div class="text-sm text-gray-500">{{ $schedule['destination'] }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Price & Action -->
+                            <div class="flex items-center gap-4 lg:border-l lg:pl-6 lg:ml-auto">
+                                <div class="text-right">
+                                    <div class="text-xs text-gray-500">{{ $passengers }} penumpang</div>
+                                    <div class="text-2xl font-bold text-green-600">{{ $schedule['total_price_formatted'] }}</div>
+                                    <div class="text-xs text-gray-400">
+                                        <i class="fa-solid fa-chair mr-1"></i>{{ $schedule['available_seats'] }} kursi tersedia
+                                    </div>
+                                </div>
+                                <button type="button"
+                                        class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
+                                    Pilih
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @elseif($returnTrip && count($returnResults) === 0)
+            <div class="text-center py-8 bg-gray-50 rounded-xl mt-8">
+                <i class="fa-solid fa-calendar-xmark text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500 font-medium">Tidak ada jadwal pulang tersedia.</p>
+                <p class="text-sm text-gray-400">Coba ubah tanggal kepulangan Anda.</p>
             </div>
             @endif
         </div>

@@ -97,7 +97,7 @@
 
                 {{-- Destinations Dropdown --}}
                 <li class="relative group">
-                    <button type="button" 
+                    <button type="button"
                             class="flex items-center gap-1 py-2 px-3 rounded md:p-0 transition-colors text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-600 {{ request()->is('destinations*') ? 'text-blue-600 font-semibold' : '' }}"
                             data-dropdown-toggle="destinations-dropdown">
                         Destinasi

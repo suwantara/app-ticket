@@ -5,7 +5,7 @@
     <section class="relative">
         <div class="h-64 md:h-96 overflow-hidden">
             @if($destination->image)
-                <img src="{{ Storage::url($destination->image) }}" 
+                <img src="{{ Storage::url($destination->image) }}"
                      alt="{{ $destination->name }}"
                      class="w-full h-full object-cover">
             @else
@@ -16,8 +16,8 @@
         <div class="absolute bottom-0 left-0 right-0 p-6 md:p-12">
             <div class="max-w-screen-xl mx-auto">
                 <div class="flex items-center gap-3 mb-3">
-                    <span class="px-3 py-1 text-sm font-semibold rounded-full 
-                        {{ $destination->type === 'island' ? 'bg-green-500 text-white' : 
+                    <span class="px-3 py-1 text-sm font-semibold rounded-full
+                        {{ $destination->type === 'island' ? 'bg-green-500 text-white' :
                            ($destination->type === 'harbor' ? 'bg-blue-500 text-white' : 'bg-purple-500 text-white') }}">
                         {{ $destination->type === 'island' ? 'Pulau' : ($destination->type === 'harbor' ? 'Pelabuhan' : 'Kota') }}
                     </span>
@@ -179,7 +179,7 @@
                     <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">
                         Informasi
                     </h3>
-                    
+
                     <!-- Facilities -->
                     @if($destination->facilities && count($destination->facilities) > 0)
                     <div class="mb-6">
@@ -202,7 +202,7 @@
                         <h4 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
                             Lokasi
                         </h4>
-                        <a href="https://www.google.com/maps?q={{ $destination->latitude }},{{ $destination->longitude }}" 
+                        <a href="https://www.google.com/maps?q={{ $destination->latitude }},{{ $destination->longitude }}"
                            target="_blank"
                            class="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,7 +215,7 @@
                     @endif
 
                     <!-- Book Now Button -->
-                    <a href="{{ route('home') }}#booking" 
+                    <a href="{{ route('home') }}#booking"
                        class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
@@ -232,11 +232,11 @@
                     </h3>
                     <div class="space-y-4">
                         @foreach($relatedDestinations as $related)
-                        <a href="{{ route('destinations.show', $related->slug) }}" 
+                        <a href="{{ route('destinations.show', $related->slug) }}"
                            class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                             <div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                                 @if($related->image)
-                                    <img src="{{ Storage::url($related->image) }}" 
+                                    <img src="{{ Storage::url($related->image) }}"
                                          alt="{{ $related->name }}"
                                          class="w-full h-full object-cover">
                                 @else

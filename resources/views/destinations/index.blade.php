@@ -28,11 +28,11 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($popularDestinations as $destination)
-                <a href="{{ route('destinations.show', $destination->slug) }}" 
+                <a href="{{ route('destinations.show', $destination->slug) }}"
                    class="group block bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                     <div class="relative h-48 overflow-hidden">
                         @if($destination->image)
-                            <img src="{{ Storage::url($destination->image) }}" 
+                            <img src="{{ Storage::url($destination->image) }}"
                                  alt="{{ $destination->name }}"
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                         @else
@@ -44,8 +44,8 @@
                             </div>
                         @endif
                         <div class="absolute top-3 left-3">
-                            <span class="px-3 py-1 text-xs font-semibold rounded-full 
-                                {{ $destination->type === 'island' ? 'bg-green-500 text-white' : 
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                {{ $destination->type === 'island' ? 'bg-green-500 text-white' :
                                    ($destination->type === 'harbor' ? 'bg-blue-500 text-white' : 'bg-purple-500 text-white') }}">
                                 {{ $destination->type === 'island' ? 'Pulau' : ($destination->type === 'harbor' ? 'Pelabuhan' : 'Kota') }}
                             </span>
@@ -98,7 +98,7 @@
                         Destinasi Pulau
                     </h2>
                 </div>
-                <a href="{{ route('destinations.islands') }}" 
+                <a href="{{ route('destinations.islands') }}"
                    class="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium flex items-center gap-1">
                     Lihat Semua
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,11 +109,11 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach($destinations['island']->take(4) as $island)
-                <a href="{{ route('destinations.show', $island->slug) }}" 
+                <a href="{{ route('destinations.show', $island->slug) }}"
                    class="group block bg-gray-50 dark:bg-gray-700 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
                     <div class="relative h-40 overflow-hidden">
                         @if($island->image)
-                            <img src="{{ Storage::url($island->image) }}" 
+                            <img src="{{ Storage::url($island->image) }}"
                                  alt="{{ $island->name }}"
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                         @else
@@ -155,7 +155,7 @@
                         Titik Keberangkatan
                     </h2>
                 </div>
-                <a href="{{ route('destinations.harbors') }}" 
+                <a href="{{ route('destinations.harbors') }}"
                    class="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium flex items-center gap-1">
                     Lihat Semua
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,7 +166,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach($destinations['harbor'] as $harbor)
-                <a href="{{ route('destinations.show', $harbor->slug) }}" 
+                <a href="{{ route('destinations.show', $harbor->slug) }}"
                    class="group block bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:shadow-lg transition-all duration-300">
                     <div class="p-5">
                         <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-500 transition-colors">
@@ -209,7 +209,7 @@
             <p class="text-blue-100 mb-8 max-w-xl mx-auto">
                 Pesan tiket fast boat sekarang dan nikmati perjalanan ke destinasi impian Anda dengan harga terbaik.
             </p>
-            <a href="{{ route('home') }}#booking" 
+            <a href="{{ route('home') }}#booking"
                class="inline-flex items-center gap-2 px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>

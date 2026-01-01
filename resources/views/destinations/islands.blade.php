@@ -23,11 +23,11 @@
         <div class="max-w-screen-xl mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @forelse($islands as $island)
-                <a href="{{ route('destinations.show', $island->slug) }}" 
+                <a href="{{ route('destinations.show', $island->slug) }}"
                    class="group block bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                     <div class="relative h-56 overflow-hidden">
                         @if($island->image)
-                            <img src="{{ Storage::url($island->image) }}" 
+                            <img src="{{ Storage::url($island->image) }}"
                                  alt="{{ $island->name }}"
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                         @else
@@ -64,7 +64,7 @@
                         <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
                             {{ $island->short_description ?: Str::limit($island->description, 120) }}
                         </p>
-                        
+
                         @if($island->highlights && count($island->highlights) > 0)
                         <div class="flex flex-wrap gap-2 mb-4">
                             @foreach(array_slice($island->highlights, 0, 3) as $highlight)
@@ -115,7 +115,7 @@
             <p class="text-green-100 mb-8 max-w-xl mx-auto">
                 Pesan tiket fast boat sekarang dan mulai petualangan Anda ke pulau-pulau eksotis.
             </p>
-            <a href="{{ route('home') }}#booking" 
+            <a href="{{ route('home') }}#booking"
                class="inline-flex items-center gap-2 px-8 py-3 bg-white text-green-600 font-semibold rounded-lg hover:bg-green-50 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DestinationController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\ScheduleController;
 use Illuminate\Support\Facades\Route;
 
 // Static pages with specific routes
@@ -15,6 +16,12 @@ Route::prefix('destinations')->name('destinations.')->group(function () {
     Route::get('/islands', [DestinationController::class, 'islands'])->name('islands');
     Route::get('/harbors', [DestinationController::class, 'harbors'])->name('harbors');
     Route::get('/{slug}', [DestinationController::class, 'show'])->name('show');
+});
+
+// Schedule search routes (API-style for AJAX)
+Route::prefix('schedules')->name('schedules.')->group(function () {
+    Route::get('/search', [ScheduleController::class, 'search'])->name('search');
+    Route::get('/{schedule}', [ScheduleController::class, 'show'])->name('show');
 });
 
 // Dynamic page route (catch-all for CMS pages)

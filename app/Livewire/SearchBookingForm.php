@@ -4,6 +4,8 @@ namespace App\Livewire;
 
 use App\Models\Destination;
 use App\Models\Route;
+use App\Models\Schedule;
+use Carbon\Carbon;
 use Livewire\Component;
 
 class SearchBookingForm extends Component
@@ -17,13 +19,14 @@ class SearchBookingForm extends Component
 
     public $availableDestinations = [];
     public $searchResults = [];
+    public $returnResults = [];
     public $showResults = false;
 
     public function mount()
     {
         $this->date = now()->addDay()->format('Y-m-d');
         $this->returnDate = now()->addDays(3)->format('Y-m-d');
-        
+
         // Load destinations for dropdowns
         $this->availableDestinations = Destination::active()
             ->orderBy('type')
@@ -57,26 +60,71 @@ class SearchBookingForm extends Component
             'returnDate.after' => 'Tanggal pulang harus setelah tanggal berangkat',
         ]);
 
-        // Search for available routes
-        $routes = Route::where('origin_id', $this->origin)
-            ->where('destination_id', $this->destination)
-            ->where('is_active', true)
-            ->with(['origin', 'destination'])
-            ->get();
+        // Search outbound schedules
+        $this->searchResults = $this->findSchedules(
+            $this->origin,
+            $this->destination,
+            $this->date
+        );
 
-        $this->searchResults = $routes->map(function ($route) {
-            return [
-                'id' => $route->id,
-                'code' => $route->code,
-                'origin' => $route->origin->name,
-                'destination' => $route->destination->name,
-                'duration' => $route->formatted_duration,
-                'base_price' => $route->base_price,
-                'total_price' => $route->base_price * $this->passengers,
-            ];
-        })->toArray();
+        // Search return schedules if round trip
+        $this->returnResults = [];
+        if ($this->returnTrip && $this->returnDate) {
+            $this->returnResults = $this->findSchedules(
+                $this->destination,
+                $this->origin,
+                $this->returnDate
+            );
+        }
 
         $this->showResults = true;
+    }
+
+    protected function findSchedules($originId, $destinationId, $date)
+    {
+        $date = Carbon::parse($date);
+        $dayOfWeek = $date->dayOfWeek;
+
+        // Find routes for this origin-destination pair
+        $routes = Route::where('origin_id', $originId)
+            ->where('destination_id', $destinationId)
+            ->active()
+            ->pluck('id');
+
+        if ($routes->isEmpty()) {
+            return [];
+        }
+
+        // Find schedules for these routes
+        $schedules = Schedule::whereIn('route_id', $routes)
+            ->active()
+            ->validOn($date)
+            ->onDay($dayOfWeek)
+            ->where('available_seats', '>=', $this->passengers)
+            ->with(['route.origin', 'route.destination', 'ship'])
+            ->orderBy('departure_time')
+            ->get();
+
+        return $schedules->map(function ($schedule) {
+            return [
+                'id' => $schedule->id,
+                'route_code' => $schedule->route->code,
+                'origin' => $schedule->route->origin->name,
+                'destination' => $schedule->route->destination->name,
+                'ship_name' => $schedule->ship->name,
+                'ship_code' => $schedule->ship->code,
+                'operator' => $schedule->ship->operator,
+                'facilities' => $schedule->ship->facilities ?? [],
+                'departure_time' => $schedule->departure_time_formatted,
+                'arrival_time' => $schedule->arrival_time_formatted,
+                'duration' => $schedule->route->formatted_duration,
+                'price' => $schedule->price,
+                'price_formatted' => 'Rp ' . number_format($schedule->price, 0, ',', '.'),
+                'total_price' => $schedule->price * $this->passengers,
+                'total_price_formatted' => 'Rp ' . number_format($schedule->price * $this->passengers, 0, ',', '.'),
+                'available_seats' => $schedule->available_seats,
+            ];
+        })->toArray();
     }
 
     public function render()

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Route extends Model
 {
@@ -75,5 +76,13 @@ class Route extends Model
     public function getRouteNameAttribute(): string
     {
         return "{$this->origin->name} → {$this->destination->name}";
+    }
+
+    /**
+     * Get all schedules for this route
+     */
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class);
     }
 }
