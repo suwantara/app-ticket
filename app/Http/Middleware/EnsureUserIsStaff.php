@@ -16,30 +16,50 @@ class EnsureUserIsStaff
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check()) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Unauthorized'], 401);
-            }
-            return redirect()->route('staff.login');
+        $deniedResponse = $this->validateAccess($request);
+
+        if ($deniedResponse !== null) {
+            return $deniedResponse;
+        }
+
+        return $next($request);
+    }
+
+    private function validateAccess(Request $request): ?Response
+    {
+        if (! Auth::check()) {
+            return $this->unauthorizedResponse($request);
         }
 
         $user = Auth::user();
 
-        if (!$user->is_active) {
+        if (! $user->is_active) {
             Auth::logout();
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Account is not active'], 403);
-            }
-            return redirect()->route('staff.login')->with('error', 'Akun Anda tidak aktif');
+
+            return $this->inactiveAccountResponse($request);
         }
 
-        if (!$user->isStaff()) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => 'Access denied'], 403);
-            }
-            return redirect()->route('home')->with('error', 'Anda tidak memiliki akses ke halaman ini');
-        }
+        return $user->isStaff() ? null : $this->accessDeniedResponse($request);
+    }
 
-        return $next($request);
+    private function unauthorizedResponse(Request $request): Response
+    {
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Unauthorized'], 401)
+            : redirect()->route('staff.login');
+    }
+
+    private function inactiveAccountResponse(Request $request): Response
+    {
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Account is not active'], 403)
+            : redirect()->route('staff.login')->with('error', 'Akun Anda tidak aktif');
+    }
+
+    private function accessDeniedResponse(Request $request): Response
+    {
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Access denied'], 403)
+            : redirect()->route('home')->with('error', 'Anda tidak memiliki akses ke halaman ini');
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -68,6 +67,14 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Accessor for is_admin attribute (used in blade templates)
+     */
+    public function getIsAdminAttribute(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    /**
      * Check if user is staff
      */
     public function isStaff(): bool
@@ -80,7 +87,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function getRoleLabelAttribute(): string
     {
-        return match($this->role) {
+        return match ($this->role) {
             'admin' => 'Administrator',
             'staff' => 'Petugas',
             'user' => 'Pengguna',

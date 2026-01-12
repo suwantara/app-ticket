@@ -30,26 +30,36 @@ class GenerateTickets extends Command
         $orderInput = $this->argument('order');
 
         if ($orderInput) {
-            // Find specific order
-            $order = Order::where('id', $orderInput)
-                ->orWhere('order_number', $orderInput)
-                ->first();
-
-            if (!$order) {
-                $this->error("Order not found: {$orderInput}");
-                return 1;
-            }
-
-            return $this->generateForOrder($ticketService, $order);
+            return $this->handleSingleOrder($ticketService, $orderInput);
         }
 
-        // Generate for all paid orders without tickets
+        return $this->handleAllPendingOrders($ticketService);
+    }
+
+    protected function handleSingleOrder(TicketService $ticketService, string $orderInput): int
+    {
+        $order = Order::where('id', $orderInput)
+            ->orWhere('order_number', $orderInput)
+            ->first();
+
+        if (! $order) {
+            $this->error("Order not found: {$orderInput}");
+
+            return 1;
+        }
+
+        return $this->generateForOrder($ticketService, $order);
+    }
+
+    protected function handleAllPendingOrders(TicketService $ticketService): int
+    {
         $orders = Order::where('payment_status', 'paid')
             ->whereDoesntHave('tickets')
             ->get();
 
         if ($orders->isEmpty()) {
             $this->info('No paid orders without tickets found.');
+
             return 0;
         }
 
@@ -60,13 +70,15 @@ class GenerateTickets extends Command
         }
 
         $this->info('Done!');
+
         return 0;
     }
 
     protected function generateForOrder(TicketService $ticketService, Order $order): int
     {
-        if (!$order->isPaid()) {
+        if (! $order->isPaid()) {
             $this->warn("Order {$order->order_number} is not paid. Skipping...");
+
             return 1;
         }
 
@@ -77,13 +89,15 @@ class GenerateTickets extends Command
         if ($result['success']) {
             $ticketCount = count($result['tickets'] ?? []);
             $this->info("✓ Generated {$ticketCount} tickets");
-            
+
             foreach ($result['tickets'] as $ticket) {
                 $this->line("  - {$ticket->ticket_number} ({$ticket->passenger->name})");
             }
+
             return 0;
         } else {
             $this->error("✗ {$result['message']}");
+
             return 1;
         }
     }

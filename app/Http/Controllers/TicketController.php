@@ -4,14 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Ticket;
-use App\Services\TicketService;
 use App\Services\MidtransService;
-use Illuminate\Http\Request;
+use App\Services\TicketService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
     protected TicketService $ticketService;
+
     protected MidtransService $midtransService;
 
     public function __construct(TicketService $ticketService, MidtransService $midtransService)
@@ -35,13 +36,13 @@ class TicketController extends Controller
         ]);
 
         // Check if order is paid - if not, verify with Midtrans first
-        if (!$order->isPaid()) {
+        if (! $order->isPaid()) {
             // Check payment status directly from Midtrans
             $statusResult = $this->midtransService->getTransactionStatus($order->order_number);
-            
+
             if ($statusResult['success']) {
                 $midtransStatus = $statusResult['data']->transaction_status ?? null;
-                
+
                 // If Midtrans says it's paid, update our database
                 if (in_array($midtransStatus, ['settlement', 'capture'])) {
                     $order->update([
@@ -53,9 +54,9 @@ class TicketController extends Controller
                     $order->refresh();
                 }
             }
-            
+
             // If still not paid after checking, redirect
-            if (!$order->isPaid()) {
+            if (! $order->isPaid()) {
                 return redirect()->route('payment.show', $order)
                     ->with('error', 'Silakan selesaikan pembayaran terlebih dahulu');
             }
@@ -173,7 +174,7 @@ class TicketController extends Controller
         // Action = use
         $ticket = Ticket::where('qr_code', $qrCode)->first();
 
-        if (!$ticket) {
+        if (! $ticket) {
             return response()->json([
                 'success' => false,
                 'message' => 'Tiket tidak ditemukan',

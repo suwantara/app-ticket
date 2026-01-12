@@ -22,7 +22,7 @@ class PaymentController extends Controller
     public function show(Order $order)
     {
         // Check if order can be paid
-        if (!$order->canBePaid()) {
+        if (! $order->canBePaid()) {
             return redirect()->route('booking.confirmation', $order)
                 ->with('error', 'Pesanan ini tidak dapat dibayar.');
         }
@@ -31,10 +31,10 @@ class PaymentController extends Controller
         $order->load(['schedule.route.origin', 'schedule.route.destination', 'schedule.ship', 'passengers']);
 
         // Get or create snap token
-        if (!$order->payment_token) {
+        if (! $order->payment_token) {
             $result = $this->midtrans->createSnapToken($order);
-            
-            if (!$result['success']) {
+
+            if (! $result['success']) {
                 return redirect()->route('booking.confirmation', $order)
                     ->with('error', $result['message']);
             }
@@ -53,7 +53,7 @@ class PaymentController extends Controller
      */
     public function createToken(Order $order)
     {
-        if (!$order->canBePaid()) {
+        if (! $order->canBePaid()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Pesanan ini tidak dapat dibayar.',
@@ -86,11 +86,11 @@ class PaymentController extends Controller
         if (in_array($transactionStatus, ['settlement', 'capture'])) {
             // Verify and update order status directly
             $statusResult = $this->midtrans->getTransactionStatus($order->order_number);
-            
+
             if ($statusResult['success']) {
                 $midtransStatus = $statusResult['data']->transaction_status ?? null;
-                
-                if (in_array($midtransStatus, ['settlement', 'capture']) && !$order->isPaid()) {
+
+                if (in_array($midtransStatus, ['settlement', 'capture']) && ! $order->isPaid()) {
                     $order->update([
                         'status' => 'confirmed',
                         'payment_status' => 'paid',
@@ -112,7 +112,7 @@ class PaymentController extends Controller
         $message = match ($transactionStatus) {
             'pending' => 'Pembayaran sedang diproses. Silakan selesaikan pembayaran.',
             'deny', 'cancel', 'expire' => 'Pembayaran gagal atau dibatalkan.',
-            default => 'Status pembayaran: ' . ($transactionStatus ?? 'unknown'),
+            default => 'Status pembayaran: '.($transactionStatus ?? 'unknown'),
         };
 
         $type = match ($transactionStatus) {

@@ -9,16 +9,16 @@
                      alt="{{ $destination->name }}"
                      class="w-full h-full object-cover">
             @else
-                <div class="w-full h-full bg-gradient-to-br from-blue-400 to-cyan-300"></div>
+                <div class="w-full h-full bg-linear-to-br from-teal-400 to-purple-300"></div>
             @endif
-            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+            <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
         </div>
         <div class="absolute bottom-0 left-0 right-0 p-6 md:p-12">
-            <div class="max-w-screen-xl mx-auto">
+            <div class="max-w-7xl mx-auto">
                 <div class="flex items-center gap-3 mb-3">
-                    <span class="px-3 py-1 text-sm font-semibold rounded-full
-                        {{ $destination->type === 'island' ? 'bg-green-500 text-white' :
-                           ($destination->type === 'harbor' ? 'bg-blue-500 text-white' : 'bg-purple-500 text-white') }}">
+                                <span class="px-3 py-1 text-sm font-semibold rounded-full
+                                {{ $destination->type === 'island' ? 'bg-teal-500 text-white' :
+                                    ($destination->type === 'harbor' ? 'bg-teal-500 text-white' : 'bg-purple-500 text-white') }}">
                         {{ $destination->type === 'island' ? 'Pulau' : ($destination->type === 'harbor' ? 'Pelabuhan' : 'Kota') }}
                     </span>
                     @if($destination->is_popular)
@@ -43,7 +43,7 @@
         </div>
     </section>
 
-    <div class="max-w-screen-xl mx-auto px-4 py-12">
+    <div class="max-w-7xl mx-auto px-4 py-12">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Main Content -->
             <div class="lg:col-span-2 space-y-8">
@@ -71,7 +71,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                         @foreach($destination->highlights as $highlight)
                         <div class="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                            <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
                             <span class="text-sm text-gray-700 dark:text-gray-300">{{ $highlight }}</span>
@@ -85,7 +85,7 @@
                 @if($routesFrom->count() > 0)
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
                     <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                         </svg>
                         Rute dari {{ $destination->name }}
@@ -95,7 +95,7 @@
                         <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                             <div class="flex items-center gap-4">
                                 <div class="flex items-center gap-2">
-                                    <span class="px-2 py-1 text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded">
+                                        <span class="px-2 py-1 text-xs font-semibold bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-400 rounded">
                                         {{ $route->code }}
                                     </span>
                                 </div>
@@ -105,7 +105,7 @@
                                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                                         </svg>
-                                        <a href="{{ route('destinations.show', $route->destination->slug) }}" class="font-medium text-blue-600 hover:underline">
+                                        <a href="{{ route('destinations.show', $route->destination->slug) }}" class="font-medium text-teal-600 hover:underline">
                                             {{ $route->destination->name }}
                                         </a>
                                     </div>
@@ -130,7 +130,7 @@
                 @if($routesTo->count() > 0)
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
                     <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
                         </svg>
                         Rute ke {{ $destination->name }}
@@ -146,7 +146,7 @@
                                 </div>
                                 <div>
                                     <div class="flex items-center gap-2">
-                                        <a href="{{ route('destinations.show', $route->origin->slug) }}" class="font-medium text-blue-600 hover:underline">
+                                        <a href="{{ route('destinations.show', $route->origin->slug) }}" class="font-medium text-teal-600 hover:underline">
                                             {{ $route->origin->name }}
                                         </a>
                                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,20 +175,20 @@
             <!-- Sidebar -->
             <div class="space-y-6">
                 <!-- Quick Info Card -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm sticky top-24">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm sticky top-24">
                     <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">
                         Informasi
                     </h3>
 
                     <!-- Facilities -->
-                    @if($destination->facilities && count($destination->facilities) > 0)
+                        @if($destination->facilities && count($destination->facilities) > 0)
                     <div class="mb-6">
                         <h4 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
                             Fasilitas
                         </h4>
                         <div class="flex flex-wrap gap-2">
                             @foreach($destination->facilities as $facility)
-                            <span class="text-sm px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full">
+                            <span class="text-sm px-3 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded-full">
                                 {{ $facility }}
                             </span>
                             @endforeach
@@ -234,13 +234,13 @@
                         @foreach($relatedDestinations as $related)
                         <a href="{{ route('destinations.show', $related->slug) }}"
                            class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                            <div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                            <div class="w-16 h-16 rounded-lg overflow-hidden pilanshrink-0">
                                 @if($related->image)
                                     <img src="{{ Storage::url($related->image) }}"
                                          alt="{{ $related->name }}"
                                          class="w-full h-full object-cover">
                                 @else
-                                    <div class="w-full h-full bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center">
+                                    <div class="w-full h-full bg-linear-to-br from-blue-400 to-cyan-300 flex items-center justify-center">
                                         <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                         </svg>

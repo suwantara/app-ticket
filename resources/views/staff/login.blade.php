@@ -1,5 +1,5 @@
-<x-layouts.app title="Login Staff">
-    <div class="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+<x-layouts.staff title="Login Staff">
+    <div class="min-h-screen bg-linear-to-br from-slate-900 to-slate-800 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full">
             <!-- Logo/Header -->
             <div class="text-center mb-8">
@@ -27,13 +27,13 @@
                         <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
                             Email
                         </label>
-                        <input type="email" 
-                               name="email" 
-                               id="email" 
+                        <input type="email"
+                               name="email"
+                               id="email"
                                value="{{ old('email') }}"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('email') border-red-500 @enderror"
+                               class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition {{ $errors->has('email') ? 'border-red-500' : 'border-gray-300' }}"
                                placeholder="petugas@example.com"
-                               required 
+                               required
                                autofocus>
                         @error('email')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -44,10 +44,10 @@
                         <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
                             Password
                         </label>
-                        <input type="password" 
-                               name="password" 
+                        <input type="password"
+                               name="password"
                                id="password"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('password') border-red-500 @enderror"
+                               class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition {{ $errors->has('password') ? 'border-red-500' : 'border-gray-300' }}"
                                placeholder="••••••••"
                                required>
                         @error('password')
@@ -57,8 +57,8 @@
 
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <input type="checkbox" 
-                                   name="remember" 
+                            <input type="checkbox"
+                                   name="remember"
                                    id="remember"
                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                             <label for="remember" class="ml-2 block text-sm text-gray-700">
@@ -67,7 +67,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" 
+                    <button type="submit"
                             class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition duration-200 flex items-center justify-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
@@ -89,4 +89,4 @@
             </p>
         </div>
     </div>
-</x-layouts.app>
+</x-layouts.staff>

@@ -3,14 +3,14 @@
 namespace App\Filament\Admin\Resources\Orders\Schemas;
 
 use App\Models\Schedule;
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
+use Filament\Schemas\Schema;
 
 class OrderForm
 {
@@ -32,8 +32,7 @@ class OrderForm
                         Select::make('schedule_id')
                             ->label('Jadwal')
                             ->relationship('schedule', 'id')
-                            ->getOptionLabelFromRecordUsing(fn (Schedule $record) => 
-                                "{$record->route->origin->name} → {$record->route->destination->name} ({$record->departure_time_formatted})"
+                            ->getOptionLabelFromRecordUsing(fn (Schedule $record) => "{$record->route->origin->name} → {$record->route->destination->name} ({$record->departure_time_formatted})"
                             )
                             ->searchable()
                             ->preload()

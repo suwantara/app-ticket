@@ -1,6 +1,6 @@
 <x-layouts.app>
     <x-slot:title>Pembayaran - {{ $order->order_number }}</x-slot>
-    
+
     @push('styles')
     <style>
         .snap-container {
@@ -32,7 +32,7 @@
         }
     </style>
     @endpush
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-white py-8">
+<div class="min-h-screen bg-linear-to-b from-blue-50 to-white py-8">
     <div class="max-w-4xl mx-auto px-4">
         <!-- Flash Messages -->
         @if(session()->has('error'))
@@ -58,7 +58,7 @@
             <div class="lg:col-span-2">
                 <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
                     <!-- Order Info Header -->
-                    <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+                    <div class="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-blue-200 text-sm">Nomor Pesanan</p>
@@ -96,7 +96,7 @@
                         <!-- Snap Button -->
                         <div class="space-y-4">
                             <button id="pay-button"
-                                    class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-4 px-6 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3">
+                                    class="w-full bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-4 px-6 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3">
                                 <i class="fa-solid fa-wallet"></i>
                                 <span>Bayar Sekarang</span>
                             </button>
@@ -198,7 +198,7 @@
 
                     <!-- Back Link -->
                     <div class="mt-6 pt-4 border-t border-gray-200">
-                        <a href="{{ route('booking.confirmation', $order) }}" 
+                        <a href="{{ route('booking.confirmation', $order) }}"
                            class="text-sm text-gray-500 hover:text-gray-700 flex items-center justify-center gap-2">
                             <i class="fa-solid fa-arrow-left"></i>
                             Kembali ke Detail Pesanan
@@ -215,7 +215,7 @@
 <script>
     // Countdown Timer
     const expiredAt = new Date('{{ $order->expired_at->toIso8601String() }}').getTime();
-    
+
     function updateCountdown() {
         const now = new Date().getTime();
         const distance = expiredAt - now;
@@ -232,9 +232,9 @@
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        document.getElementById('countdown').innerHTML = 
-            String(hours).padStart(2, '0') + ':' + 
-            String(minutes).padStart(2, '0') + ':' + 
+        document.getElementById('countdown').innerHTML =
+            String(hours).padStart(2, '0') + ':' +
+            String(minutes).padStart(2, '0') + ':' +
             String(seconds).padStart(2, '0');
     }
 
@@ -244,7 +244,7 @@
     // Pay Button Handler
     document.getElementById('pay-button').addEventListener('click', function() {
         const snapToken = '{{ $snapToken }}';
-        
+
         if (!snapToken) {
             alert('Token pembayaran tidak tersedia. Silakan refresh halaman.');
             return;

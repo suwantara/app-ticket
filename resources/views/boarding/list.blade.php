@@ -1,4 +1,4 @@
-<x-layouts.app title="Daftar Boarding">
+<x-layouts.staff title="Daftar Boarding">
     <div class="min-h-screen bg-slate-100">
         <!-- Header -->
         <header class="bg-slate-800 text-white shadow-lg sticky top-0 z-50">
@@ -21,7 +21,7 @@
                         </div>
                     </div>
                     <div class="flex items-center space-x-3">
-                        <a href="{{ route('boarding.scanner', $schedule ? ['schedule' => $schedule->id] : []) }}" 
+                        <a href="{{ route('boarding.scanner', $schedule ? ['schedule' => $schedule->id] : []) }}"
                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium">
                             <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
@@ -53,8 +53,8 @@
             <!-- Filter & Search -->
             <div class="bg-white rounded-xl p-4 shadow-sm mb-6">
                 <div class="flex flex-wrap gap-4">
-                    <div class="flex-1 min-w-[200px]">
-                        <input type="text" id="search-input" placeholder="Cari nama atau nomor tiket..." 
+                    <div class="flex-1 min-w-50">
+                        <input type="text" id="search-input" placeholder="Cari nama atau nomor tiket..."
                                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div class="flex space-x-2">
@@ -102,7 +102,7 @@
                         </thead>
                         <tbody id="passenger-table" class="bg-white divide-y divide-slate-200">
                             @forelse($tickets as $ticket)
-                                <tr class="passenger-row hover:bg-slate-50 transition" 
+                                <tr class="passenger-row hover:bg-slate-50 transition"
                                     data-name="{{ strtolower($ticket->passenger->name) }}"
                                     data-ticket="{{ strtolower($ticket->ticket_number) }}"
                                     data-status="{{ $ticket->status === 'used' ? 'boarded' : 'pending' }}">
@@ -149,7 +149,7 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         @if($ticket->status === 'unused')
-                                            <button onclick="boardPassenger({{ $ticket->id }}, '{{ $ticket->passenger->name }}')" 
+                                            <button onclick="boardPassenger({{ $ticket->id }}, '{{ $ticket->passenger->name }}')"
                                                     class="px-3 py-1 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition text-xs">
                                                 Board
                                             </button>
@@ -187,7 +187,7 @@
         // Filter by status
         function filterStatus(status) {
             currentFilter = status;
-            
+
             // Update button styles
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('bg-blue-600', 'text-white');
@@ -245,5 +245,18 @@
                 console.error(error);
             }
         }
+
+        // Session timeout check
+        setInterval(async () => {
+            try {
+                const response = await fetch('{{ route('boarding.stats') }}', {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (response.status === 401 || response.status === 419) {
+                    window.location.href = '{{ route('staff.login') }}';
+                }
+            } catch (e) {}
+        }, 60000);
     </script>
-</x-layouts.app>
+</x-layouts.staff>

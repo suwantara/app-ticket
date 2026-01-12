@@ -77,7 +77,7 @@
                     <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800"
                          alt="Nusa Penida"
                          class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-6">
                         <h3 class="text-xl font-bold text-white mb-1">Nusa Penida</h3>
                         <p class="text-gray-200 text-sm">Dari Sanur, Bali</p>
@@ -89,7 +89,7 @@
                     <img src="https://images.unsplash.com/photo-1573790387438-4da905039392?q=80&w=800"
                          alt="Gili Trawangan"
                          class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-6">
                         <h3 class="text-xl font-bold text-white mb-1">Gili Trawangan</h3>
                         <p class="text-gray-200 text-sm">Dari Padang Bai, Bali</p>
@@ -101,7 +101,7 @@
                     <img src="https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?q=80&w=800"
                          alt="Lombok"
                          class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-6">
                         <h3 class="text-xl font-bold text-white mb-1">Lombok</h3>
                         <p class="text-gray-200 text-sm">Dari Benoa, Bali</p>
@@ -112,7 +112,7 @@
     </section>
 
     {{-- CTA Section --}}
-    <section class="py-16 bg-gradient-to-r from-blue-600 to-blue-800">
+    <section class="py-16 bg-linear-to-r from-blue-600 to-blue-800">
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Siap Untuk Petualangan?</h2>
             <p class="text-blue-100 mb-8 max-w-2xl mx-auto">Pesan tiket fast boat Anda sekarang dan nikmati perjalanan yang tak terlupakan</p>

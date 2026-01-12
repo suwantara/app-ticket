@@ -1,5 +1,5 @@
-<x-layouts.app title="Boarding Dashboard">
-    <div class="min-h-screen bg-slate-100">
+<x-layouts.staff title="Boarding Dashboard">
+    <div class="bg-slate-100">
         <!-- Header -->
         <header class="bg-slate-800 text-white shadow-lg">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -17,13 +17,13 @@
                     </div>
                     <div class="flex items-center space-x-4">
                         <span class="text-slate-300">{{ auth()->user()->name }}</span>
-                        <form method="POST" action="{{ route('staff.logout') }}" class="inline">
+                        <button type="button" onclick="confirmLogout()" class="text-slate-400 hover:text-white transition" title="Logout">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                        </button>
+                        <form id="logout-form" method="POST" action="{{ route('staff.logout') }}" class="hidden">
                             @csrf
-                            <button type="submit" class="text-slate-400 hover:text-white transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                                </svg>
-                            </button>
                         </form>
                     </div>
                 </div>
@@ -33,8 +33,8 @@
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Quick Actions -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <a href="{{ route('boarding.scanner') }}" 
-                   class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-6 text-white hover:shadow-lg transition transform hover:-translate-y-1">
+                <a href="{{ route('boarding.scanner') }}"
+                   class="bg-linear-to-br from-blue-600 to-blue-700 rounded-2xl p-6 text-white hover:shadow-lg transition transform hover:-translate-y-1">
                     <div class="flex items-center space-x-4">
                         <div class="h-14 w-14 bg-white/20 rounded-xl flex items-center justify-center">
                             <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,8 +48,8 @@
                     </div>
                 </a>
 
-                <a href="{{ route('boarding.list') }}" 
-                   class="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-2xl p-6 text-white hover:shadow-lg transition transform hover:-translate-y-1">
+                <a href="{{ route('boarding.list') }}"
+                   class="bg-linear-to-br from-emerald-600 to-emerald-700 rounded-2xl p-6 text-white hover:shadow-lg transition transform hover:-translate-y-1">
                     <div class="flex items-center space-x-4">
                         <div class="h-14 w-14 bg-white/20 rounded-xl flex items-center justify-center">
                             <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,8 +63,8 @@
                     </div>
                 </a>
 
-                <a href="/admin/tickets" 
-                   class="bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl p-6 text-white hover:shadow-lg transition transform hover:-translate-y-1">
+                <a href="/admin/tickets"
+                   class="bg-linear-to-br from-purple-600 to-purple-700 rounded-2xl p-6 text-white hover:shadow-lg transition transform hover:-translate-y-1">
                     <div class="flex items-center space-x-4">
                         <div class="h-14 w-14 bg-white/20 rounded-xl flex items-center justify-center">
                             <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,7 +168,7 @@
                                                 {{ $item['schedule']->route->origin->name }} → {{ $item['schedule']->route->destination->name }}
                                             </h3>
                                             <p class="text-sm text-slate-500">
-                                                {{ $item['schedule']->ship->name }} • 
+                                                {{ $item['schedule']->ship->name }} •
                                                 {{ \Carbon\Carbon::parse($item['schedule']->departure_time)->format('H:i') }} WIB
                                             </p>
                                         </div>
@@ -180,7 +180,7 @@
                                             <p class="text-sm text-slate-500">Boarding Progress</p>
                                             <div class="flex items-center space-x-2">
                                                 <div class="w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                                    <div class="h-full bg-emerald-500 rounded-full" 
+                                                    <div class="h-full bg-emerald-500 rounded-full"
                                                          style="width: {{ $item['boarding_percentage'] }}%"></div>
                                                 </div>
                                                 <span class="text-sm font-medium text-slate-700">
@@ -191,11 +191,11 @@
 
                                         <!-- Actions -->
                                         <div class="flex space-x-2">
-                                            <a href="{{ route('boarding.scanner', ['schedule' => $item['schedule']->id]) }}" 
+                                            <a href="{{ route('boarding.scanner', ['schedule' => $item['schedule']->id]) }}"
                                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium">
                                                 Scan
                                             </a>
-                                            <a href="{{ route('boarding.list', ['schedule' => $item['schedule']->id]) }}" 
+                                            <a href="{{ route('boarding.list', ['schedule' => $item['schedule']->id]) }}"
                                                class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition text-sm font-medium">
                                                 List
                                             </a>
@@ -209,4 +209,124 @@
             </div>
         </main>
     </div>
-</x-layouts.app>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logout-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl transform transition-all scale-95 opacity-0" id="logout-modal-content">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Konfirmasi Logout</h3>
+                <p class="text-slate-500 mb-6">Apakah Anda yakin ingin keluar dari sistem?</p>
+                <div class="flex gap-3">
+                    <button onclick="closeLogoutModal()" class="flex-1 py-3 px-4 bg-slate-100 text-slate-700 rounded-xl font-medium hover:bg-slate-200 transition cursor-pointer">
+                        Batal
+                    </button>
+                    <button onclick="doLogout()" class="flex-1 py-3 px-4 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition cursor-pointer">
+                        Ya, Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Expired Modal -->
+    <div id="session-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Sesi Berakhir</h3>
+                <p class="text-slate-500 mb-6">Sesi Anda telah berakhir. Silakan login kembali untuk melanjutkan.</p>
+                <button onclick="window.location.href='{{ route('staff.login') }}'" class="w-full py-3 px-4 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition">
+                    Login Kembali
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Logout confirmation
+        function confirmLogout() {
+            const modal = document.getElementById('logout-modal');
+            const content = document.getElementById('logout-modal-content');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeLogoutModal() {
+            const modal = document.getElementById('logout-modal');
+            const content = document.getElementById('logout-modal-content');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 200);
+        }
+
+        function doLogout() {
+            document.getElementById('logout-form').submit();
+        }
+
+        // Session timeout check
+        const sessionLifetime = {{ config('session.lifetime', 120) }} * 60 * 1000; // Convert to milliseconds
+        let lastActivity = Date.now();
+
+        // Update last activity on user interaction
+        ['click', 'keypress', 'scroll', 'mousemove'].forEach(event => {
+            document.addEventListener(event, () => {
+                lastActivity = Date.now();
+            }, { passive: true });
+        });
+
+        // Check session periodically
+        setInterval(async () => {
+            try {
+                const response = await fetch('{{ route('boarding.stats') }}', {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.status === 401 || response.status === 419) {
+                    showSessionExpiredModal();
+                }
+            } catch (e) {
+                // Network error - might be session issue
+                if (Date.now() - lastActivity > sessionLifetime) {
+                    showSessionExpiredModal();
+                }
+            }
+        }, 60000); // Check every minute
+
+        function showSessionExpiredModal() {
+            const modal = document.getElementById('session-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeLogoutModal();
+            }
+        });
+
+        // Close modal on backdrop click
+        document.getElementById('logout-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('logout-modal')) {
+                closeLogoutModal();
+            }
+        });
+    </script>
+</x-layouts.staff>

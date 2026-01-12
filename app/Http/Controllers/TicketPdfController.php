@@ -4,16 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Services\TicketService;
+use App\Services\TicketPdfService;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
+use chillerlan\QRCode\Common\EccLevel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Ticket;
 
 class TicketPdfController extends Controller
 {
-    protected TicketService $ticketService;
+    private const ACCESS_DENIED_MESSAGE = 'Anda tidak memiliki akses ke tiket ini';
 
-    public function __construct(TicketService $ticketService)
+    protected TicketService $ticketService;
+    protected TicketPdfService $pdfService;
+
+    public function __construct(TicketService $ticketService, TicketPdfService $pdfService)
     {
         $this->ticketService = $ticketService;
+        $this->pdfService = $pdfService;
     }
 
     /**
@@ -24,17 +35,17 @@ class TicketPdfController extends Controller
         $order = Order::where('order_number', $orderNumber)->firstOrFail();
 
         // Verify access - either by email or authenticated user
-        if (!$this->canAccessTicket($request, $order)) {
-            abort(403, 'Anda tidak memiliki akses ke tiket ini');
+        if (! $this->canAccessTicket($request, $order)) {
+            abort(403, self::ACCESS_DENIED_MESSAGE);
         }
 
         // Check if order is paid
-        if (!$order->isPaid()) {
+        if (! $order->isPaid()) {
             abort(400, 'Pesanan belum dibayar');
         }
 
         // Check if tickets exist
-        if (!$order->tickets()->exists()) {
+        if (! $order->tickets()->exists()) {
             // Generate tickets if not exist
             $this->ticketService->generateTicketsForOrder($order);
         }
@@ -44,7 +55,7 @@ class TicketPdfController extends Controller
             'ip' => $request->ip(),
         ]);
 
-        return $this->ticketService->downloadPdf($order);
+        return $this->pdfService->downloadPdf($order);
     }
 
     /**
@@ -55,21 +66,21 @@ class TicketPdfController extends Controller
         $order = Order::where('order_number', $orderNumber)->firstOrFail();
 
         // Verify access
-        if (!$this->canAccessTicket($request, $order)) {
-            abort(403, 'Anda tidak memiliki akses ke tiket ini');
+        if (! $this->canAccessTicket($request, $order)) {
+            abort(403, self::ACCESS_DENIED_MESSAGE);
         }
 
         // Check if order is paid
-        if (!$order->isPaid()) {
+        if (! $order->isPaid()) {
             abort(400, 'Pesanan belum dibayar');
         }
 
         // Check if tickets exist
-        if (!$order->tickets()->exists()) {
+        if (! $order->tickets()->exists()) {
             $this->ticketService->generateTicketsForOrder($order);
         }
 
-        return $this->ticketService->streamPdf($order);
+        return $this->pdfService->streamPdf($order);
     }
 
     /**
@@ -84,8 +95,8 @@ class TicketPdfController extends Controller
         $order = $ticket->order;
 
         // Verify access
-        if (!$this->canAccessTicket($request, $order)) {
-            abort(403, 'Anda tidak memiliki akses ke tiket ini');
+        if (! $this->canAccessTicket($request, $order)) {
+            abort(403, self::ACCESS_DENIED_MESSAGE);
         }
 
         // Load relationships
@@ -95,13 +106,23 @@ class TicketPdfController extends Controller
             'schedule.ship',
         ]);
 
-        // Generate QR SVG
-        $ticket->qr_svg = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
-            ->size(150)
-            ->errorCorrection('H')
-            ->generate($ticket->qr_code);
+        // Generate QR as PNG base64 using chillerlan (GD-based)
+        $qrContent = json_encode([
+            'ticket_number' => $ticket->ticket_number,
+            'qr_code' => $ticket->qr_code,
+        ]);
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.ticket', [
+        $options = new QROptions([
+            'outputType' => 'png',
+            'eccLevel' => EccLevel::H,
+            'scale' => 10,
+            'imageBase64' => true,
+        ]);
+
+        $qrcode = new QRCode($options);
+        $ticket->qr_base64 = $qrcode->render($qrContent);
+
+        $pdf = Pdf::loadView('pdf.ticket', [
             'order' => $order,
             'tickets' => collect([$ticket]),
         ]);
@@ -117,31 +138,20 @@ class TicketPdfController extends Controller
     protected function canAccessTicket(Request $request, Order $order): bool
     {
         // If authenticated user is admin or staff, allow access
-        if (auth()->check()) {
-            $user = auth()->user();
-            if (in_array($user->role, ['admin', 'staff'])) {
-                return true;
-            }
-        }
+        $isAdminOrStaff = Auth::check() && in_array(Auth::user()->role, ['admin', 'staff']);
 
         // Check by email in query string (for email links)
         $email = $request->query('email');
-        if ($email && $order->contact_email === $email) {
-            return true;
-        }
+        $hasValidEmail = $email && $order->contact_email === $email;
 
         // Check by token (for secure links)
         $token = $request->query('token');
-        if ($token && $this->verifyToken($order, $token)) {
-            return true;
-        }
+        $hasValidToken = $token && $this->verifyToken($order, $token);
 
         // If accessed from booking confirmation page (session check)
-        if (session('completed_order') === $order->order_number) {
-            return true;
-        }
+        $hasValidSession = session('completed_order') === $order->order_number;
 
-        return false;
+        return $isAdminOrStaff || $hasValidEmail || $hasValidToken || $hasValidSession;
     }
 
     /**
@@ -149,7 +159,8 @@ class TicketPdfController extends Controller
      */
     protected function verifyToken(Order $order, string $token): bool
     {
-        $expectedToken = hash('sha256', $order->order_number . $order->contact_email . config('app.key'));
+        $expectedToken = hash('sha256', $order->order_number.$order->contact_email.config('app.key'));
+
         return hash_equals($expectedToken, $token);
     }
 
@@ -158,7 +169,7 @@ class TicketPdfController extends Controller
      */
     public static function generateToken(Order $order): string
     {
-        return hash('sha256', $order->order_number . $order->contact_email . config('app.key'));
+        return hash('sha256', $order->order_number.$order->contact_email.config('app.key'));
     }
 
     /**
@@ -167,6 +178,7 @@ class TicketPdfController extends Controller
     public static function getSecureDownloadUrl(Order $order): string
     {
         $token = self::generateToken($order);
+
         return route('ticket.pdf.download', [
             'orderNumber' => $order->order_number,
             'token' => $token,
@@ -179,6 +191,7 @@ class TicketPdfController extends Controller
     public static function getSecureViewUrl(Order $order): string
     {
         $token = self::generateToken($order);
+
         return route('ticket.pdf.view', [
             'orderNumber' => $order->order_number,
             'token' => $token,

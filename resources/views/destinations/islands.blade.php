@@ -2,8 +2,8 @@
     <x-slot:title>Pulau Wisata - Fast Boat Ticket</x-slot:title>
 
     <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-green-600 to-emerald-500 py-16 md:py-24">
-        <div class="max-w-screen-xl mx-auto px-4 text-center">
+    <section class="bg-linear-to-r from-teal-500 to-purple-600 py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-4 text-center">
             <div class="flex items-center justify-center gap-3 mb-4">
                 <svg class="w-10 h-10 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -12,7 +12,7 @@
             <h1 class="text-3xl md:text-5xl font-bold text-white mb-4">
                 Pulau Eksotis
             </h1>
-            <p class="text-lg md:text-xl text-green-100 max-w-2xl mx-auto">
+            <p class="text-lg md:text-xl text-teal-100 max-w-2xl mx-auto">
                 Jelajahi keindahan pulau-pulau tropis dengan pantai berpasir putih, air laut jernih, dan pemandangan menakjubkan
             </p>
         </div>
@@ -20,7 +20,7 @@
 
     <!-- Islands Grid -->
     <section class="py-16 bg-gray-50 dark:bg-gray-900">
-        <div class="max-w-screen-xl mx-auto px-4">
+        <div class="max-w-7xl mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @forelse($islands as $island)
                 <a href="{{ route('destinations.show', $island->slug) }}"
@@ -31,13 +31,13 @@
                                  alt="{{ $island->name }}"
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                         @else
-                            <div class="w-full h-full bg-gradient-to-br from-green-400 to-emerald-300 flex items-center justify-center">
+                            <div class="w-full h-full bg-linear-to-br from-teal-400 to-purple-300 flex items-center justify-center">
                                 <svg class="w-20 h-20 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
                         @endif
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        <div class="absolute inset-0 bg-linear-to-t from-black/50 to-transparent"></div>
                         @if($island->is_popular)
                         <div class="absolute top-4 right-4">
                             <span class="px-3 py-1 text-sm font-semibold bg-yellow-400 text-yellow-900 rounded-full flex items-center gap-1">
@@ -68,7 +68,7 @@
                         @if($island->highlights && count($island->highlights) > 0)
                         <div class="flex flex-wrap gap-2 mb-4">
                             @foreach(array_slice($island->highlights, 0, 3) as $highlight)
-                            <span class="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full">
+                            <span class="text-xs px-2 py-1 bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded-full">
                                 {{ $highlight }}
                             </span>
                             @endforeach
@@ -84,7 +84,7 @@
                             <span class="text-sm text-gray-500 dark:text-gray-400">
                                 {{ $island->routesTo()->where('is_active', true)->count() }} rute tersedia
                             </span>
-                            <span class="text-green-600 dark:text-green-400 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                            <span class="text-teal-600 dark:text-teal-400 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
                                 Lihat Detail
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -107,8 +107,8 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-16 bg-gradient-to-r from-green-600 to-emerald-500">
-        <div class="max-w-screen-xl mx-auto px-4 text-center">
+    <section class="py-16 bg-linear-to-r from-green-600 to-emerald-500">
+        <div class="max-w-7xl mx-auto px-4 text-center">
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">
                 Siap Berlibur ke Pulau Impian?
             </h2>

@@ -1,23 +1,27 @@
 <x-layouts.app title="E-Ticket - {{ $ticket->ticket_number }}">
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div class="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 py-8">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            
+
             <!-- E-Ticket Card -->
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden" id="ticket-printable">
-                
+
                 <!-- Header -->
-                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-6 text-white">
+                <div class="bg-linear-to-r from-blue-600 to-indigo-600 px-6 py-6 text-white">
                     <div class="flex justify-between items-start">
                         <div>
                             <h1 class="text-2xl font-bold">E-TICKET</h1>
                             <p class="text-blue-100 text-sm mt-1">Ferry Booking System</p>
                         </div>
                         <div class="text-right">
-                            <span class="px-3 py-1 rounded-full text-sm font-medium
-                                @if($ticket->status === 'active') bg-green-400 text-green-900
-                                @elseif($ticket->status === 'used') bg-blue-400 text-blue-900
-                                @elseif($ticket->status === 'cancelled') bg-red-400 text-red-900
-                                @else bg-gray-400 text-gray-900 @endif">
+                            @php
+                                $statusClasses = match($ticket->status) {
+                                    'active' => 'bg-green-400 text-green-900',
+                                    'used' => 'bg-blue-400 text-blue-900',
+                                    'cancelled' => 'bg-red-400 text-red-900',
+                                    default => 'bg-gray-400 text-gray-900',
+                                };
+                            @endphp
+                            <span class="px-3 py-1 rounded-full text-sm font-medium {{ $statusClasses }}">
                                 {{ $ticket->status_label }}
                             </span>
                         </div>
@@ -52,22 +56,22 @@
                             <p class="text-xs text-gray-500 uppercase tracking-wider">Nama Penumpang</p>
                             <p class="text-xl font-bold text-gray-900">{{ $ticket->passenger->name }}</p>
                         </div>
-                        
+
                         <div>
                             <p class="text-xs text-gray-500 uppercase tracking-wider">Tanggal</p>
                             <p class="font-semibold text-gray-900">{{ $ticket->order->travel_date->format('d M Y') }}</p>
                         </div>
-                        
+
                         <div>
                             <p class="text-xs text-gray-500 uppercase tracking-wider">Waktu Berangkat</p>
                             <p class="font-semibold text-gray-900">{{ \Carbon\Carbon::parse($ticket->order->schedule->departure_time)->format('H:i') }} WIB</p>
                         </div>
-                        
+
                         <div>
                             <p class="text-xs text-gray-500 uppercase tracking-wider">Tipe Identitas</p>
                             <p class="font-semibold text-gray-900">{{ strtoupper($ticket->passenger->id_type) }}</p>
                         </div>
-                        
+
                         <div>
                             <p class="text-xs text-gray-500 uppercase tracking-wider">No. Identitas</p>
                             <p class="font-semibold text-gray-900">{{ $ticket->passenger->id_number }}</p>
@@ -93,22 +97,22 @@
                         <div class="inline-block bg-white p-4 rounded-2xl border-2 border-gray-200 shadow-inner">
                             @if($ticket->qr_code_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($ticket->qr_code_path))
                                 @if(str_ends_with($ticket->qr_code_path, '.svg'))
-                                    <div class="w-44 h-44 mx-auto overflow-hidden flex items-center justify-center">
+                                    <div class="w-44 h-44 mx-auto overflow-hidden flex items-center justify-center [&>svg]:w-full [&>svg]:h-full">
                                         {!! \Illuminate\Support\Facades\Storage::disk('public')->get($ticket->qr_code_path) !!}
                                     </div>
                                 @else
-                                    <img src="{{ asset('storage/' . $ticket->qr_code_path) }}" 
-                                         alt="QR Code" 
+                                    <img src="{{ asset('storage/' . $ticket->qr_code_path) }}"
+                                         alt="QR Code"
                                          class="w-44 h-44 mx-auto object-contain">
                                 @endif
                             @else
-                                <div class="w-44 h-44 flex items-center justify-center">
+                                <div class="w-44 h-44 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full">
                                     {!! QrCode::size(170)->margin(0)->generate(json_encode(['ticket_number' => $ticket->ticket_number, 'qr_code' => $ticket->qr_code])) !!}
                                 </div>
                             @endif
                         </div>
                         <p class="text-xs text-gray-500 mt-2">Tunjukkan QR Code ini saat boarding</p>
-                        <p class="font-mono text-xs text-gray-400 break-all max-w-[200px] mx-auto">{{ $ticket->qr_code }}</p>
+                        <p class="font-mono text-xs text-gray-400 break-all max-w-50 mx-auto">{{ $ticket->qr_code }}</p>
                     </div>
 
                     <!-- Valid Info -->
@@ -135,15 +139,15 @@
 
             <!-- Actions -->
             <div class="mt-6 flex flex-wrap justify-center gap-4">
-                <button onclick="printTicket()" 
+                <button onclick="printTicket()"
                         class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition font-medium shadow-lg">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                     </svg>
                     Cetak Tiket
                 </button>
-                
-                <a href="{{ route('ticket.show', $ticket->order) }}" 
+
+                <a href="{{ route('ticket.show', $ticket->order) }}"
                    class="inline-flex items-center px-6 py-3 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition text-gray-700 font-medium">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>

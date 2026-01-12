@@ -1,7 +1,7 @@
 <x-layouts.app title="Validasi Tiket">
-    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
+    <div class="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 py-8">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            
+
             <!-- Header -->
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-bold text-gray-900 mb-2">Validasi Tiket</h1>
@@ -17,13 +17,13 @@
                                 Nomor Tiket / QR Code
                             </label>
                             <div class="flex gap-3">
-                                <input type="text" 
-                                       id="ticketCode" 
+                                <input type="text"
+                                       id="ticketCode"
                                        name="ticketCode"
                                        placeholder="Masukkan nomor tiket atau scan QR code"
                                        class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg font-mono"
                                        autofocus>
-                                <button type="submit" 
+                                <button type="submit"
                                         class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition font-medium">
                                     Cari
                                 </button>
@@ -59,7 +59,7 @@
     <script>
         document.getElementById('searchForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             const code = document.getElementById('ticketCode').value.trim();
             if (!code) return;
 
@@ -112,7 +112,7 @@
                                         <p class="font-semibold text-gray-900">${ticket.passenger.id_number}</p>
                                     </div>
                                 </div>
-                                <button onclick="useTicket(${ticket.id}, '${ticket.qr_code}')" 
+                                <button onclick="useTicket(${ticket.id}, '${ticket.qr_code}')"
                                         class="w-full py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition font-semibold text-lg">
                                     ✓ Gunakan Tiket Sekarang
                                 </button>
@@ -163,7 +163,7 @@
                     },
                     body: JSON.stringify({ used_by: 'Staff' })
                 });
-                
+
                 const data = await response.json();
 
                 if (data.success) {

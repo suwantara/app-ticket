@@ -63,7 +63,7 @@ beforeEach(function () {
 
 test('ticket QR code contains correct data', function () {
     $order = Order::create([
-        'order_number' => 'TKT' . date('Ymd') . 'QR001',
+        'order_number' => 'TKT'.date('Ymd').'QR001',
         'schedule_id' => $this->schedule->id,
         'travel_date' => $this->travelDate,
         'contact_name' => 'John Doe',
@@ -96,7 +96,7 @@ test('ticket QR code contains correct data', function () {
 
 test('ticket can be verified by QR data', function () {
     $order = Order::create([
-        'order_number' => 'TKT' . date('Ymd') . 'QR002',
+        'order_number' => 'TKT'.date('Ymd').'QR002',
         'schedule_id' => $this->schedule->id,
         'travel_date' => Carbon::today()->format('Y-m-d'), // Today for valid validation
         'contact_name' => 'John Doe',
@@ -138,7 +138,7 @@ test('invalid QR code returns error', function () {
 
 test('ticket can be checked in (boarded)', function () {
     $order = Order::create([
-        'order_number' => 'TKT' . date('Ymd') . 'QR003',
+        'order_number' => 'TKT'.date('Ymd').'QR003',
         'schedule_id' => $this->schedule->id,
         'travel_date' => Carbon::today()->format('Y-m-d'), // Today for boarding
         'contact_name' => 'John Doe',
@@ -174,7 +174,7 @@ test('ticket can be checked in (boarded)', function () {
 
 test('used ticket cannot be checked in again', function () {
     $order = Order::create([
-        'order_number' => 'TKT' . date('Ymd') . 'QR004',
+        'order_number' => 'TKT'.date('Ymd').'QR004',
         'schedule_id' => $this->schedule->id,
         'travel_date' => Carbon::today()->format('Y-m-d'),
         'contact_name' => 'John Doe',
@@ -214,7 +214,7 @@ test('used ticket cannot be checked in again', function () {
 
 test('ticket for wrong date cannot be used', function () {
     $order = Order::create([
-        'order_number' => 'TKT' . date('Ymd') . 'QR005',
+        'order_number' => 'TKT'.date('Ymd').'QR005',
         'schedule_id' => $this->schedule->id,
         'travel_date' => Carbon::tomorrow()->format('Y-m-d'), // Tomorrow, not today
         'contact_name' => 'John Doe',
@@ -255,7 +255,7 @@ test('QR scanner page redirects to login for unauthenticated users', function ()
 
 test('ticket list shows all tickets for order', function () {
     $order = Order::create([
-        'order_number' => 'TKT' . date('Ymd') . 'QR006',
+        'order_number' => 'TKT'.date('Ymd').'QR006',
         'schedule_id' => $this->schedule->id,
         'travel_date' => $this->travelDate,
         'contact_name' => 'John Doe',
@@ -291,7 +291,7 @@ test('ticket list shows all tickets for order', function () {
 
     expect($result['success'])->toBeTrue();
     expect($result['tickets'])->toHaveCount(2);
-    
+
     $ticketNames = collect($result['tickets'])->pluck('passenger.name')->toArray();
     expect($ticketNames)->toContain('John Doe');
     expect($ticketNames)->toContain('Jane Doe');

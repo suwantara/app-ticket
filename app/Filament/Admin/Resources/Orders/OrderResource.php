@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Resources\Orders;
 use App\Filament\Admin\Resources\Orders\Pages\CreateOrder;
 use App\Filament\Admin\Resources\Orders\Pages\EditOrder;
 use App\Filament\Admin\Resources\Orders\Pages\ListOrders;
-use App\Filament\Admin\Resources\Orders\Pages\ViewOrder;
 use App\Filament\Admin\Resources\Orders\Schemas\OrderForm;
 use App\Filament\Admin\Resources\Orders\Tables\OrdersTable;
 use App\Models\Order;

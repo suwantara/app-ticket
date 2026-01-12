@@ -2,13 +2,13 @@
 
 namespace App\Filament\Admin\Resources\Ships\Schemas;
 
-use Filament\Schemas\Components\FileUpload;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\TagsInput;
-use Filament\Schemas\Components\TextInput;
-use Filament\Schemas\Components\Textarea;
-use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 
 class ShipForm
@@ -62,15 +62,21 @@ class ShipForm
                                 FileUpload::make('image')
                                     ->label('Foto Kapal')
                                     ->image()
+                                    ->disk('public')
                                     ->directory('ships')
+                                    ->visibility('public')
                                     ->maxSize(2048)
-                                    ->imageEditor(),
+                                    ->imageEditor()
+                                    ->helperText('Unggah foto kapal'),
 
                                 FileUpload::make('operator_logo')
                                     ->label('Logo Operator')
                                     ->image()
+                                    ->disk('public')
                                     ->directory('operators')
-                                    ->maxSize(1024),
+                                    ->visibility('public')
+                                    ->maxSize(1024)
+                                    ->helperText('Unggah logo operator'),
                             ]),
                     ]),
 
@@ -82,7 +88,7 @@ class ShipForm
                             ->suggestions([
                                 'AC', 'Toilet', 'Life Jacket', 'Asuransi',
                                 'Bagasi', 'TV', 'Musik', 'Snack', 'Air Mineral',
-                                'Deck Terbuka', 'WiFi', 'USB Charger'
+                                'Deck Terbuka', 'WiFi', 'USB Charger',
                             ])
                             ->columnSpanFull(),
                     ]),

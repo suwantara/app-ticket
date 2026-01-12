@@ -2,11 +2,11 @@
 
 namespace App\Filament\Admin\Resources\Orders\Tables;
 
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -27,7 +27,7 @@ class OrdersTable
 
                 TextColumn::make('schedule.route.code')
                     ->label('Rute')
-                    ->description(fn ($record) => $record->schedule?->route?->origin?->name . ' → ' . $record->schedule?->route?->destination?->name)
+                    ->description(fn ($record) => $record->schedule?->route?->origin?->name.' → '.$record->schedule?->route?->destination?->name)
                     ->sortable(),
 
                 TextColumn::make('travel_date')

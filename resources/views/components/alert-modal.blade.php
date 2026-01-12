@@ -1,20 +1,20 @@
 {{-- Alpine.js Alert/Confirmation Modal Component --}}
-<div x-data="alertModal()" 
+<div x-data="alertModal()"
      x-on:show-alert.window="showAlert($event.detail)"
      x-on:show-confirm.window="showConfirm($event.detail)">
-    
+
     {{-- Alert Modal --}}
     <template x-teleport="body">
-        <div x-show="isOpen" 
+        <div x-show="isOpen"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
-             class="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+             class="fixed inset-0 z-99999 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
              style="display: none;">
-            
+
             <div x-show="isOpen"
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 scale-95"
@@ -24,14 +24,14 @@
                  x-transition:leave-end="opacity-0 scale-95"
                  @click.away="close()"
                  class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
-                
+
                 {{-- Icon Header --}}
                 <div class="p-6 text-center"
                      :class="{
-                         'bg-gradient-to-br from-green-50 to-green-100': type === 'success',
-                         'bg-gradient-to-br from-red-50 to-red-100': type === 'error',
-                         'bg-gradient-to-br from-yellow-50 to-yellow-100': type === 'warning',
-                         'bg-gradient-to-br from-blue-50 to-blue-100': type === 'info' || type === 'confirm',
+                         'bg-linear-to-br from-green-50 to-green-100': type === 'success',
+                         'bg-linear-to-br from-red-50 to-red-100': type === 'error',
+                         'bg-linear-to-br from-yellow-50 to-yellow-100': type === 'warning',
+                         'bg-linear-to-br from-blue-50 to-blue-100': type === 'info' || type === 'confirm',
                      }">
                     <div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center"
                          :class="{
@@ -68,14 +68,14 @@
                 <div class="px-6 pb-6 flex gap-3 justify-center">
                     {{-- Cancel Button (for confirm) --}}
                     <template x-if="isConfirm">
-                        <button @click="cancel()" 
+                        <button @click="cancel()"
                                 class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors cursor-pointer">
                             <span x-text="cancelText"></span>
                         </button>
                     </template>
-                    
+
                     {{-- OK/Confirm Button --}}
-                    <button @click="confirm()" 
+                    <button @click="confirm()"
                             class="px-6 py-2.5 font-medium rounded-lg transition-colors cursor-pointer"
                             :class="{
                                 'bg-green-600 hover:bg-green-700 text-white': type === 'success',

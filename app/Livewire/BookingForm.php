@@ -6,21 +6,31 @@ use App\Models\Order;
 use App\Models\Passenger;
 use App\Models\Schedule;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class BookingForm extends Component
 {
     // Booking session data
     public $schedule;
+
     public $returnSchedule;
+
     public $travelDate;
+
     public $returnDate;
+
     public $passengerCount;
+
     public $isRoundTrip;
 
     // Contact information
     public $contactName = '';
+
     public $contactEmail = '';
+
     public $contactPhone = '';
 
     // Passengers data
@@ -28,20 +38,21 @@ class BookingForm extends Component
 
     // UI state
     public $currentStep = 1;
+
     public $isProcessing = false;
 
     public function mount()
     {
         $booking = session('booking');
 
-        if (!$booking || !isset($booking['schedule_id'])) {
+        if (! $booking || ! isset($booking['schedule_id'])) {
             return redirect()->route('home')->with('error', 'Silakan pilih jadwal terlebih dahulu.');
         }
 
         $this->schedule = Schedule::with(['route.origin', 'route.destination', 'ship'])
             ->find($booking['schedule_id']);
 
-        if (!$this->schedule) {
+        if (! $this->schedule) {
             return redirect()->route('home')->with('error', 'Jadwal tidak ditemukan.');
         }
 
@@ -55,6 +66,14 @@ class BookingForm extends Component
         $this->passengerCount = $booking['passengers'];
         $this->isRoundTrip = $booking['is_round_trip'];
 
+        // Auto-fill for logged in users
+        if (Auth::check()) {
+            $user = Auth::user();
+            $this->contactName = $user->name;
+            $this->contactEmail = $user->email;
+            // Phone is not standard in user table usually, so we leave it empty or check if column exists
+        }
+
         // Initialize passengers array
         for ($i = 0; $i < $this->passengerCount; $i++) {
             $this->passengers[$i] = [
@@ -66,7 +85,6 @@ class BookingForm extends Component
             ];
         }
     }
-
     public function nextStep()
     {
         if ($this->currentStep === 1) {
@@ -109,8 +127,8 @@ class BookingForm extends Component
             $rules["passengers.{$i}.type"] = 'required|in:adult,child,infant';
             $rules["passengers.{$i}.gender"] = 'required|in:male,female';
 
-            $messages["passengers.{$i}.name.required"] = "Nama penumpang " . ($i + 1) . " wajib diisi";
-            $messages["passengers.{$i}.gender.required"] = "Jenis kelamin penumpang " . ($i + 1) . " wajib dipilih";
+            $messages["passengers.{$i}.name.required"] = 'Nama penumpang '.($i + 1).' wajib diisi';
+            $messages["passengers.{$i}.gender.required"] = 'Jenis kelamin penumpang '.($i + 1).' wajib dipilih';
         }
 
         $this->validate($rules, $messages);
@@ -126,7 +144,6 @@ class BookingForm extends Component
 
         return $total;
     }
-
     public function submitBooking()
     {
         $this->isProcessing = true;
@@ -134,9 +151,12 @@ class BookingForm extends Component
         try {
             DB::beginTransaction();
 
+            $userId = Auth::id();
+
             // Create outbound order
             $order = Order::create([
                 'schedule_id' => $this->schedule->id,
+                'user_id' => $userId,
                 'travel_date' => $this->travelDate,
                 'passenger_count' => $this->passengerCount,
                 'total_amount' => $this->schedule->price * $this->passengerCount,
@@ -164,6 +184,7 @@ class BookingForm extends Component
             if ($this->returnSchedule) {
                 $returnOrder = Order::create([
                     'schedule_id' => $this->returnSchedule->id,
+                    'user_id' => $userId,
                     'travel_date' => $this->returnDate,
                     'passenger_count' => $this->passengerCount,
                     'total_amount' => $this->returnSchedule->price * $this->passengerCount,
@@ -172,7 +193,7 @@ class BookingForm extends Component
                     'contact_phone' => $this->contactPhone,
                     'status' => 'pending',
                     'payment_status' => 'unpaid',
-                    'notes' => 'Return trip for order: ' . $order->order_number,
+                    'notes' => 'Return trip for order: '.$order->order_number,
                 ]);
 
                 // Create passengers for return
@@ -188,7 +209,7 @@ class BookingForm extends Component
                 }
 
                 // Link orders
-                $order->update(['notes' => 'Return order: ' . $returnOrder->order_number]);
+                $order->update(['notes' => 'Return order: '.$returnOrder->order_number]);
             }
 
             DB::commit();
@@ -214,9 +235,10 @@ class BookingForm extends Component
         }
     }
 
+    #[Layout('components.layouts.app')]
+    #[Title('Pemesanan Tiket')]
     public function render()
     {
-        return view('livewire.booking-form')
-            ->layout('components.layouts.app', ['title' => 'Pemesanan Tiket']);
+        return view('livewire.booking-form');
     }
 }

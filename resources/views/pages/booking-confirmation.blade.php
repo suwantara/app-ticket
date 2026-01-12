@@ -1,6 +1,6 @@
 <x-layouts.app>
     <x-slot:title>Konfirmasi Pemesanan - {{ $order->order_number }}</x-slot>
-<div class="min-h-screen bg-gradient-to-b from-green-50 to-white py-12">
+<div class="min-h-screen bg-linear-to-b from-green-50 to-white py-12">
     <div class="max-w-3xl mx-auto px-4">
         <!-- Flash Messages -->
         @if(session()->has('success'))
@@ -71,7 +71,7 @@
         <!-- Order Card -->
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
             <!-- Order Header -->
-            <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+            <div class="bg-linear-to-r from-blue-600 to-blue-700 text-white p-6">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-blue-200 text-sm">Nomor Pesanan</p>
@@ -92,7 +92,7 @@
                 <h3 class="font-bold text-gray-800 mb-4">
                     <i class="fa-solid fa-ship text-blue-600 mr-2"></i> Detail Perjalanan
                 </h3>
-                
+
                 <div class="bg-gray-50 rounded-lg p-4">
                     <div class="flex items-center gap-4 mb-4">
                         <div class="flex-1">
@@ -134,7 +134,7 @@
                 <h3 class="font-bold text-gray-800 mb-4">
                     <i class="fa-solid fa-address-card text-blue-600 mr-2"></i> Informasi Kontak
                 </h3>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div>
                         <p class="text-gray-500">Nama</p>
@@ -156,7 +156,7 @@
                 <h3 class="font-bold text-gray-800 mb-4">
                     <i class="fa-solid fa-users text-blue-600 mr-2"></i> Daftar Penumpang
                 </h3>
-                
+
                 <div class="space-y-3">
                     @foreach($order->passengers as $index => $passenger)
                     <div class="flex items-center justify-between bg-gray-50 rounded-lg p-4">
@@ -185,7 +185,7 @@
                 <h3 class="font-bold text-gray-800 mb-4">
                     <i class="fa-solid fa-receipt text-blue-600 mr-2"></i> Ringkasan Pembayaran
                 </h3>
-                
+
                 <div class="space-y-2 text-sm">
                     <div class="flex justify-between">
                         <span class="text-gray-600">Tiket ({{ $order->passengers->count() }} penumpang)</span>
@@ -209,7 +209,7 @@
                         <div>
                             <p class="font-semibold text-yellow-800">Menunggu Pembayaran</p>
                             <p class="text-sm text-yellow-700">
-                                Silakan selesaikan pembayaran sebelum 
+                                Silakan selesaikan pembayaran sebelum
                                 <strong>{{ $order->expired_at->translatedFormat('d M Y, H:i') }}</strong>
                             </p>
                         </div>
@@ -238,7 +238,7 @@
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             @if($order->canBePaid())
             <a href="{{ route('payment.show', $order) }}"
-               class="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-bold text-lg transition-all shadow-lg">
+               class="inline-flex items-center justify-center px-8 py-3 bg-linear-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-bold text-lg transition-all shadow-lg">
                 <i class="fa-solid fa-credit-card mr-2"></i> Bayar Sekarang
             </a>
             @endif

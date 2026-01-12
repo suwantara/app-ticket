@@ -57,6 +57,7 @@ class Order extends Model
         $prefix = 'TKT';
         $date = now()->format('Ymd');
         $random = strtoupper(Str::random(6));
+
         return "{$prefix}{$date}{$random}";
     }
 
@@ -67,33 +68,6 @@ class Order extends Model
     public function getRouteKeyName(): string
     {
         return 'order_number';
-    }
-
-    // Scopes
-    public function scopePending($query)
-    {
-        return $query->where('status', 'pending');
-    }
-
-    public function scopeConfirmed($query)
-    {
-        return $query->where('status', 'confirmed');
-    }
-
-    public function scopePaid($query)
-    {
-        return $query->where('payment_status', 'paid');
-    }
-
-    public function scopeUnpaid($query)
-    {
-        return $query->whereIn('payment_status', ['unpaid', 'pending']);
-    }
-
-    public function scopeExpired($query)
-    {
-        return $query->where('expired_at', '<', now())
-            ->where('payment_status', '!=', 'paid');
     }
 
     // Relations
@@ -120,12 +94,12 @@ class Order extends Model
     // Accessors
     public function getTotalAmountFormattedAttribute(): string
     {
-        return 'Rp ' . number_format($this->total_amount, 0, ',', '.');
+        return 'Rp '.number_format($this->total_amount, 0, ',', '.');
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'pending' => 'Menunggu',
             'confirmed' => 'Dikonfirmasi',
             'paid' => 'Dibayar',
@@ -138,7 +112,7 @@ class Order extends Model
 
     public function getPaymentStatusLabelAttribute(): string
     {
-        return match($this->payment_status) {
+        return match ($this->payment_status) {
             'unpaid' => 'Belum Bayar',
             'pending' => 'Menunggu Pembayaran',
             'paid' => 'Lunas',
@@ -151,7 +125,7 @@ class Order extends Model
 
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'pending' => 'warning',
             'confirmed' => 'info',
             'paid' => 'success',
@@ -164,7 +138,7 @@ class Order extends Model
 
     public function getPaymentStatusColorAttribute(): string
     {
-        return match($this->payment_status) {
+        return match ($this->payment_status) {
             'unpaid' => 'gray',
             'pending' => 'warning',
             'paid' => 'success',
@@ -183,17 +157,17 @@ class Order extends Model
 
     public function isExpired(): bool
     {
-        return $this->expired_at && $this->expired_at < now() && !$this->isPaid();
+        return $this->expired_at && $this->expired_at < now() && ! $this->isPaid();
     }
 
     public function canBePaid(): bool
     {
         return in_array($this->payment_status, ['unpaid', 'pending', 'failed'])
-            && !$this->isExpired()
+            && ! $this->isExpired()
             && $this->status !== 'cancelled';
     }
 
-    public function markAsPaid(string $paymentMethod = null): void
+    public function markAsPaid(?string $paymentMethod = null): void
     {
         $this->update([
             'status' => 'paid',

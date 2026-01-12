@@ -33,14 +33,14 @@ class StaffAuthController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $user = Auth::user();
 
-            if (!$user->is_active) {
+            if (! $user->is_active) {
                 Auth::logout();
                 throw ValidationException::withMessages([
                     'email' => 'Akun Anda tidak aktif. Silakan hubungi administrator.',
                 ]);
             }
 
-            if (!$user->isStaff()) {
+            if (! $user->isStaff()) {
                 Auth::logout();
                 throw ValidationException::withMessages([
                     'email' => 'Anda tidak memiliki akses sebagai staff.',

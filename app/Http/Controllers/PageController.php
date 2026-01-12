@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\Page;
-use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
@@ -13,7 +11,14 @@ class PageController extends Controller
      */
     public function home()
     {
-        $page = Page::where('slug', 'home')->published()->first();
+        // Static fallback for home page (DB-driven pages removed)
+        $page = (object) [
+            'title' => 'Home',
+            'meta_title' => 'Home',
+            'meta_description' => 'Selamat datang di layanan tiket kapal cepat kami.',
+            'featured_image' => null,
+            'content' => null,
+        ];
 
         return view('pages.home', compact('page'));
     }
@@ -31,7 +36,14 @@ class PageController extends Controller
      */
     public function about()
     {
-        $page = Page::where('slug', 'about')->published()->firstOrFail();
+        // Dummy data for static view
+        $page = (object) [
+            'title' => 'Tentang Kami',
+            'meta_title' => 'Tentang Kami',
+            'meta_description' => 'Informasi tentang layanan dan perusahaan kami.',
+            'featured_image' => null,
+            'content' => '<p>Selamat datang di layanan tiket kapal cepat terbaik. Kami melayani rute destinasi populer dengan armada modern dan pelayanan ramah.</p>',
+        ];
 
         return view('pages.about', compact('page'));
     }
@@ -41,7 +53,14 @@ class PageController extends Controller
      */
     public function contact()
     {
-        $page = Page::where('slug', 'contact')->published()->firstOrFail();
+        // Dummy data for static view
+        $page = (object) [
+            'title' => 'Hubungi Kami',
+            'meta_title' => 'Hubungi Kami',
+            'meta_description' => 'Silakan hubungi kami untuk pertanyaan, bantuan, atau kerjasama.',
+            'featured_image' => null,
+            'content' => '<p>Tim kami siap membantu Anda setiap hari. Hubungi kami melalui email, telepon, atau kunjungi kantor kami di Bali.</p>',
+        ];
 
         return view('pages.contact', compact('page'));
     }
@@ -60,21 +79,9 @@ class PageController extends Controller
     /**
      * Display a dynamic page by slug
      */
-    public function show(Page $page)
+    public function show(string $slug)
     {
-        if (!$page->is_published) {
-            abort(404);
-        }
-
-        // Determine which template to use
-        $template = $page->template ?? 'default';
-        $viewName = "pages.templates.{$template}";
-
-        // Fallback to default template if specific one doesn't exist
-        if (!view()->exists($viewName)) {
-            $viewName = 'pages.templates.default';
-        }
-
-        return view($viewName, compact('page'));
+        // Dynamic CMS pages have been removed. Return 404 for old page URLs.
+        abort(404);
     }
 }

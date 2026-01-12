@@ -67,11 +67,11 @@ class Ticket extends Model
      */
     public static function generateQrCode(): string
     {
-        $code = 'QR' . now()->format('YmdHis') . strtoupper(Str::random(8));
+        $code = 'QR'.now()->format('YmdHis').strtoupper(Str::random(8));
 
         // Ensure uniqueness
         while (self::where('qr_code', $code)->exists()) {
-            $code = 'QR' . now()->format('YmdHis') . strtoupper(Str::random(8));
+            $code = 'QR'.now()->format('YmdHis').strtoupper(Str::random(8));
         }
 
         return $code;
@@ -139,8 +139,9 @@ class Ticket extends Model
     public function getQrCodeUrlAttribute(): ?string
     {
         if ($this->qr_code_path) {
-            return asset('storage/' . $this->qr_code_path);
+            return asset('storage/'.$this->qr_code_path);
         }
+
         return null;
     }
 
@@ -171,14 +172,14 @@ class Ticket extends Model
 
     public function canBeUsed(): bool
     {
-        if (!$this->isValid() || $this->isUsed()) {
+        if (! $this->isValid() || $this->isUsed()) {
             return false;
         }
-        
+
         // Check if travel date is today (or allow some flexibility)
         $travelDate = $this->order->travel_date;
         $today = now()->startOfDay();
-        
+
         // Allow ticket to be used on travel date
         return $travelDate->startOfDay()->equalTo($today);
     }
@@ -188,7 +189,7 @@ class Ticket extends Model
      */
     public function markAsUsed(?string $usedBy = null): bool
     {
-        if (!$this->canBeUsed()) {
+        if (! $this->canBeUsed()) {
             return false;
         }
 
@@ -225,42 +226,32 @@ class Ticket extends Model
      */
     public function validate(): array
     {
-        if ($this->status === 'used') {
-            return [
+        return match (true) {
+            $this->status === 'used' => [
                 'valid' => false,
-                'message' => 'Tiket sudah digunakan pada ' . $this->used_at->format('d M Y H:i'),
+                'message' => 'Tiket sudah digunakan pada '.$this->used_at->format('d M Y H:i'),
                 'code' => 'USED',
-            ];
-        }
-
-        if ($this->status === 'cancelled') {
-            return [
+            ],
+            $this->status === 'cancelled' => [
                 'valid' => false,
                 'message' => 'Tiket telah dibatalkan',
                 'code' => 'CANCELLED',
-            ];
-        }
-
-        if ($this->status === 'expired' || $this->isExpired()) {
-            return [
+            ],
+            $this->status === 'expired' || $this->isExpired() => [
                 'valid' => false,
                 'message' => 'Tiket telah kadaluarsa',
                 'code' => 'EXPIRED',
-            ];
-        }
-
-        if (!$this->order->isPaid()) {
-            return [
+            ],
+            ! $this->order->isPaid() => [
                 'valid' => false,
                 'message' => 'Pembayaran belum dikonfirmasi',
                 'code' => 'UNPAID',
-            ];
-        }
-
-        return [
-            'valid' => true,
-            'message' => 'Tiket valid',
-            'code' => 'VALID',
-        ];
+            ],
+            default => [
+                'valid' => true,
+                'message' => 'Tiket valid',
+                'code' => 'VALID',
+            ],
+        };
     }
 }

@@ -1,6 +1,6 @@
 <x-layouts.app :title="$page->meta_title ?? 'Hubungi Kami'">
     {{-- Page Header --}}
-    <section class="bg-gradient-to-r from-blue-600 to-blue-800 py-20">
+    <section class="bg-linear-to-r from-blue-600 to-blue-800 py-20">
         <div class="container mx-auto px-4 text-center">
             <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
                 {{ $page->title }}
@@ -24,7 +24,7 @@
                     <div class="space-y-6">
                         {{-- Address --}}
                         <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-location-dot text-blue-600"></i>
                             </div>
                             <div>
@@ -35,7 +35,7 @@
 
                         {{-- Phone --}}
                         <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-phone text-green-600"></i>
                             </div>
                             <div>
@@ -46,7 +46,7 @@
 
                         {{-- WhatsApp --}}
                         <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
                                 <i class="fa-brands fa-whatsapp text-green-600 text-xl"></i>
                             </div>
                             <div>
@@ -57,7 +57,7 @@
 
                         {{-- Email --}}
                         <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-envelope text-red-600"></i>
                             </div>
                             <div>
@@ -177,7 +177,8 @@
             style="border:0;"
             allowfullscreen=""
             loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Lokasi Kantor Kami">
         </iframe>
     </section>
 </x-layouts.app>

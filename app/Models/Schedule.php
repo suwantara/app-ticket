@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Carbon\Carbon;
 
 class Schedule extends Model
 {
@@ -44,10 +44,10 @@ class Schedule extends Model
     {
         return $query->where(function ($q) use ($date) {
             $q->whereNull('valid_from')
-              ->orWhere('valid_from', '<=', $date);
+                ->orWhere('valid_from', '<=', $date);
         })->where(function ($q) use ($date) {
             $q->whereNull('valid_until')
-              ->orWhere('valid_until', '>=', $date);
+                ->orWhere('valid_until', '>=', $date);
         });
     }
 
@@ -90,23 +90,27 @@ class Schedule extends Model
 
     public function getDaysLabelAttribute(): string
     {
-        if (!$this->days_of_week) return 'Setiap Hari';
+        if (! $this->days_of_week) {
+            return 'Setiap Hari';
+        }
 
         $days = [
             1 => 'Sen', 2 => 'Sel', 3 => 'Rab', 4 => 'Kam',
-            5 => 'Jum', 6 => 'Sab', 0 => 'Min'
+            5 => 'Jum', 6 => 'Sab', 0 => 'Min',
         ];
 
-        if (count($this->days_of_week) === 7) return 'Setiap Hari';
+        if (count($this->days_of_week) === 7) {
+            return 'Setiap Hari';
+        }
 
         return collect($this->days_of_week)
-            ->map(fn($day) => $days[$day] ?? '')
+            ->map(fn ($day) => $days[$day] ?? '')
             ->implode(', ');
     }
 
     public function getPriceFormattedAttribute(): string
     {
-        return 'Rp ' . number_format($this->price, 0, ',', '.');
+        return 'Rp '.number_format($this->price, 0, ',', '.');
     }
 
     public function isAvailableOn(string $date): bool
@@ -114,19 +118,10 @@ class Schedule extends Model
         $carbonDate = Carbon::parse($date);
         $dayOfWeek = $carbonDate->dayOfWeek;
 
-        // Check if schedule is valid on this date
-        if ($this->valid_from && $carbonDate->lt($this->valid_from)) {
-            return false;
-        }
-        if ($this->valid_until && $carbonDate->gt($this->valid_until)) {
-            return false;
-        }
+        $isValidFrom = ! $this->valid_from || $carbonDate->gte($this->valid_from);
+        $isValidUntil = ! $this->valid_until || $carbonDate->lte($this->valid_until);
+        $runsOnDay = ! $this->days_of_week || in_array($dayOfWeek, $this->days_of_week);
 
-        // Check if schedule runs on this day
-        if ($this->days_of_week && !in_array($dayOfWeek, $this->days_of_week)) {
-            return false;
-        }
-
-        return $this->is_active;
+        return $this->is_active && $isValidFrom && $isValidUntil && $runsOnDay;
     }
 }

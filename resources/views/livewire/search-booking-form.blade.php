@@ -95,12 +95,12 @@
 
                 <!-- Return Trip Toggle -->
                 <div class="lg:col-span-1">
-                    <label class="block mb-2 text-sm font-semibold text-gray-700">
+                    <label for="returnTrip" class="block mb-2 text-sm font-semibold text-gray-700">
                         <i class="fa-solid fa-rotate mr-1 text-purple-600"></i> Pulang-Pergi
                     </label>
                     <label class="relative inline-flex items-center cursor-pointer w-full bg-gray-50 border border-gray-300 rounded-lg p-3">
-                        <input type="checkbox" wire:model.live="returnTrip" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[50%] after:-translate-y-1/2 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <input type="checkbox" wire:model.live="returnTrip" id="returnTrip" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[50%] after:-translate-y-1/2 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                         <span class="ml-3 text-sm text-gray-600">{{ $returnTrip ? 'Ya' : 'Tidak' }}</span>
                     </label>
                 </div>
@@ -110,7 +110,7 @@
                     <button type="submit"
                             wire:loading.attr="disabled"
                             wire:loading.class="opacity-75 cursor-wait"
-                            class="w-full text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 p-3 text-center transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer">
+                            class="w-full text-white bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 p-3 text-center transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer">
                         <span wire:loading.remove>
                             <i class="fa-solid fa-magnifying-glass mr-2"></i> Cari Tiket
                         </span>
@@ -168,7 +168,7 @@
                         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                             <!-- Ship & Operator Info -->
                             <div class="flex items-start gap-4">
-                                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-3 rounded-xl">
+                                <div class="bg-linear-to-br from-blue-500 to-blue-600 text-white p-3 rounded-xl">
                                     <i class="fa-solid fa-ship text-2xl"></i>
                                 </div>
                                 <div>
@@ -195,7 +195,7 @@
                                     <div class="text-xs text-gray-400">{{ $schedule['duration'] }}</div>
                                     <div class="flex items-center gap-1 my-1">
                                         <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                                        <div class="w-16 h-0.5 bg-gradient-to-r from-blue-500 to-green-500"></div>
+                                        <div class="w-16 h-0.5 bg-linear-to-r from-blue-500 to-green-500"></div>
                                         <i class="fa-solid fa-location-dot text-green-500"></i>
                                     </div>
                                     <div class="text-xs text-gray-400">Langsung</div>
@@ -262,7 +262,7 @@
                         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                             <!-- Ship & Operator Info -->
                             <div class="flex items-start gap-4">
-                                <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-3 rounded-xl">
+                                <div class="bg-linear-to-br from-green-500 to-green-600 text-white p-3 rounded-xl">
                                     <i class="fa-solid fa-ship text-2xl"></i>
                                 </div>
                                 <div>
@@ -286,7 +286,7 @@
                                     <div class="text-xs text-gray-400">{{ $schedule['duration'] }}</div>
                                     <div class="flex items-center gap-1 my-1">
                                         <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                                        <div class="w-16 h-0.5 bg-gradient-to-r from-green-500 to-blue-500"></div>
+                                        <div class="w-16 h-0.5 bg-linear-to-r from-green-500 to-blue-500"></div>
                                         <i class="fa-solid fa-location-dot text-blue-500"></i>
                                     </div>
                                     <div class="text-xs text-gray-400">Langsung</div>
@@ -328,7 +328,7 @@
 
             <!-- Proceed to Booking Button -->
             @if($selectedScheduleId || $selectedReturnScheduleId)
-            <div class="mt-8 p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-xl border border-blue-200">
+            <div class="mt-8 p-4 bg-linear-to-r from-blue-50 to-green-50 rounded-xl border border-blue-200">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <div class="text-sm text-gray-600">Total Pembayaran</div>
@@ -347,7 +347,7 @@
                     <button x-data
                             @click="confirmAction('Lanjutkan ke halaman pemesanan dengan total <strong>Rp {{ number_format($selectedTotal, 0, ',', '.') }}</strong>?', 'Konfirmasi Pemesanan').then(confirmed => { if(confirmed) $wire.proceedToBooking(); })"
                             wire:loading.attr="disabled"
-                            class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer">
+                            class="bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer">
                         <span wire:loading.remove wire:target="proceedToBooking">
                             <i class="fa-solid fa-arrow-right mr-2"></i> Lanjut ke Pemesanan
                         </span>

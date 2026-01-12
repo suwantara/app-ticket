@@ -11,19 +11,28 @@ use Livewire\Component;
 class SearchBookingForm extends Component
 {
     public $origin = '';
+
     public $destination = '';
+
     public $date = '';
+
     public $passengers = 1;
+
     public $returnTrip = false;
+
     public $returnDate = '';
 
     public $availableDestinations = [];
+
     public $searchResults = [];
+
     public $returnResults = [];
+
     public $showResults = false;
 
     // Selected schedules for booking
     public $selectedScheduleId = null;
+
     public $selectedReturnScheduleId = null;
 
     public function mount()
@@ -107,14 +116,16 @@ class SearchBookingForm extends Component
 
     public function proceedToBooking()
     {
-        if (!$this->selectedScheduleId) {
+        if (! $this->selectedScheduleId) {
             session()->flash('error', 'Pilih jadwal keberangkatan terlebih dahulu.');
-            return;
+
+            return null;
         }
 
-        if ($this->returnTrip && !$this->selectedReturnScheduleId) {
+        if ($this->returnTrip && ! $this->selectedReturnScheduleId) {
             session()->flash('error', 'Pilih jadwal kepulangan terlebih dahulu.');
-            return;
+
+            return null;
         }
 
         // Store booking data in session
@@ -126,7 +137,7 @@ class SearchBookingForm extends Component
                 'return_date' => $this->returnDate,
                 'passengers' => $this->passengers,
                 'is_round_trip' => $this->returnTrip,
-            ]
+            ],
         ]);
 
         return redirect()->route('booking.form');
@@ -171,15 +182,15 @@ class SearchBookingForm extends Component
                 'arrival_time' => $schedule->arrival_time_formatted,
                 'duration' => $schedule->route->formatted_duration,
                 'price' => $schedule->price,
-                'price_formatted' => 'Rp ' . number_format($schedule->price, 0, ',', '.'),
+                'price_formatted' => 'Rp '.number_format($schedule->price, 0, ',', '.'),
                 'total_price' => $schedule->price * $this->passengers,
-                'total_price_formatted' => 'Rp ' . number_format($schedule->price * $this->passengers, 0, ',', '.'),
+                'total_price_formatted' => 'Rp '.number_format($schedule->price * $this->passengers, 0, ',', '.'),
                 'available_seats' => $schedule->available_seats,
             ];
         })->toArray();
     }
 
-    public function getSelectedTotalAttribute()
+    public function getSelectedTotalProperty(): int
     {
         $total = 0;
 
@@ -206,14 +217,17 @@ class SearchBookingForm extends Component
 
     public function render()
     {
-        $destinations = Destination::active()
-            ->orderBy('type')
-            ->orderBy('order')
-            ->get();
+        // Cache destinations query to avoid repeated DB calls on re-render
+        $destinations = cache()->remember('active_destinations', 300, function () {
+            return Destination::active()
+                ->orderBy('type')
+                ->orderBy('order')
+                ->get();
+        });
 
         return view('livewire.search-booking-form', [
             'destinations' => $destinations,
-            'selectedTotal' => $this->getSelectedTotalAttribute(),
+            'selectedTotal' => $this->selectedTotal,
         ]);
     }
 }

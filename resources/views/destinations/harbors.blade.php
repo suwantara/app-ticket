@@ -2,8 +2,8 @@
     <x-slot:title>Pelabuhan Keberangkatan - Fast Boat Ticket</x-slot:title>
 
     <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-blue-600 to-cyan-500 py-16 md:py-24">
-        <div class="max-w-screen-xl mx-auto px-4 text-center">
+    <section class="bg-linear-to-r from-teal-500 to-purple-600 py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-4 text-center">
             <div class="flex items-center justify-center gap-3 mb-4">
                 <svg class="w-10 h-10 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -12,7 +12,7 @@
             <h1 class="text-3xl md:text-5xl font-bold text-white mb-4">
                 Pelabuhan Keberangkatan
             </h1>
-            <p class="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
+            <p class="text-lg md:text-xl text-teal-100 max-w-2xl mx-auto">
                 Pilih titik keberangkatan yang paling nyaman untuk perjalanan fast boat Anda
             </p>
         </div>
@@ -20,7 +20,7 @@
 
     <!-- Harbors Grid -->
     <section class="py-16 bg-gray-50 dark:bg-gray-900">
-        <div class="max-w-screen-xl mx-auto px-4">
+        <div class="max-w-7xl mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 @forelse($harbors as $harbor)
                 <a href="{{ route('destinations.show', $harbor->slug) }}"
@@ -32,7 +32,7 @@
                                      alt="{{ $harbor->name }}"
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @else
-                                <div class="w-full h-full bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center">
+                                <div class="w-full h-full bg-linear-to-br from-teal-400 to-purple-300 flex items-center justify-center">
                                     <svg class="w-16 h-16 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                     </svg>
@@ -52,7 +52,7 @@
                         <div class="md:w-3/5 p-6">
                             <div class="flex items-start justify-between mb-3">
                                 <div>
-                                    <h3 class="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">
+                                    <h3 class="text-xl font-bold text-gray-900 dark:text-white group-hover:text-teal-600 transition-colors">
                                         {{ $harbor->name }}
                                     </h3>
                                     <p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-1">
@@ -62,7 +62,7 @@
                                         {{ $harbor->location }}
                                     </p>
                                 </div>
-                                <span class="px-3 py-1 text-xs font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full">
+                                <span class="px-3 py-1 text-xs font-semibold bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded-full">
                                     Pelabuhan
                                 </span>
                             </div>
@@ -93,7 +93,7 @@
                                 <span class="text-sm text-gray-500 dark:text-gray-400">
                                     {{ $harbor->routesFrom()->where('is_active', true)->count() }} rute keberangkatan
                                 </span>
-                                <span class="text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                                <span class="text-teal-600 dark:text-teal-400 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
                                     Lihat Rute
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -118,7 +118,7 @@
 
     <!-- Info Section -->
     <section class="py-16 bg-white dark:bg-gray-800">
-        <div class="max-w-screen-xl mx-auto px-4">
+        <div class="max-w-7xl mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="text-center p-6">
                     <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -152,16 +152,16 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-16 bg-gradient-to-r from-blue-600 to-cyan-500">
-        <div class="max-w-screen-xl mx-auto px-4 text-center">
+    <section class="py-16 bg-linear-to-r from-teal-500 to-purple-600">
+        <div class="max-w-7xl mx-auto px-4 text-center">
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">
                 Pilih Pelabuhan & Mulai Perjalanan
             </h2>
-            <p class="text-blue-100 mb-8 max-w-xl mx-auto">
+            <p class="text-teal-100 mb-8 max-w-xl mx-auto">
                 Booking tiket fast boat dari pelabuhan pilihan Anda dan nikmati perjalanan yang nyaman.
             </p>
-            <a href="{{ route('home') }}#booking"
-               class="inline-flex items-center gap-2 px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors">
+                <a href="{{ route('home') }}#booking"
+                    class="inline-flex items-center gap-2 px-8 py-3 bg-white text-teal-600 font-semibold rounded-lg hover:bg-teal-50 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
                 </svg>

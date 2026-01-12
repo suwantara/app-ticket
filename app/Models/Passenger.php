@@ -42,7 +42,7 @@ class Passenger extends Model
     public static function generateTicketCode(): string
     {
         do {
-            $code = 'P' . strtoupper(Str::random(8));
+            $code = 'P'.strtoupper(Str::random(8));
         } while (self::where('ticket_code', $code)->exists());
 
         return $code;
@@ -57,7 +57,7 @@ class Passenger extends Model
     // Accessors
     public function getTypeLabelAttribute(): string
     {
-        return match($this->type) {
+        return match ($this->type) {
             'adult' => 'Dewasa',
             'child' => 'Anak-anak',
             'infant' => 'Bayi',
@@ -67,7 +67,7 @@ class Passenger extends Model
 
     public function getGenderLabelAttribute(): string
     {
-        return match($this->gender) {
+        return match ($this->gender) {
             'male' => 'Laki-laki',
             'female' => 'Perempuan',
             default => '-',

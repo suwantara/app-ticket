@@ -2,61 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
-use App\Models\Ticket;
 use App\Models\Schedule;
+use App\Models\Ticket;
+use App\Services\BoardingStatsService;
+use App\Services\QrCodeParserService;
 use App\Services\TicketService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class BoardingController extends Controller
 {
-    protected TicketService $ticketService;
-
-    public function __construct(TicketService $ticketService)
-    {
-        $this->ticketService = $ticketService;
-    }
+    public function __construct(
+        protected TicketService $ticketService,
+        protected QrCodeParserService $qrCodeParser,
+        protected BoardingStatsService $statsService
+    ) {}
 
     /**
      * Show boarding dashboard
      */
     public function dashboard()
     {
-        // Get today's schedules with ticket stats
-        $schedules = Schedule::with(['route.origin', 'route.destination', 'ship'])
-            ->whereHas('orders', function ($q) {
-                $q->where('travel_date', today())
-                  ->where('payment_status', 'paid');
-            })
-            ->get()
-            ->map(function ($schedule) {
-                $orders = $schedule->orders()
-                    ->where('travel_date', today())
-                    ->where('payment_status', 'paid')
-                    ->pluck('id');
-                
-                $totalTickets = Ticket::whereIn('order_id', $orders)->count();
-                $usedTickets = Ticket::whereIn('order_id', $orders)->where('status', 'used')->count();
-                $unusedTickets = Ticket::whereIn('order_id', $orders)->where('status', 'unused')->count();
-                
-                return [
-                    'schedule' => $schedule,
-                    'total_tickets' => $totalTickets,
-                    'used_tickets' => $usedTickets,
-                    'unused_tickets' => $unusedTickets,
-                    'boarding_percentage' => $totalTickets > 0 ? round(($usedTickets / $totalTickets) * 100) : 0,
-                ];
-            });
-
-        // Today's stats
-        $todayStats = [
-            'total_orders' => Order::where('travel_date', today())->where('payment_status', 'paid')->count(),
-            'total_passengers' => Ticket::whereHas('order', fn($q) => $q->where('travel_date', today()))->count(),
-            'boarded' => Ticket::whereHas('order', fn($q) => $q->where('travel_date', today()))->where('status', 'used')->count(),
-            'pending' => Ticket::whereHas('order', fn($q) => $q->where('travel_date', today()))->where('status', 'unused')->count(),
-        ];
+        $schedules = $this->statsService->getTodaySchedulesWithStats();
+        $todayStats = $this->statsService->getTodayStats();
 
         return view('boarding.dashboard', compact('schedules', 'todayStats'));
     }
@@ -78,7 +47,7 @@ class BoardingController extends Controller
         $todaySchedules = Schedule::with(['route.origin', 'route.destination'])
             ->whereHas('orders', function ($q) {
                 $q->where('travel_date', today())
-                  ->where('payment_status', 'paid');
+                    ->where('payment_status', 'paid');
             })
             ->get();
 
@@ -86,20 +55,22 @@ class BoardingController extends Controller
     }
 
     /**
-     * Validate QR code via API
+     * Validate QR code via API (with optional auto-board)
      */
     public function validateQr(Request $request): JsonResponse
     {
         $request->validate([
             'qr_data' => 'required|string',
+            'auto_board' => 'boolean',
         ]);
 
         $qrData = $request->input('qr_data');
-        
-        // Try to parse QR data (could be JSON or plain text)
-        $qrCode = $this->extractQrCode($qrData);
+        $autoBoard = $request->input('auto_board', true);
 
-        if (!$qrCode) {
+        // Use QrCodeParserService to extract QR code
+        $qrCode = $this->qrCodeParser->extractQrCode($qrData);
+
+        if (! $qrCode) {
             return response()->json([
                 'success' => false,
                 'valid' => false,
@@ -109,71 +80,64 @@ class BoardingController extends Controller
 
         $result = $this->ticketService->validateTicket($qrCode);
 
-        if ($result['valid'] && isset($result['ticket'])) {
-            $ticket = $result['ticket'];
-            
+        // Ticket not found
+        if (! isset($result['ticket'])) {
             return response()->json([
-                'success' => true,
-                'valid' => true,
+                'success' => false,
+                'valid' => false,
                 'message' => $result['message'],
-                'ticket' => [
-                    'id' => $ticket->id,
-                    'ticket_number' => $ticket->ticket_number,
-                    'qr_code' => $ticket->qr_code,
-                    'status' => $ticket->status,
-                    'status_label' => ucfirst($ticket->status),
-                    'used_at' => $ticket->used_at?->format('d/m/Y H:i'),
-                ],
-                'passenger' => [
-                    'name' => $ticket->passenger->name,
-                    'id_type' => strtoupper($ticket->passenger->id_type),
-                    'id_number' => $ticket->passenger->id_number,
-                    'type' => ucfirst($ticket->passenger->type),
-                ],
-                'schedule' => [
-                    'route' => $ticket->order->schedule->route->origin->name . ' → ' . $ticket->order->schedule->route->destination->name,
-                    'date' => $ticket->order->travel_date->format('d M Y'),
-                    'time' => \Carbon\Carbon::parse($ticket->order->schedule->departure_time)->format('H:i') . ' WIB',
-                    'ship' => $ticket->order->schedule->ship->name,
-                ],
             ]);
         }
 
-        // Ticket exists but not valid for use
-        if (isset($result['ticket'])) {
-            $ticket = $result['ticket'];
-            
-            return response()->json([
-                'success' => true,
-                'valid' => true, // We found the ticket
-                'message' => $result['message'],
-                'ticket' => [
-                    'id' => $ticket->id,
-                    'ticket_number' => $ticket->ticket_number,
-                    'status' => $ticket->status,
-                    'status_label' => ucfirst($ticket->status),
-                    'used_at' => $ticket->used_at?->format('d/m/Y H:i'),
-                ],
-                'passenger' => [
-                    'name' => $ticket->passenger->name,
-                    'id_type' => strtoupper($ticket->passenger->id_type),
-                    'id_number' => $ticket->passenger->id_number,
-                    'type' => ucfirst($ticket->passenger->type),
-                ],
-                'schedule' => [
-                    'route' => $ticket->order->schedule->route->origin->name . ' → ' . $ticket->order->schedule->route->destination->name,
-                    'date' => $ticket->order->travel_date->format('d M Y'),
-                    'time' => \Carbon\Carbon::parse($ticket->order->schedule->departure_time)->format('H:i') . ' WIB',
-                    'ship' => $ticket->order->schedule->ship->name,
-                ],
-            ]);
+        // Ticket found - build response
+        $ticket = $result['ticket'];
+
+        // Auto-board: If ticket is valid and active, automatically mark as used
+        $autoBoarded = false;
+        if ($autoBoard && $result['valid'] && $ticket->status === 'active') {
+            $staffName = Auth::user()?->name ?? 'Staff';
+            $useResult = $this->ticketService->useTicket($ticket, $staffName);
+
+            if ($useResult['success']) {
+                $ticket = $useResult['ticket'];
+                $autoBoarded = true;
+            }
         }
 
-        return response()->json([
-            'success' => false,
-            'valid' => false,
-            'message' => $result['message'],
-        ]);
+        $responseData = [
+            'success' => true,
+            'valid' => $result['valid'],
+            'auto_boarded' => $autoBoarded,
+            'message' => $autoBoarded
+                ? 'Penumpang berhasil boarding!'
+                : $result['message'],
+            'ticket' => [
+                'id' => $ticket->id,
+                'ticket_number' => $ticket->ticket_number,
+                'status' => $ticket->status,
+                'status_label' => $this->statsService->getStatusLabel($ticket->status),
+                'used_at' => $ticket->used_at?->format('d/m/Y H:i'),
+            ],
+            'passenger' => [
+                'name' => $ticket->passenger->name,
+                'id_type' => strtoupper($ticket->passenger->id_type),
+                'id_number' => $ticket->passenger->id_number,
+                'type' => ucfirst($ticket->passenger->type),
+            ],
+            'schedule' => [
+                'route' => $ticket->order->schedule->route->origin->name.' → '.$ticket->order->schedule->route->destination->name,
+                'date' => $ticket->order->travel_date->format('d M Y'),
+                'time' => \Carbon\Carbon::parse($ticket->order->schedule->departure_time)->format('H:i').' WIB',
+                'ship' => $ticket->order->schedule->ship->name,
+            ],
+        ];
+
+        // Add qr_code only when ticket is valid for use
+        if ($result['valid']) {
+            $responseData['ticket']['qr_code'] = $ticket->qr_code;
+        }
+
+        return response()->json($responseData);
     }
 
     /**
@@ -185,7 +149,16 @@ class BoardingController extends Controller
             'ticket_id' => 'required|exists:tickets,id',
         ]);
 
+        /** @var Ticket|null $ticket */
         $ticket = Ticket::find($request->input('ticket_id'));
+
+        if (! $ticket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tiket tidak ditemukan',
+            ], 404);
+        }
+
         $staffName = Auth::user()?->name ?? 'Staff';
 
         $result = $this->ticketService->useTicket($ticket, $staffName);
@@ -217,8 +190,8 @@ class BoardingController extends Controller
         $query = Ticket::with(['passenger', 'order'])
             ->whereHas('order', function ($q) use ($scheduleId) {
                 $q->where('travel_date', today())
-                  ->where('payment_status', 'paid');
-                
+                    ->where('payment_status', 'paid');
+
                 if ($scheduleId) {
                     $q->where('schedule_id', $scheduleId);
                 }
@@ -242,63 +215,14 @@ class BoardingController extends Controller
     }
 
     /**
-     * Extract QR code from scanned data
-     */
-    protected function extractQrCode(string $data): ?string
-    {
-        // Try to decode as JSON first
-        $decoded = json_decode($data, true);
-        
-        if ($decoded && isset($decoded['qr_code'])) {
-            return $decoded['qr_code'];
-        }
-
-        if ($decoded && isset($decoded['ticket_number'])) {
-            // Search by ticket number
-            $ticket = Ticket::where('ticket_number', $decoded['ticket_number'])->first();
-            return $ticket?->qr_code;
-        }
-
-        // If not JSON, assume it's the QR code directly
-        // Check if it matches QR code pattern (QR + timestamp + random)
-        if (preg_match('/^QR\d{14}[A-Z0-9]{8}$/', $data)) {
-            return $data;
-        }
-
-        // Could also be ticket number
-        if (preg_match('/^TKT-\d{8}-[A-Z0-9]{5}$/', $data)) {
-            $ticket = Ticket::where('ticket_number', $data)->first();
-            return $ticket?->qr_code;
-        }
-
-        return null;
-    }
-
-    /**
      * Get real-time stats via API
      */
     public function stats(Request $request): JsonResponse
     {
         $scheduleId = $request->get('schedule');
 
-        $query = Ticket::whereHas('order', function ($q) use ($scheduleId) {
-            $q->where('travel_date', today())
-              ->where('payment_status', 'paid');
-            
-            if ($scheduleId) {
-                $q->where('schedule_id', $scheduleId);
-            }
-        });
-
-        $total = (clone $query)->count();
-        $boarded = (clone $query)->where('status', 'used')->count();
-        $pending = (clone $query)->where('status', 'unused')->count();
-
-        return response()->json([
-            'total' => $total,
-            'boarded' => $boarded,
-            'pending' => $pending,
-            'percentage' => $total > 0 ? round(($boarded / $total) * 100) : 0,
-        ]);
+        return response()->json(
+            $this->statsService->getRealtimeStats($scheduleId)
+        );
     }
 }

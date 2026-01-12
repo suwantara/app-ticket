@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\Models\Order;
-use Midtrans\Config;
-use Midtrans\Snap;
-use Midtrans\Notification;
 use Illuminate\Support\Facades\Log;
+use Midtrans\Config;
+use Midtrans\Notification;
+use Midtrans\Snap;
 
 class MidtransService
 {
@@ -53,7 +53,7 @@ class MidtransService
 
         try {
             $snapToken = Snap::getSnapToken($params);
-            
+
             // Update order with payment token
             $order->update([
                 'payment_token' => $snapToken,
@@ -66,14 +66,14 @@ class MidtransService
                 'redirect_url' => $this->getSnapRedirectUrl($snapToken),
             ];
         } catch (\Exception $e) {
-            Log::error('Midtrans Snap Token Error: ' . $e->getMessage(), [
+            Log::error('Midtrans Snap Token Error: '.$e->getMessage(), [
                 'order_id' => $order->id,
                 'order_number' => $order->order_number,
             ]);
 
             return [
                 'success' => false,
-                'message' => 'Gagal membuat token pembayaran: ' . $e->getMessage(),
+                'message' => 'Gagal membuat token pembayaran: '.$e->getMessage(),
             ];
         }
     }
@@ -86,9 +86,9 @@ class MidtransService
         $items = [];
 
         // Main ticket item
-        $routeName = $order->schedule->route->origin->name . ' → ' . $order->schedule->route->destination->name;
+        $routeName = $order->schedule->route->origin->name.' → '.$order->schedule->route->destination->name;
         $items[] = [
-            'id' => 'TICKET-' . $order->schedule_id,
+            'id' => 'TICKET-'.$order->schedule_id,
             'price' => (int) ($order->total_amount / $order->passenger_count),
             'quantity' => $order->passenger_count,
             'name' => substr("Tiket {$routeName}", 0, 50), // Max 50 chars
@@ -105,8 +105,8 @@ class MidtransService
         $baseUrl = config('midtrans.is_production')
             ? 'https://app.midtrans.com/snap/v2/vtweb/'
             : 'https://app.sandbox.midtrans.com/snap/v2/vtweb/';
-        
-        return $baseUrl . $token;
+
+        return $baseUrl.$token;
     }
 
     /**
@@ -115,8 +115,8 @@ class MidtransService
     public function handleNotification(): array
     {
         try {
-            $notification = new Notification();
-            
+            $notification = new Notification;
+
             $orderNumber = $notification->order_id;
             $transactionStatus = $notification->transaction_status;
             $paymentType = $notification->payment_type;
@@ -131,8 +131,9 @@ class MidtransService
 
             $order = Order::where('order_number', $orderNumber)->first();
 
-            if (!$order) {
+            if (! $order) {
                 Log::error('Order not found for notification', ['order_number' => $orderNumber]);
+
                 return ['success' => false, 'message' => 'Order not found'];
             }
 
@@ -145,7 +146,8 @@ class MidtransService
                 'status' => $transactionStatus,
             ];
         } catch (\Exception $e) {
-            Log::error('Midtrans Notification Error: ' . $e->getMessage());
+            Log::error('Midtrans Notification Error: '.$e->getMessage());
+
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -208,6 +210,14 @@ class MidtransService
                     'payment_status' => 'refunded',
                 ]);
                 break;
+
+            default:
+                Log::warning('Unhandled Midtrans transaction status', [
+                    'order_number' => $order->order_number,
+                    'status' => $status,
+                    'payment_type' => $paymentType,
+                ]);
+                break;
         }
     }
 
@@ -239,7 +249,7 @@ class MidtransService
     {
         try {
             $result = $this->ticketService->generateTicketsForOrder($order);
-            
+
             if ($result['success']) {
                 Log::info('Tickets generated successfully', [
                     'order_number' => $order->order_number,
@@ -266,6 +276,7 @@ class MidtransService
     {
         try {
             $status = \Midtrans\Transaction::status($orderNumber);
+
             return [
                 'success' => true,
                 'data' => $status,

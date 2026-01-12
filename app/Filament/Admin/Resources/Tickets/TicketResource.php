@@ -2,27 +2,27 @@
 
 namespace App\Filament\Admin\Resources\Tickets;
 
-use BackedEnum;
-use App\Models\Ticket;
-use Filament\Tables\Table;
-use Filament\Actions\Action;
-use Filament\Schemas\Schema;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Resource;
-use Filament\Support\Icons\Heroicon;
-use Filament\Schemas\Components\Grid;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Schemas\Components\Section;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\ImageEntry;
-use App\Filament\Admin\Resources\Tickets\Pages\ViewTicket;
 use App\Filament\Admin\Resources\Tickets\Pages\ListTickets;
+use App\Filament\Admin\Resources\Tickets\Pages\ViewTicket;
+use App\Models\Ticket;
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class TicketResource extends Resource
 {
     protected static ?string $model = Ticket::class;
+
+    private const DATETIME_FORMAT = 'd/m/Y H:i';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTicket;
 
@@ -104,17 +104,24 @@ class TicketResource extends Resource
 
                 TextColumn::make('used_at')
                     ->label('Digunakan')
-                    ->dateTime('d/m/Y H:i')
+                    ->dateTime(self::DATETIME_FORMAT)
                     ->placeholder('-')
                     ->sortable(),
 
+                TextColumn::make('used_by')
+                    ->label('Oleh')
+                    ->placeholder('-')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+
                 TextColumn::make('created_at')
                     ->label('Dibuat')
-                    ->dateTime('d/m/Y H:i')
+                    ->dateTime(self::DATETIME_FORMAT)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
+            ->poll('10s') // Auto-refresh every 10 seconds for real-time boarding updates
             ->filters([
                 SelectFilter::make('status')
                     ->options([
@@ -123,6 +130,21 @@ class TicketResource extends Resource
                         'cancelled' => 'Dibatalkan',
                         'expired' => 'Kadaluarsa',
                     ]),
+                SelectFilter::make('travel_date')
+                    ->label('Tanggal Perjalanan')
+                    ->options([
+                        'today' => 'Hari Ini',
+                        'tomorrow' => 'Besok',
+                        'all' => 'Semua',
+                    ])
+                    ->query(function ($query, array $data) {
+                        return match ($data['value'] ?? null) {
+                            'today' => $query->whereHas('order', fn ($q) => $q->whereDate('travel_date', today())),
+                            'tomorrow' => $query->whereHas('order', fn ($q) => $q->whereDate('travel_date', today()->addDay())),
+                            default => $query,
+                        };
+                    })
+                    ->default('today'),
             ])
             ->actions([
                 ViewAction::make(),
@@ -245,7 +267,7 @@ class TicketResource extends Resource
 
                                 TextEntry::make('valid_until')
                                     ->label('Berlaku Sampai')
-                                    ->dateTime('d/m/Y H:i'),
+                                    ->dateTime(self::DATETIME_FORMAT),
                             ]),
                     ]),
 
@@ -255,7 +277,7 @@ class TicketResource extends Resource
                             ->schema([
                                 TextEntry::make('used_at')
                                     ->label('Waktu Digunakan')
-                                    ->dateTime('d/m/Y H:i')
+                                    ->dateTime(self::DATETIME_FORMAT)
                                     ->placeholder('-'),
 
                                 TextEntry::make('used_by')
@@ -271,12 +293,11 @@ class TicketResource extends Resource
 
                 Section::make('QR Code')
                     ->schema([
-                        ImageEntry::make('qr_code_path')
+                        \Filament\Infolists\Components\ViewEntry::make('qr_code_path')
                             ->label('')
-                            ->disk('public')
-                            ->height(200),
+                            ->view('filament.entries.qr-code-entry'),
                     ])
-                    ->visible(fn (Ticket $record): bool => !empty($record->qr_code_path)),
+                    ->visible(fn (Ticket $record): bool => ! empty($record->qr_code_path)),
             ]);
     }
 

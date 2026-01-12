@@ -6,11 +6,9 @@ use App\Models\Passenger;
 use App\Models\Route;
 use App\Models\Schedule;
 use App\Models\Ship;
-use App\Models\Ticket;
 use App\Services\TicketService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -67,7 +65,7 @@ beforeEach(function () {
 
 test('can create order with passengers', function () {
     $order = Order::create([
-        'order_number' => 'TKT' . date('Ymd') . 'TEST1',
+        'order_number' => 'TKT'.date('Ymd').'TEST1',
         'schedule_id' => $this->schedule->id,
         'travel_date' => $this->travelDate,
         'contact_name' => 'John Doe',
@@ -105,7 +103,7 @@ test('can create order with passengers', function () {
 
 test('can generate tickets after payment', function () {
     $order = Order::create([
-        'order_number' => 'TKT' . date('Ymd') . 'TEST2',
+        'order_number' => 'TKT'.date('Ymd').'TEST2',
         'schedule_id' => $this->schedule->id,
         'travel_date' => $this->travelDate,
         'contact_name' => 'John Doe',
@@ -146,7 +144,7 @@ test('can generate tickets after payment', function () {
 
 test('ticket has correct passenger information', function () {
     $order = Order::create([
-        'order_number' => 'TKT' . date('Ymd') . 'TEST3',
+        'order_number' => 'TKT'.date('Ymd').'TEST3',
         'schedule_id' => $this->schedule->id,
         'travel_date' => $this->travelDate,
         'contact_name' => 'John Doe',
@@ -183,7 +181,7 @@ test('order total is calculated correctly', function () {
     $childPrice = 100000; // Assuming child gets discount
 
     $order = Order::create([
-        'order_number' => 'TKT' . date('Ymd') . 'TEST4',
+        'order_number' => 'TKT'.date('Ymd').'TEST4',
         'schedule_id' => $this->schedule->id,
         'travel_date' => $this->travelDate,
         'contact_name' => 'John Doe',
@@ -221,7 +219,7 @@ test('schedule available seats decrease after booking', function () {
     $initialSeats = $this->schedule->available_seats;
 
     $order = Order::create([
-        'order_number' => 'TKT' . date('Ymd') . 'TEST5',
+        'order_number' => 'TKT'.date('Ymd').'TEST5',
         'schedule_id' => $this->schedule->id,
         'travel_date' => $this->travelDate,
         'contact_name' => 'John Doe',
@@ -268,7 +266,7 @@ test('booking page redirects without session data', function () {
 
 test('can view ticket with order number', function () {
     $order = Order::create([
-        'order_number' => 'TKT' . date('Ymd') . 'VIEW1',
+        'order_number' => 'TKT'.date('Ymd').'VIEW1',
         'schedule_id' => $this->schedule->id,
         'travel_date' => $this->travelDate,
         'contact_name' => 'John Doe',
@@ -293,7 +291,7 @@ test('can view ticket with order number', function () {
     $ticketService = app(TicketService::class);
     $ticketService->generateTicketsForOrder($order);
 
-    $response = $this->get('/ticket/order/' . $order->order_number);
+    $response = $this->get('/ticket/order/'.$order->order_number);
 
     $response->assertStatus(200);
     $response->assertSee('John Doe');
