@@ -11,7 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Exclude payment webhook from CSRF verification
+        $middleware->validateCsrfTokens(except: [
+            'payment/notification',
+        ]);
+        
+        // Register middleware aliases
+        $middleware->alias([
+            'staff' => \App\Http\Middleware\EnsureUserIsStaff::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

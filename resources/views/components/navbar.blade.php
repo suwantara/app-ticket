@@ -86,7 +86,7 @@
                     @endphp
                     <li>
                         <a href="{{ $route }}"
-                           class="block py-2 px-3 rounded md:p-0 transition-colors
+                           class="block py-2 px-3 rounded md:p-0 transition-colors cursor-pointer
                                   {{ $isActive
                                      ? 'text-blue-600 font-semibold md:bg-transparent'
                                      : 'text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-600' }}">
@@ -94,6 +94,15 @@
                         </a>
                     </li>
                 @endforeach
+
+                {{-- Pesan Tiket Link --}}
+                <li>
+                    <a href="{{ route('ticket') }}"
+                       class="block py-2 px-3 rounded md:p-0 transition-colors cursor-pointer
+                              {{ request()->is('ticket') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-600' }}">
+                        <i class="fa-solid fa-ticket mr-1"></i> Pesan Tiket
+                    </a>
+                </li>
 
                 {{-- Destinations Dropdown --}}
                 <li class="relative group">

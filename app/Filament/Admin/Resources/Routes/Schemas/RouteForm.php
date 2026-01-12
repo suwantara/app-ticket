@@ -3,12 +3,12 @@
 namespace App\Filament\Admin\Resources\Routes\Schemas;
 
 use App\Models\Destination;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Select;
+use Filament\Schemas\Components\TextInput;
+use Filament\Schemas\Components\Textarea;
+use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 

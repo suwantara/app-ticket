@@ -116,7 +116,7 @@
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Siap Untuk Petualangan?</h2>
             <p class="text-blue-100 mb-8 max-w-2xl mx-auto">Pesan tiket fast boat Anda sekarang dan nikmati perjalanan yang tak terlupakan</p>
-            <a href="#" class="inline-block bg-white text-blue-600 font-semibold px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
+            <a href="{{ route('ticket') }}" class="inline-block bg-white text-blue-600 font-semibold px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors shadow-lg cursor-pointer">
                 <i class="fa-solid fa-ship mr-2"></i> Pesan Sekarang
             </a>
         </div>

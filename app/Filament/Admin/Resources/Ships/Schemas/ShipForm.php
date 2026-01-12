@@ -2,13 +2,13 @@
 
 namespace App\Filament\Admin\Resources\Ships\Schemas;
 
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\FileUpload;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\TagsInput;
+use Filament\Schemas\Components\TextInput;
+use Filament\Schemas\Components\Textarea;
+use Filament\Schemas\Components\Toggle;
 use Filament\Schemas\Schema;
 
 class ShipForm

@@ -22,6 +22,10 @@ class SearchBookingForm extends Component
     public $returnResults = [];
     public $showResults = false;
 
+    // Selected schedules for booking
+    public $selectedScheduleId = null;
+    public $selectedReturnScheduleId = null;
+
     public function mount()
     {
         $this->date = now()->addDay()->format('Y-m-d');
@@ -42,6 +46,14 @@ class SearchBookingForm extends Component
         if ($this->origin === $this->destination) {
             $this->destination = '';
         }
+        $this->resetSelection();
+    }
+
+    public function resetSelection()
+    {
+        $this->selectedScheduleId = null;
+        $this->selectedReturnScheduleId = null;
+        $this->showResults = false;
     }
 
     public function search()
@@ -59,6 +71,10 @@ class SearchBookingForm extends Component
             'date.after_or_equal' => 'Tanggal tidak boleh di masa lalu',
             'returnDate.after' => 'Tanggal pulang harus setelah tanggal berangkat',
         ]);
+
+        // Reset selections
+        $this->selectedScheduleId = null;
+        $this->selectedReturnScheduleId = null;
 
         // Search outbound schedules
         $this->searchResults = $this->findSchedules(
@@ -78,6 +94,42 @@ class SearchBookingForm extends Component
         }
 
         $this->showResults = true;
+    }
+
+    public function selectSchedule($scheduleId, $isReturn = false)
+    {
+        if ($isReturn) {
+            $this->selectedReturnScheduleId = $scheduleId;
+        } else {
+            $this->selectedScheduleId = $scheduleId;
+        }
+    }
+
+    public function proceedToBooking()
+    {
+        if (!$this->selectedScheduleId) {
+            session()->flash('error', 'Pilih jadwal keberangkatan terlebih dahulu.');
+            return;
+        }
+
+        if ($this->returnTrip && !$this->selectedReturnScheduleId) {
+            session()->flash('error', 'Pilih jadwal kepulangan terlebih dahulu.');
+            return;
+        }
+
+        // Store booking data in session
+        session([
+            'booking' => [
+                'schedule_id' => $this->selectedScheduleId,
+                'return_schedule_id' => $this->selectedReturnScheduleId,
+                'travel_date' => $this->date,
+                'return_date' => $this->returnDate,
+                'passengers' => $this->passengers,
+                'is_round_trip' => $this->returnTrip,
+            ]
+        ]);
+
+        return redirect()->route('booking.form');
     }
 
     protected function findSchedules($originId, $destinationId, $date)
@@ -127,6 +179,31 @@ class SearchBookingForm extends Component
         })->toArray();
     }
 
+    public function getSelectedTotalAttribute()
+    {
+        $total = 0;
+
+        if ($this->selectedScheduleId) {
+            foreach ($this->searchResults as $schedule) {
+                if ($schedule['id'] == $this->selectedScheduleId) {
+                    $total += $schedule['total_price'];
+                    break;
+                }
+            }
+        }
+
+        if ($this->selectedReturnScheduleId) {
+            foreach ($this->returnResults as $schedule) {
+                if ($schedule['id'] == $this->selectedReturnScheduleId) {
+                    $total += $schedule['total_price'];
+                    break;
+                }
+            }
+        }
+
+        return $total;
+    }
+
     public function render()
     {
         $destinations = Destination::active()
@@ -136,6 +213,7 @@ class SearchBookingForm extends Component
 
         return view('livewire.search-booking-form', [
             'destinations' => $destinations,
+            'selectedTotal' => $this->getSelectedTotalAttribute(),
         ]);
     }
 }

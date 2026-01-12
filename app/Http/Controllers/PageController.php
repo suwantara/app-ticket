@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Page;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,14 @@ class PageController extends Controller
         $page = Page::where('slug', 'home')->published()->first();
 
         return view('pages.home', compact('page'));
+    }
+
+    /**
+     * Display the ticket booking page
+     */
+    public function ticket()
+    {
+        return view('pages.ticket');
     }
 
     /**
@@ -35,6 +44,17 @@ class PageController extends Controller
         $page = Page::where('slug', 'contact')->published()->firstOrFail();
 
         return view('pages.contact', compact('page'));
+    }
+
+    /**
+     * Display booking confirmation page
+     */
+    public function bookingConfirmation(Order $order)
+    {
+        // Load relationships for display
+        $order->load(['schedule.route.origin', 'schedule.route.destination', 'schedule.ship', 'passengers']);
+
+        return view('pages.booking-confirmation', compact('order'));
     }
 
     /**

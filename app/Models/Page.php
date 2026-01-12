@@ -13,6 +13,7 @@ class Page extends Model
         'title',
         'slug',
         'content',
+        'sections',
         'meta_title',
         'meta_description',
         'featured_image',
@@ -26,6 +27,7 @@ class Page extends Model
         'is_published' => 'boolean',
         'is_in_navbar' => 'boolean',
         'navbar_order' => 'integer',
+        'sections' => 'array',
     ];
 
     /**

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Carbon\Carbon;
 
 class Schedule extends Model
@@ -71,6 +72,11 @@ class Schedule extends Model
         return $this->belongsTo(Ship::class);
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
     // Accessors
     public function getDepartureTimeFormattedAttribute(): string
     {
@@ -85,14 +91,14 @@ class Schedule extends Model
     public function getDaysLabelAttribute(): string
     {
         if (!$this->days_of_week) return 'Setiap Hari';
-        
+
         $days = [
             1 => 'Sen', 2 => 'Sel', 3 => 'Rab', 4 => 'Kam',
             5 => 'Jum', 6 => 'Sab', 0 => 'Min'
         ];
-        
+
         if (count($this->days_of_week) === 7) return 'Setiap Hari';
-        
+
         return collect($this->days_of_week)
             ->map(fn($day) => $days[$day] ?? '')
             ->implode(', ');
@@ -107,7 +113,7 @@ class Schedule extends Model
     {
         $carbonDate = Carbon::parse($date);
         $dayOfWeek = $carbonDate->dayOfWeek;
-        
+
         // Check if schedule is valid on this date
         if ($this->valid_from && $carbonDate->lt($this->valid_from)) {
             return false;
@@ -115,12 +121,12 @@ class Schedule extends Model
         if ($this->valid_until && $carbonDate->gt($this->valid_until)) {
             return false;
         }
-        
+
         // Check if schedule runs on this day
         if ($this->days_of_week && !in_array($dayOfWeek, $this->days_of_week)) {
             return false;
         }
-        
+
         return $this->is_active;
     }
 }
