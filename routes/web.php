@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BoardingController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DestinationController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\PageController;
@@ -19,6 +20,7 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/ticket', [PageController::class, 'ticket'])->name('ticket');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Public Authentication Routes (with rate limiting)
 Route::middleware('guest')->group(function () {

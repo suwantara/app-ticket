@@ -8,8 +8,10 @@ use App\Services\MidtransService;
 use App\Services\TicketService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class TicketController extends Controller
+class TicketController extends Controller implements HasMiddleware
 {
     protected TicketService $ticketService;
 
@@ -22,10 +24,25 @@ class TicketController extends Controller
     }
 
     /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('auth', only: ['show', 'showSingle', 'download']),
+        ];
+    }
+
+    /**
      * Display all tickets for an order
      */
     public function show(Order $order)
     {
+        // Check if user owns this order
+        if ($order->user_id !== request()->user()->id) {
+            abort(403, 'Anda tidak memiliki akses ke tiket ini.');
+        }
+
         // Load order with relations
         $order->load([
             'schedule.route.origin',
@@ -76,6 +93,11 @@ class TicketController extends Controller
      */
     public function showSingle(Ticket $ticket)
     {
+        // Check if user owns this ticket through the order
+        if ($ticket->order->user_id !== request()->user()->id) {
+            abort(403, 'Anda tidak memiliki akses ke tiket ini.');
+        }
+
         $ticket->load([
             'order.schedule.route.origin',
             'order.schedule.route.destination',
@@ -186,8 +208,9 @@ class TicketController extends Controller
             ]);
         }
 
+        $userName = $request->user()?->name ?? 'System';
         return response()->json(
-            $this->ticketService->useTicket($ticket, $request->user()?->name ?? 'System')
+            $this->ticketService->useTicket($ticket, $userName)
         );
     }
 }

@@ -123,35 +123,39 @@
                                     </h3>
 
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {{-- Nama Lengkap --}}
                                         <div class="md:col-span-2">
                                             <label for="passenger-name-{{ $index }}"
-                                                class="block text-sm font-medium text-gray-700 mb-1">Nama
-                                                Lengkap</label>
+                                                class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap <span
+                                                    class="text-red-500">*</span></label>
                                             <input type="text" id="passenger-name-{{ $index }}"
                                                 wire:model="passengers.{{ $index }}.name"
                                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                                placeholder="Sesuai identitas">
+                                                placeholder="Sesuai identitas (KTP/Passport)">
                                             @error("passengers.{$index}.name")
                                                 <span class="text-xs text-red-500">{{ $message }}</span>
                                             @enderror
                                         </div>
 
+                                        {{-- Tipe Penumpang --}}
                                         <div>
                                             <label for="passenger-type-{{ $index }}"
-                                                class="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
+                                                class="block text-sm font-medium text-gray-700 mb-1">Tipe <span
+                                                    class="text-red-500">*</span></label>
                                             <select id="passenger-type-{{ $index }}"
                                                 wire:model="passengers.{{ $index }}.type"
                                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                                                <option value="adult">Dewasa</option>
-                                                <option value="child">Anak (2-12 thn)</option>
+                                                <option value="adult">Dewasa (12+ thn)</option>
+                                                <option value="child">Anak (2-11 thn)</option>
                                                 <option value="infant">Bayi (< 2 thn)</option>
                                             </select>
                                         </div>
 
+                                        {{-- Jenis Kelamin --}}
                                         <div>
                                             <label for="passenger-gender-{{ $index }}"
-                                                class="block text-sm font-medium text-gray-700 mb-1">Jenis
-                                                Kelamin</label>
+                                                class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin <span
+                                                    class="text-red-500">*</span></label>
                                             <select id="passenger-gender-{{ $index }}"
                                                 wire:model="passengers.{{ $index }}.gender"
                                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 cursor-pointer">
@@ -164,6 +168,38 @@
                                             @enderror
                                         </div>
 
+                                        {{-- Tanggal Lahir --}}
+                                        <div>
+                                            <label for="passenger-birth-{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir <span
+                                                    class="text-red-500">*</span></label>
+                                            <input type="date" id="passenger-birth-{{ $index }}"
+                                                wire:model="passengers.{{ $index }}.birth_date"
+                                                max="{{ date('Y-m-d') }}"
+                                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                            @error("passengers.{$index}.birth_date")
+                                                <span class="text-xs text-red-500">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        {{-- Kewarganegaraan --}}
+                                        <div>
+                                            <label for="passenger-nat-{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 mb-1">Kewarganegaraan
+                                                <span class="text-red-500">*</span></label>
+                                            <select id="passenger-nat-{{ $index }}"
+                                                wire:model="passengers.{{ $index }}.nationality"
+                                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                                                @foreach (config('countries') as $country)
+                                                    <option value="{{ $country }}">{{ $country }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error("passengers.{$index}.nationality")
+                                                <span class="text-xs text-red-500">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        {{-- Jenis Identitas --}}
                                         <div>
                                             <label for="passenger-id-type-{{ $index }}"
                                                 class="block text-sm font-medium text-gray-700 mb-1">Jenis
@@ -177,6 +213,7 @@
                                             </select>
                                         </div>
 
+                                        {{-- Nomor Identitas --}}
                                         <div>
                                             <label for="passenger-id-number-{{ $index }}"
                                                 class="block text-sm font-medium text-gray-700 mb-1">Nomor
@@ -184,7 +221,7 @@
                                             <input type="text" id="passenger-id-number-{{ $index }}"
                                                 wire:model="passengers.{{ $index }}.id_number"
                                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                                placeholder="Opsional">
+                                                placeholder="16 digit untuk KTP">
                                         </div>
                                     </div>
                                 </div>

@@ -82,6 +82,8 @@ class BookingForm extends Component
                 'id_type' => 'ktp',
                 'id_number' => '',
                 'gender' => '',
+                'birth_date' => '',
+                'nationality' => 'Indonesia',
             ];
         }
     }
@@ -126,9 +128,14 @@ class BookingForm extends Component
             $rules["passengers.{$i}.name"] = 'required|min:3|max:100';
             $rules["passengers.{$i}.type"] = 'required|in:adult,child,infant';
             $rules["passengers.{$i}.gender"] = 'required|in:male,female';
+            $rules["passengers.{$i}.birth_date"] = 'required|date|before:today';
+            $rules["passengers.{$i}.nationality"] = 'required|min:2|max:50';
 
             $messages["passengers.{$i}.name.required"] = 'Nama penumpang '.($i + 1).' wajib diisi';
             $messages["passengers.{$i}.gender.required"] = 'Jenis kelamin penumpang '.($i + 1).' wajib dipilih';
+            $messages["passengers.{$i}.birth_date.required"] = 'Tanggal lahir penumpang '.($i + 1).' wajib diisi';
+            $messages["passengers.{$i}.birth_date.before"] = 'Tanggal lahir harus sebelum hari ini';
+            $messages["passengers.{$i}.nationality.required"] = 'Kewarganegaraan penumpang '.($i + 1).' wajib diisi';
         }
 
         $this->validate($rules, $messages);
@@ -176,6 +183,8 @@ class BookingForm extends Component
                     'id_type' => $passengerData['id_type'] ?? null,
                     'id_number' => $passengerData['id_number'] ?? null,
                     'gender' => $passengerData['gender'],
+                    'birth_date' => $passengerData['birth_date'] ?? null,
+                    'nationality' => $passengerData['nationality'] ?? 'Indonesia',
                 ]);
             }
 
@@ -205,6 +214,8 @@ class BookingForm extends Component
                         'id_type' => $passengerData['id_type'] ?? null,
                         'id_number' => $passengerData['id_number'] ?? null,
                         'gender' => $passengerData['gender'],
+                        'birth_date' => $passengerData['birth_date'] ?? null,
+                        'nationality' => $passengerData['nationality'] ?? 'Indonesia',
                     ]);
                 }
 

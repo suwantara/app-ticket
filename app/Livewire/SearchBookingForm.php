@@ -11,29 +11,15 @@ use Livewire\Component;
 class SearchBookingForm extends Component
 {
     public $origin = '';
-
     public $destination = '';
-
     public $date = '';
-
     public $passengers = 1;
-
     public $returnTrip = false;
-
     public $returnDate = '';
-
     public $availableDestinations = [];
 
-    public $searchResults = [];
-
-    public $returnResults = [];
-
-    public $showResults = false;
-
-    // Selected schedules for booking
-    public $selectedScheduleId = null;
-
-    public $selectedReturnScheduleId = null;
+    // Track if search has been performed
+    public $hasSearched = false;
 
     public function mount()
     {
@@ -55,14 +41,41 @@ class SearchBookingForm extends Component
         if ($this->origin === $this->destination) {
             $this->destination = '';
         }
-        $this->resetSelection();
     }
 
-    public function resetSelection()
+    public function updatedPassengers()
     {
-        $this->selectedScheduleId = null;
-        $this->selectedReturnScheduleId = null;
-        $this->showResults = false;
+        // Ensure passengers is within bounds
+        $this->passengers = max(1, min(20, (int) $this->passengers));
+
+        // If search has been performed, re-search with new passenger count
+        if ($this->hasSearched && $this->origin && $this->destination && $this->date) {
+            $this->search();
+        }
+    }
+
+    public function updatedReturnTrip()
+    {
+        // If search has been performed, re-search when toggling return trip
+        if ($this->hasSearched && $this->origin && $this->destination && $this->date) {
+            $this->search();
+        }
+    }
+
+    public function updatedDate()
+    {
+        // If search has been performed, re-search when date changes
+        if ($this->hasSearched && $this->origin && $this->destination) {
+            $this->search();
+        }
+    }
+
+    public function updatedReturnDate()
+    {
+        // If search has been performed and return trip, re-search
+        if ($this->hasSearched && $this->returnTrip && $this->origin && $this->destination && $this->date) {
+            $this->search();
+        }
     }
 
     public function search()
@@ -79,68 +92,38 @@ class SearchBookingForm extends Component
             'destination.different' => 'Tujuan harus berbeda dengan keberangkatan',
             'date.after_or_equal' => 'Tanggal tidak boleh di masa lalu',
             'returnDate.after' => 'Tanggal pulang harus setelah tanggal berangkat',
+            'passengers.min' => 'Minimal 1 penumpang',
+            'passengers.max' => 'Maksimal 20 penumpang',
         ]);
 
-        // Reset selections
-        $this->selectedScheduleId = null;
-        $this->selectedReturnScheduleId = null;
+        $this->hasSearched = true;
 
         // Search outbound schedules
-        $this->searchResults = $this->findSchedules(
+        $searchResults = $this->findSchedules(
             $this->origin,
             $this->destination,
             $this->date
         );
 
         // Search return schedules if round trip
-        $this->returnResults = [];
+        $returnResults = [];
         if ($this->returnTrip && $this->returnDate) {
-            $this->returnResults = $this->findSchedules(
+            $returnResults = $this->findSchedules(
                 $this->destination,
                 $this->origin,
                 $this->returnDate
             );
         }
 
-        $this->showResults = true;
-    }
-
-    public function selectSchedule($scheduleId, $isReturn = false)
-    {
-        if ($isReturn) {
-            $this->selectedReturnScheduleId = $scheduleId;
-        } else {
-            $this->selectedScheduleId = $scheduleId;
-        }
-    }
-
-    public function proceedToBooking()
-    {
-        if (! $this->selectedScheduleId) {
-            session()->flash('error', 'Pilih jadwal keberangkatan terlebih dahulu.');
-
-            return null;
-        }
-
-        if ($this->returnTrip && ! $this->selectedReturnScheduleId) {
-            session()->flash('error', 'Pilih jadwal kepulangan terlebih dahulu.');
-
-            return null;
-        }
-
-        // Store booking data in session
-        session([
-            'booking' => [
-                'schedule_id' => $this->selectedScheduleId,
-                'return_schedule_id' => $this->selectedReturnScheduleId,
-                'travel_date' => $this->date,
-                'return_date' => $this->returnDate,
-                'passengers' => $this->passengers,
-                'is_round_trip' => $this->returnTrip,
-            ],
+        // Dispatch event to SearchResults component
+        $this->dispatch('search-completed', [
+            'searchResults' => $searchResults,
+            'returnResults' => $returnResults,
+            'returnTrip' => $this->returnTrip,
+            'passengers' => $this->passengers,
+            'date' => $this->date,
+            'returnDate' => $this->returnDate,
         ]);
-
-        return redirect()->route('booking.form');
     }
 
     protected function findSchedules($originId, $destinationId, $date)
@@ -190,31 +173,6 @@ class SearchBookingForm extends Component
         })->toArray();
     }
 
-    public function getSelectedTotalProperty(): int
-    {
-        $total = 0;
-
-        if ($this->selectedScheduleId) {
-            foreach ($this->searchResults as $schedule) {
-                if ($schedule['id'] == $this->selectedScheduleId) {
-                    $total += $schedule['total_price'];
-                    break;
-                }
-            }
-        }
-
-        if ($this->selectedReturnScheduleId) {
-            foreach ($this->returnResults as $schedule) {
-                if ($schedule['id'] == $this->selectedReturnScheduleId) {
-                    $total += $schedule['total_price'];
-                    break;
-                }
-            }
-        }
-
-        return $total;
-    }
-
     public function render()
     {
         // Cache destinations query to avoid repeated DB calls on re-render
@@ -227,7 +185,6 @@ class SearchBookingForm extends Component
 
         return view('livewire.search-booking-form', [
             'destinations' => $destinations,
-            'selectedTotal' => $this->selectedTotal,
         ]);
     }
 }
