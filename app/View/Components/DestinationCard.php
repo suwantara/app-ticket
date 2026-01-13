@@ -6,14 +6,19 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class HeroSection extends Component
+class DestinationCard extends Component
 {
+    /**
+     * The destination model.
+     */
+    public $destination;
+
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct($destination)
     {
-        //
+        $this->destination = $destination;
     }
 
     /**
@@ -21,6 +26,6 @@ class HeroSection extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.hero-section');
+        return view('components.destination-card');
     }
 }

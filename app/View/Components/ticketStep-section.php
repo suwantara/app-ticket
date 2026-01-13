@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class ticketStep-section extends Component
+class TicketStepSection extends Component
 {
     /**
      * Create a new component instance.

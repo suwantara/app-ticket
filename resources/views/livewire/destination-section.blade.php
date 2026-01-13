@@ -22,6 +22,7 @@
             {{-- Single Row Horizontal Scroll --}}
             <div class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide"
                 style="-webkit-overflow-scrolling: touch;">
+
                 @forelse($destinations as $destination)
                     {{-- Destination Card --}}
                     <div
@@ -42,12 +43,10 @@
                             Lihat Detail
                         </a>
                     </div>
-
-
-
                 @empty
-                    {{-- Fallback Static Cards --}}
+                    <p class="text-neutral-secondary">Belum ada destinasi tersedia.</p>
                 @endforelse
+
             </div>
         </div>
     </section>

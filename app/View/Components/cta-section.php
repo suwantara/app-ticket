@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class cta-section extends Component
+class CtaSection extends Component
 {
     /**
      * Create a new component instance.

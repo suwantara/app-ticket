@@ -41,7 +41,7 @@ class DestinationController extends Controller
         $islands = Destination::active()
             ->islands()
             ->orderBy('order')
-            ->get();
+            ->paginate(12);
 
         return view('destinations.islands', compact('islands'));
     }
@@ -54,7 +54,7 @@ class DestinationController extends Controller
         $harbors = Destination::active()
             ->harbors()
             ->orderBy('order')
-            ->get();
+            ->paginate(12);
 
         return view('destinations.harbors', compact('harbors'));
     }
