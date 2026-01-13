@@ -183,4 +183,84 @@ class Order extends Model
             'status' => 'cancelled',
         ]);
     }
+
+    /**
+     * Mark order as expired
+     */
+    public function markAsExpired(): void
+    {
+        $this->update([
+            'status' => 'cancelled',
+            'payment_status' => 'expired',
+        ]);
+    }
+
+    /**
+     * Get remaining time until expiration in seconds
+     */
+    public function getRemainingTimeAttribute(): int
+    {
+        if (!$this->expired_at || $this->isPaid()) {
+            return 0;
+        }
+
+        $remaining = $this->expired_at->diffInSeconds(now(), false);
+        return max(0, -$remaining);
+    }
+
+    /**
+     * Get formatted remaining time (e.g., "01:30:45")
+     */
+    public function getRemainingTimeFormattedAttribute(): string
+    {
+        $seconds = $this->remaining_time;
+
+        if ($seconds <= 0) {
+            return '00:00:00';
+        }
+
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        $secs = $seconds % 60;
+
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $secs);
+    }
+
+    /**
+     * Get expiration datetime formatted
+     */
+    public function getExpiredAtFormattedAttribute(): string
+    {
+        return $this->expired_at?->translatedFormat('d M Y, H:i') ?? '-';
+    }
+
+    // Scopes
+
+    /**
+     * Scope for pending payment orders
+     */
+    public function scopePendingPayment($query)
+    {
+        return $query->whereIn('payment_status', ['unpaid', 'pending', 'failed'])
+            ->whereNotIn('status', ['cancelled', 'completed', 'refunded']);
+    }
+
+    /**
+     * Scope for expired orders (time passed but not yet marked)
+     */
+    public function scopeNeedsExpiration($query)
+    {
+        return $query->pendingPayment()
+            ->whereNotNull('expired_at')
+            ->where('expired_at', '<', now());
+    }
+
+    /**
+     * Scope for active (not cancelled/expired) orders
+     */
+    public function scopeActive($query)
+    {
+        return $query->whereNotIn('status', ['cancelled', 'refunded'])
+            ->where('payment_status', '!=', 'expired');
+    }
 }

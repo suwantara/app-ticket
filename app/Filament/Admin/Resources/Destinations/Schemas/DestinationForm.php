@@ -75,6 +75,9 @@ class DestinationForm
                             ->directory('destinations')
                             ->visibility('public')
                             ->imageEditor()
+                            ->imagePreviewHeight('200')
+                            ->openable()
+                            ->downloadable()
                             ->helperText('Unggah gambar utama destinasi.')
                             ->columnSpanFull(),
                         FileUpload::make('gallery')
@@ -85,6 +88,9 @@ class DestinationForm
                             ->directory('destinations/gallery')
                             ->visibility('public')
                             ->reorderable()
+                            ->imagePreviewHeight('150')
+                            ->openable()
+                            ->downloadable()
                             ->maxFiles(10)
                             ->helperText('Unggah maksimal 10 gambar.')
                             ->columnSpanFull(),

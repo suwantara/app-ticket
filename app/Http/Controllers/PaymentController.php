@@ -21,10 +21,19 @@ class PaymentController extends Controller
      */
     public function show(Order $order)
     {
+        // Real-time check if order is expired
+        if ($order->isExpired() && $order->payment_status !== 'expired') {
+            $order->markAsExpired();
+        }
+
         // Check if order can be paid
         if (! $order->canBePaid()) {
+            $message = $order->isExpired()
+                ? 'Waktu pembayaran telah habis. Silakan buat pesanan baru.'
+                : 'Pesanan ini tidak dapat dibayar.';
+
             return redirect()->route('booking.confirmation', $order)
-                ->with('error', 'Pesanan ini tidak dapat dibayar.');
+                ->with('error', $message);
         }
 
         // Load relationships
@@ -177,12 +186,22 @@ class PaymentController extends Controller
     {
         $order->refresh();
 
+        // Real-time check if order is expired
+        if ($order->isExpired() && $order->payment_status !== 'expired') {
+            $order->markAsExpired();
+            $order->refresh();
+        }
+
         return response()->json([
             'order_number' => $order->order_number,
             'status' => $order->status,
             'payment_status' => $order->payment_status,
             'is_paid' => $order->isPaid(),
+            'is_expired' => $order->isExpired(),
             'can_pay' => $order->canBePaid(),
+            'remaining_time' => $order->remaining_time,
+            'remaining_time_formatted' => $order->remaining_time_formatted,
+            'expired_at' => $order->expired_at?->toIso8601String(),
         ]);
     }
 }

@@ -44,5 +44,36 @@ class StaffSeeder extends Seeder
                 'is_active' => true,
             ]
         );
+
+        // Create sample regular users
+        User::updateOrCreate(
+            ['email' => 'user@kapal.test'],
+            [
+                'name' => 'Pengguna Demo',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+                'is_active' => true,
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'budi@gmail.com'],
+            [
+                'name' => 'Budi Santoso',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+                'is_active' => true,
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'siti@gmail.com'],
+            [
+                'name' => 'Siti Rahayu',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+                'is_active' => true,
+            ]
+        );
     }
 }

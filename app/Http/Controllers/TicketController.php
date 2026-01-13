@@ -122,6 +122,11 @@ class TicketController extends Controller
      */
     public function search(Request $request)
     {
+        // If no query, show the search page
+        if (! $request->has('query') || empty($request->input('query'))) {
+            return view('tickets.search');
+        }
+
         $request->validate([
             'query' => 'required|string|min:3',
         ]);
@@ -143,7 +148,7 @@ class TicketController extends Controller
             return redirect()->route('ticket.show', $order);
         }
 
-        return back()->with('error', 'Tiket tidak ditemukan');
+        return back()->with('error', 'Tiket tidak ditemukan dengan kode: ' . $query);
     }
 
     /**

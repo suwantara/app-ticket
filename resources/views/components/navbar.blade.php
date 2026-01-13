@@ -1,9 +1,7 @@
 <nav class="bg-neutral-primary fixed w-full z-20 top-0 start-0 border-b border-default">
-    <div class="flex flex-wrap justify-between items-center mx-auto max-w-7xl p-4">
+    <div class="flex flex-wrap justify-between items-center mx-auto container p-4">
         <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
-            <i class="fa-solid fa-ship text-2xl text-teal-600"></i>
-            <span
-                class="self-center text-xl font-semibold whitespace-nowrap text-heading">{{ config('app.name') }}</span>
+            <img src="{{ asset('img/logo-semabu.png') }}" class="h-8" alt="{{ config('app.name') }} Logo" />
         </a>
         <button data-collapse-toggle="mega-menu-full" type="button"
             class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-body rounded-lg md:hidden hover:bg-neutral-secondary-soft hover:text-heading focus:outline-none focus:ring-2 focus:ring-default"
@@ -18,13 +16,13 @@
             <ul class="flex flex-col mt-4 font-medium md:flex-row md:mt-0 md:space-x-8 rtl:space-x-reverse">
                 <li>
                     <a href="{{ route('home') }}"
-                        class="block py-2 px-3 text-heading hover:text-fg-brand border-b border-light hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0"
-                        aria-current="page">Home</a>
+                        class="block py-2 px-3 text-heading hover:text-blue-900 border-b border-light hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
+                        aria-current="page">Beranda</a>
                 </li>
                 <li>
                     <button id="mega-menu-full-dropdown-button" data-collapse-toggle="mega-menu-full-dropdown"
-                        class="flex items-center justify-between w-full py-2 px-3 font-medium text-heading border-b border-light md:w-auto hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0">
-                        Destinations
+                        class="flex items-center justify-between w-full py-2 px-3 font-medium text-heading border-b border-light md:w-auto hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
+                        Destinasi
                         <svg class="w-4 h-4 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
                             height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -34,15 +32,15 @@
                 </li>
                 <li>
                     <a href="{{ route('ticket') }}"
-                        class="block py-2 px-3 text-heading hover:text-fg-brand border-b border-light hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0">Ticket</a>
+                        class="block py-2 px-3 text-heading hover:text-blue-900 border-b border-light hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Tiket</a>
                 </li>
                 <li>
                     <a href="{{ route('about') }}"
-                        class="block py-2 px-3 text-heading hover:text-fg-brand border-b border-light hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0">About</a>
+                        class="block py-2 px-3 text-heading hover:text-blue-900 border-b border-light hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Tentang</a>
                 </li>
                 <li>
                     <a href="{{ route('contact') }}"
-                        class="block py-2 px-3 text-heading hover:text-fg-brand border-b border-light hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0">Contact</a>
+                        class="block py-2 px-3 text-heading hover:text-blue-900 border-b border-light hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Kontak</a>
                 </li>
             </ul>
         </div>
@@ -81,62 +79,42 @@
             @else
                 <div class="hidden md:flex items-center space-x-2">
                     <a href="{{ route('login') }}"
-                        class="inline-flex items-center text-gray-700 hover:text-teal-600 font-medium text-sm px-4 py-2 transition-colors">Masuk</a>
+                        class="inline-flex items-center text-gray-700 hover:text-blue-900 font-medium text-sm px-4 py-2 transition-colors">Masuk</a>
                     <a href="{{ route('register') }}"
-                        class="inline-flex items-center text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">Daftar</a>
+                        class="inline-flex items-center text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">Daftar</a>
                 </div>
             @endauth
         </div>
     </div>
     <div id="mega-menu-full-dropdown" class="mt-1 bg-neutral-primary-soft border-default shadow-xs border-y hidden">
-        <div class="grid max-w-7xl px-4 py-5 mx-auto text-heading sm:grid-cols-2 md:grid-cols-3 md:px-6">
-            <ul aria-labelledby="mega-menu-full-dropdown-button">
+        <div class="flex flex-wrap gap-4 max-w-7xl px-4 py-5 mx-auto text-heading md:px-6">
+            <ul aria-labelledby="mega-menu-full-dropdown-button" class="flex flex-row flex-wrap gap-2">
                 <li>
                     <a href="{{ route('destinations.index') }}"
                         class="block p-3 rounded-lg hover:bg-neutral-secondary-medium">
-                        <div class="font-semibold">All Destinations</div>
-                        <span class="text-sm text-body">Explore all available destinations and schedules.</span>
+                        <div class="font-semibold">Daftar Destinasi</div>
+                        <span class="text-sm text-body">Lihat semua destinasi yang tersedia.</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('gallery.index') }}"
                         class="block p-3 rounded-lg hover:bg-neutral-secondary-medium">
-                        <div class="font-semibold">Gallery</div>
+                        <div class="font-semibold">Galeri</div>
                         <span class="text-sm text-body">Lihat foto destinasi kami.</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('destinations.islands') }}"
                         class="block p-3 rounded-lg hover:bg-neutral-secondary-medium">
-                        <div class="font-semibold">Islands</div>
-                        <span class="text-sm text-body">Popular island routes and tips.</span>
+                        <div class="font-semibold">Pulau</div>
+                        <span class="text-sm text-body">Rute dan tips pulau populer.</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('destinations.harbors') }}"
                         class="block p-3 rounded-lg hover:bg-neutral-secondary-medium">
-                        <div class="font-semibold">Harbors</div>
-                        <span class="text-sm text-body">Harbor information and facilities.</span>
-                    </a>
-                </li>
-            </ul>
-            <ul>
-                <li>
-                    <a href="{{ route('ticket') }}" class="block p-3 rounded-lg hover:bg-neutral-secondary-medium">
-                        <div class="font-semibold">Ticketing</div>
-                        <span class="text-sm text-body">Buy and manage your tickets.</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('about') }}" class="block p-3 rounded-lg hover:bg-neutral-secondary-medium">
-                        <div class="font-semibold">About Us</div>
-                        <span class="text-sm text-body">Company information and contact.</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('contact') }}" class="block p-3 rounded-lg hover:bg-neutral-secondary-medium">
-                        <div class="font-semibold">Contact</div>
-                        <span class="text-sm text-body">Get in touch with support.</span>
+                        <div class="font-semibold">Port</div>
+                        <span class="text-sm text-body">Informasi dan fasilitas port.</span>
                     </a>
                 </li>
             </ul>

@@ -23,6 +23,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Set Carbon locale to Indonesian
+        \Carbon\Carbon::setLocale(config('app.locale', 'id'));
+
         // Register model observers for cache invalidation
         Destination::observe(DestinationObserver::class);
         Schedule::observe(ScheduleObserver::class);
