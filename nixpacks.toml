@@ -1,11 +1,12 @@
 # Nixpacks configuration for Railway deployment
+# Requires PHP 8.3+ for Laravel 12 and dependencies
 
 [phases.setup]
-nixPkgs = ["php83", "php83Extensions.pdo", "php83Extensions.pdo_mysql", "php83Extensions.mbstring", "php83Extensions.xml", "php83Extensions.curl", "php83Extensions.gd", "php83Extensions.zip", "php83Extensions.bcmath", "nodejs_20", "npm-9_x"]
+nixPkgs = ["php83", "php83Extensions.pdo", "php83Extensions.pdo_mysql", "php83Extensions.mbstring", "php83Extensions.xml", "php83Extensions.curl", "php83Extensions.gd", "php83Extensions.zip", "php83Extensions.bcmath", "php83Extensions.intl", "nodejs_20", "npm-9_x"]
 
 [phases.install]
 cmds = [
-    "composer install --no-dev --optimize-autoloader",
+    "composer install --no-dev --optimize-autoloader --ignore-platform-reqs",
     "npm install",
     "npm run build"
 ]
