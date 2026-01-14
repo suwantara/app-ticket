@@ -1,319 +1,256 @@
 <!-- Booking Search Form -->
-<div class="max-w-7xl mx-auto" id="booking">
-    <div class="bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-6">
+<div class="max-w-7xl mx-auto px-4 lg:px-0 relative z-30" id="booking">
+    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-md p-6 lg:p-8">
+        <!-- Flash Messages -->
+        @if (session()->has('error'))
+            <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl flex items-center gap-3">
+                <i class="fa-solid fa-exclamation-circle text-xl"></i>
+                <span>{{ session('error') }}</span>
+            </div>
+        @endif
+
         <form wire:submit="search">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
-
-                <!-- Departure -->
-                <div class="lg:col-span-1">
-                    <label for="origin" class="block mb-2 text-sm font-semibold text-gray-700">
-                        <i class="fa-solid fa-ship mr-1 text-blue-600"></i> Keberangkatan
-                    </label>
-                    <select wire:model.live="origin" id="origin"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3">
-                        <option value="">Pilih Lokasi</option>
-                        @php
-                            $grouped = $destinations->groupBy('type');
-                        @endphp
-                        @if(isset($grouped['harbor']))
-                        <optgroup label="🚢 Pelabuhan">
-                            @foreach($grouped['harbor'] as $harbor)
-                                <option value="{{ $harbor->id }}">{{ $harbor->name }}</option>
-                            @endforeach
-                        </optgroup>
-                        @endif
-                        @if(isset($grouped['island']))
-                        <optgroup label="🏝️ Pulau">
-                            @foreach($grouped['island'] as $island)
-                                <option value="{{ $island->id }}">{{ $island->name }}</option>
-                            @endforeach
-                        </optgroup>
-                        @endif
-                    </select>
-                    @error('origin') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Destination -->
-                <div class="lg:col-span-1">
-                    <label for="destination" class="block mb-2 text-sm font-semibold text-gray-700">
-                        <i class="fa-solid fa-location-dot mr-1 text-red-500"></i> Tujuan
-                    </label>
-                    <select wire:model="destination" id="destination"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3">
-                        <option value="">Pilih Tujuan</option>
-                        @if(isset($grouped['island']))
-                        <optgroup label="🏝️ Pulau">
-                            @foreach($grouped['island'] as $island)
-                                <option value="{{ $island->id }}" {{ $island->id == $origin ? 'disabled' : '' }}>
-                                    {{ $island->name }}
-                                </option>
-                            @endforeach
-                        </optgroup>
-                        @endif
-                        @if(isset($grouped['harbor']))
-                        <optgroup label="🚢 Pelabuhan">
-                            @foreach($grouped['harbor'] as $harbor)
-                                <option value="{{ $harbor->id }}" {{ $harbor->id == $origin ? 'disabled' : '' }}>
-                                    {{ $harbor->name }}
-                                </option>
-                            @endforeach
-                        </optgroup>
-                        @endif
-                    </select>
-                    @error('destination') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Date Picker -->
-                <div class="lg:col-span-1">
-                    <label for="date" class="block mb-2 text-sm font-semibold text-gray-700">
-                        <i class="fa-regular fa-calendar mr-1 text-green-600"></i> Tanggal
-                    </label>
-                    <input type="date" wire:model="date" id="date" min="{{ date('Y-m-d') }}"
-                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3">
-                    @error('date') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Passengers -->
-                <div class="lg:col-span-1">
-                    <label for="passengers" class="block mb-2 text-sm font-semibold text-gray-700">
-                        <i class="fa-solid fa-users mr-1 text-blue-600"></i> Penumpang
-                    </label>
-                    <select wire:model="passengers" id="passengers"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3">
-                        @for($i = 1; $i <= 20; $i++)
-                            <option value="{{ $i }}">{{ $i }} Orang</option>
-                        @endfor
-                    </select>
-                </div>
-
-                <!-- Return Trip Toggle -->
-                <div class="lg:col-span-1">
-                    <label class="block mb-2 text-sm font-semibold text-gray-700">
-                        <i class="fa-solid fa-rotate mr-1 text-purple-600"></i> Pulang-Pergi
-                    </label>
-                    <label class="relative inline-flex items-center cursor-pointer w-full bg-gray-50 border border-gray-300 rounded-lg p-3">
-                        <input type="checkbox" wire:model.live="returnTrip" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[50%] after:-translate-y-1/2 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        <span class="ml-3 text-sm text-gray-600">{{ $returnTrip ? 'Ya' : 'Tidak' }}</span>
-                    </label>
-                </div>
-
-                <!-- Search Button -->
-                <div class="lg:col-span-1">
-                    <button type="submit"
-                            wire:loading.attr="disabled"
-                            wire:loading.class="opacity-75 cursor-wait"
-                            class="w-full text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-sm px-5 p-3 text-center transition-all duration-200 shadow-lg hover:shadow-xl">
-                        <span wire:loading.remove>
-                            <i class="fa-solid fa-magnifying-glass mr-2"></i> Cari Tiket
-                        </span>
-                        <span wire:loading>
-                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Mencari...
-                        </span>
+            <!-- Trip Type Toggle -->
+            <div class="mb-6">
+                <div class="inline-flex rounded-xl bg-gray-100 p-1">
+                    <button type="button" wire:click="$set('returnTrip', false)"
+                        class="px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2
+                                   {{ !$returnTrip ? 'bg-yellow-400 text-black shadow-md' : 'text-gray-600 hover:bg-gray-200' }}">
+                        <i class="fa-solid fa-arrow-right"></i>
+                        Sekali Jalan
+                    </button>
+                    <button type="button" wire:click="$set('returnTrip', true)"
+                        class="px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2
+                                   {{ $returnTrip ? 'bg-yellow-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200' }}">
+                        <i class="fa-solid fa-rotate"></i>
+                        Pulang Pergi
                     </button>
                 </div>
             </div>
 
-            <!-- Return Date (shown when return trip is selected) -->
-            @if($returnTrip)
-            <div class="mt-4 pt-4 border-t border-gray-200">
-                <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
-                    <div class="md:col-start-3">
-                        <label for="returnDate" class="block mb-2 text-sm font-semibold text-gray-700">
-                            <i class="fa-regular fa-calendar-check mr-1 text-green-600"></i> Tanggal Pulang
-                        </label>
-                        <input type="date" wire:model="returnDate" id="returnDate" min="{{ $date }}"
-                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3">
-                        @error('returnDate') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
+                <!-- Departure -->
+                <div class="sm:col-span-1 lg:col-span-1" x-data="{ open: false }">
+                    <label class="block mb-2 text-sm font-semibold text-gray-700">
+                        <i class="fa-solid fa-ship mr-1 text-blue-600"></i> Keberangkatan
+                    </label>
+                    <div class="relative">
+                        <button @click="open = !open" @click.away="open = false" type="button"
+                            class="flex items-center justify-between w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 p-4 cursor-pointer text-left">
+                            <span class="truncate">
+                                @if ($origin)
+                                    {{ $destinations->flatten()->firstWhere('id', $origin)?->name ?? 'Pilih Lokasi' }}
+                                @else
+                                    Pilih Lokasi
+                                @endif
+                            </span>
+                            <i class="fa-solid fa-chevron-down text-gray-500 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+
+                        <!-- Dropdown menu -->
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                            class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-xl border border-gray-100 max-h-60 overflow-y-auto"
+                            style="display: none;">
+                            <ul class="py-2 text-sm text-gray-700">
+                                @php
+                                    $grouped = $destinations->groupBy('type');
+                                @endphp
+                                @if (isset($grouped['harbor']))
+                                    <li
+                                        class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50">
+                                        🚢 Pelabuhan
+                                    </li>
+                                    @foreach ($grouped['harbor'] as $harbor)
+                                        <li>
+                                            <button type="button"
+                                                @click="$wire.set('origin', '{{ $harbor->id }}'); open = false"
+                                                class="w-full text-left px-4 py-3 hover:bg-blue-50 hover:text-blue-600 transition-colors {{ $origin == $harbor->id ? 'bg-blue-50 text-blue-600 font-semibold' : '' }}">
+                                                {{ $harbor->name }}
+                                            </button>
+                                        </li>
+                                    @endforeach
+                                @endif
+                                @if (isset($grouped['island']))
+                                    <li
+                                        class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50 border-t border-gray-100 mt-2">
+                                        🏝️ Pulau
+                                    </li>
+                                    @foreach ($grouped['island'] as $island)
+                                        <li>
+                                            <button type="button"
+                                                @click="$wire.set('origin', '{{ $island->id }}'); open = false"
+                                                class="w-full text-left px-4 py-3 hover:bg-blue-50 hover:text-blue-600 transition-colors {{ $origin == $island->id ? 'bg-blue-50 text-blue-600 font-semibold' : '' }}">
+                                                {{ $island->name }}
+                                            </button>
+                                        </li>
+                                    @endforeach
+                                @endif
+                            </ul>
+                        </div>
                     </div>
+                    @error('origin')
+                        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Destination -->
+                <div class="sm:col-span-1 lg:col-span-1" x-data="{ open: false }">
+                    <label class="block mb-2 text-sm font-semibold text-gray-700">
+                        <i class="fa-solid fa-location-dot mr-1 text-red-500"></i> Tujuan
+                    </label>
+                    <div class="relative">
+                        <button @click="open = !open" @click.away="open = false" type="button"
+                            class="flex items-center justify-between w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 p-4 cursor-pointer text-left">
+                            <span class="truncate">
+                                @if ($destination)
+                                    {{ $destinations->flatten()->firstWhere('id', $destination)?->name ?? 'Pilih Tujuan' }}
+                                @else
+                                    Pilih Tujuan
+                                @endif
+                            </span>
+                            <i class="fa-solid fa-chevron-down text-gray-500 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+
+                        <!-- Dropdown menu -->
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                            class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-xl border border-gray-100 max-h-60 overflow-y-auto"
+                            style="display: none;">
+                            <ul class="py-2 text-sm text-gray-700">
+                                @if (isset($grouped['island']))
+                                    <li
+                                        class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50">
+                                        🏝️ Pulau
+                                    </li>
+                                    @foreach ($grouped['island'] as $island)
+                                        @if ($island->id != $origin)
+                                            <li>
+                                                <button type="button"
+                                                    @click="$wire.set('destination', '{{ $island->id }}'); open = false"
+                                                    class="w-full text-left px-4 py-3 hover:bg-blue-50 hover:text-blue-600 transition-colors {{ $destination == $island->id ? 'bg-blue-50 text-blue-600 font-semibold' : '' }}">
+                                                    {{ $island->name }}
+                                                </button>
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                @endif
+                                @if (isset($grouped['harbor']))
+                                    <li
+                                        class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50 border-t border-gray-100 mt-2">
+                                        🚢 Pelabuhan
+                                    </li>
+                                    @foreach ($grouped['harbor'] as $harbor)
+                                        @if ($harbor->id != $origin)
+                                            <li>
+                                                <button type="button"
+                                                    @click="$wire.set('destination', '{{ $harbor->id }}'); open = false"
+                                                    class="w-full text-left px-4 py-3 hover:bg-blue-50 hover:text-blue-600 transition-colors {{ $destination == $harbor->id ? 'bg-blue-50 text-blue-600 font-semibold' : '' }}">
+                                                    {{ $harbor->name }}
+                                                </button>
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            </ul>
+                        </div>
+                    </div>
+                    @error('destination')
+                        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Date Picker -->
+                <div class="sm:col-span-1 lg:col-span-1">
+                    <label for="date" class="block mb-2 text-sm font-semibold text-gray-700">
+                        <i class="fa-regular fa-calendar mr-1 text-green-600"></i>
+                        {{ $returnTrip ? 'Tanggal Pergi' : 'Tanggal' }}
+                    </label>
+                    <input type="date" wire:model.live="date" id="date" min="{{ date('Y-m-d') }}"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-4">
+                    @error('date')
+                        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                @if ($returnTrip)
+                    <div class="sm:col-span-1 lg:col-span-1">
+                        <label for="returnDate" class="block mb-2 text-sm font-semibold text-gray-700">
+                            <i class="fa-regular fa-calendar-check mr-1 text-purple-600"></i> Tanggal Pulang
+                        </label>
+                        <input type="date" wire:model.live="returnDate" id="returnDate" min="{{ $date }}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-4">
+                        @error('returnDate')
+                            <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @endif
+
+                <!-- Passengers -->
+                <div class="sm:col-span-1 lg:col-span-1">
+                    <label for="passengers" class="block mb-2 text-sm font-semibold text-gray-700">
+                        <i class="fa-solid fa-users mr-1 text-blue-600"></i> Penumpang
+                    </label>
+                    <div class="flex items-center bg-gray-50 border border-gray-300 rounded-xl overflow-hidden">
+                        <button type="button" wire:click="$set('passengers', Math.max(1, {{ $passengers }} - 1))"
+                            class="px-2 py-3 text-gray-600 hover:bg-gray-200 transition-colors">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <input type="number" wire:model.live="passengers" id="passengers" min="1"
+                            max="20"
+                            class="w-full text-center bg-transparent border-0 text-gray-900 text-base font-semibold focus:ring-0 p-0">
+                        <button type="button" wire:click="$set('passengers', Math.min(20, {{ $passengers }} + 1))"
+                            class="px-2 py-3 text-gray-600 hover:bg-gray-200 transition-colors">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                    @error('passengers')
+                        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Search Button -->
+                <div class="sm:col-span-2 lg:col-span-1">
+                    <button type="submit" wire:loading.attr="disabled" wire:loading.class="opacity-75 cursor-wait"
+                        class="w-full text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-xl text-base px-8 py-4 text-center transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer whitespace-nowrap">
+                        <span wire:loading.remove>
+                            <i class="fa-solid fa-magnifying-glass mr-2"></i> Cari
+                        </span>
+                        <span wire:loading>
+                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> ...
+                        </span>
+                    </button>
                 </div>
             </div>
-            @endif
         </form>
 
-        <!-- Search Results -->
-        @if($showResults)
-        <div class="mt-6 pt-6 border-t border-gray-200">
-            <!-- Outbound Results -->
-            <h3 class="text-lg font-bold text-gray-800 mb-4">
-                <i class="fa-solid fa-ship mr-2 text-blue-600"></i>
-                Jadwal Keberangkatan
-                <span class="text-sm font-normal text-gray-500">
-                    ({{ \Carbon\Carbon::parse($date)->translatedFormat('l, d F Y') }})
-                </span>
-            </h3>
-
-            @if(count($searchResults) > 0)
-            <div class="space-y-4">
-                @foreach($searchResults as $schedule)
-                <div class="bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-200 overflow-hidden">
-                    <div class="p-4">
-                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                            <!-- Ship & Operator Info -->
-                            <div class="flex items-start gap-4">
-                                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-3 rounded-xl">
-                                    <i class="fa-solid fa-ship text-2xl"></i>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-gray-800">{{ $schedule['ship_name'] }}</div>
-                                    <div class="text-sm text-gray-500">{{ $schedule['operator'] }}</div>
-                                    <div class="flex flex-wrap gap-1 mt-2">
-                                        @foreach(array_slice($schedule['facilities'], 0, 4) as $facility)
-                                        <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{{ $facility }}</span>
-                                        @endforeach
-                                        @if(count($schedule['facilities']) > 4)
-                                        <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">+{{ count($schedule['facilities']) - 4 }}</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Time & Route -->
-                            <div class="flex items-center gap-3 lg:gap-6">
-                                <div class="text-center">
-                                    <div class="text-2xl font-bold text-gray-800">{{ $schedule['departure_time'] }}</div>
-                                    <div class="text-sm text-gray-500">{{ $schedule['origin'] }}</div>
-                                </div>
-                                <div class="flex flex-col items-center px-4">
-                                    <div class="text-xs text-gray-400">{{ $schedule['duration'] }}</div>
-                                    <div class="flex items-center gap-1 my-1">
-                                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                                        <div class="w-16 h-0.5 bg-gradient-to-r from-blue-500 to-green-500"></div>
-                                        <i class="fa-solid fa-location-dot text-green-500"></i>
-                                    </div>
-                                    <div class="text-xs text-gray-400">Langsung</div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-2xl font-bold text-gray-800">{{ $schedule['arrival_time'] }}</div>
-                                    <div class="text-sm text-gray-500">{{ $schedule['destination'] }}</div>
-                                </div>
-                            </div>
-
-                            <!-- Price & Action -->
-                            <div class="flex items-center gap-4 lg:border-l lg:pl-6 lg:ml-auto">
-                                <div class="text-right">
-                                    <div class="text-xs text-gray-500">{{ $passengers }} penumpang</div>
-                                    <div class="text-2xl font-bold text-blue-600">{{ $schedule['total_price_formatted'] }}</div>
-                                    <div class="text-xs text-gray-400">
-                                        <i class="fa-solid fa-chair mr-1"></i>{{ $schedule['available_seats'] }} kursi tersedia
-                                    </div>
-                                </div>
-                                <button type="button"
-                                        class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
-                                    Pilih
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-            @else
-            <div class="text-center py-8 bg-gray-50 rounded-xl">
-                <i class="fa-solid fa-calendar-xmark text-4xl text-gray-300 mb-3"></i>
-                <p class="text-gray-500 font-medium">Tidak ada jadwal tersedia untuk tanggal ini.</p>
-                <p class="text-sm text-gray-400">Coba ubah lokasi atau tanggal perjalanan Anda.</p>
-            </div>
-            @endif
-
-            <!-- Return Results (if round trip) -->
-            @if($returnTrip && count($returnResults) > 0)
-            <h3 class="text-lg font-bold text-gray-800 mb-4 mt-8">
-                <i class="fa-solid fa-rotate-left mr-2 text-green-600"></i>
-                Jadwal Kepulangan
-                <span class="text-sm font-normal text-gray-500">
-                    ({{ \Carbon\Carbon::parse($returnDate)->translatedFormat('l, d F Y') }})
-                </span>
-            </h3>
-
-            <div class="space-y-4">
-                @foreach($returnResults as $schedule)
-                <div class="bg-white rounded-xl border border-gray-200 hover:border-green-300 hover:shadow-lg transition-all duration-200 overflow-hidden">
-                    <div class="p-4">
-                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                            <!-- Ship & Operator Info -->
-                            <div class="flex items-start gap-4">
-                                <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-3 rounded-xl">
-                                    <i class="fa-solid fa-ship text-2xl"></i>
-                                </div>
-                                <div>
-                                    <div class="font-bold text-gray-800">{{ $schedule['ship_name'] }}</div>
-                                    <div class="text-sm text-gray-500">{{ $schedule['operator'] }}</div>
-                                    <div class="flex flex-wrap gap-1 mt-2">
-                                        @foreach(array_slice($schedule['facilities'], 0, 4) as $facility)
-                                        <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{{ $facility }}</span>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Time & Route -->
-                            <div class="flex items-center gap-3 lg:gap-6">
-                                <div class="text-center">
-                                    <div class="text-2xl font-bold text-gray-800">{{ $schedule['departure_time'] }}</div>
-                                    <div class="text-sm text-gray-500">{{ $schedule['origin'] }}</div>
-                                </div>
-                                <div class="flex flex-col items-center px-4">
-                                    <div class="text-xs text-gray-400">{{ $schedule['duration'] }}</div>
-                                    <div class="flex items-center gap-1 my-1">
-                                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                                        <div class="w-16 h-0.5 bg-gradient-to-r from-green-500 to-blue-500"></div>
-                                        <i class="fa-solid fa-location-dot text-blue-500"></i>
-                                    </div>
-                                    <div class="text-xs text-gray-400">Langsung</div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-2xl font-bold text-gray-800">{{ $schedule['arrival_time'] }}</div>
-                                    <div class="text-sm text-gray-500">{{ $schedule['destination'] }}</div>
-                                </div>
-                            </div>
-
-                            <!-- Price & Action -->
-                            <div class="flex items-center gap-4 lg:border-l lg:pl-6 lg:ml-auto">
-                                <div class="text-right">
-                                    <div class="text-xs text-gray-500">{{ $passengers }} penumpang</div>
-                                    <div class="text-2xl font-bold text-green-600">{{ $schedule['total_price_formatted'] }}</div>
-                                    <div class="text-xs text-gray-400">
-                                        <i class="fa-solid fa-chair mr-1"></i>{{ $schedule['available_seats'] }} kursi tersedia
-                                    </div>
-                                </div>
-                                <button type="button"
-                                        class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
-                                    Pilih
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-            @elseif($returnTrip && count($returnResults) === 0)
-            <div class="text-center py-8 bg-gray-50 rounded-xl mt-8">
-                <i class="fa-solid fa-calendar-xmark text-4xl text-gray-300 mb-3"></i>
-                <p class="text-gray-500 font-medium">Tidak ada jadwal pulang tersedia.</p>
-                <p class="text-sm text-gray-400">Coba ubah tanggal kepulangan Anda.</p>
-            </div>
-            @endif
-        </div>
-        @endif
-
         <!-- Quick Info -->
-        <div class="mt-4 pt-4 border-t border-gray-200">
+        <div class="mt-6 pt-6 border-t border-gray-200">
             <div class="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
-                <span class="flex items-center">
-                    <i class="fa-solid fa-check-circle text-green-500 mr-2"></i>
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-check-circle text-green-500"></i>
                     Pembayaran Aman
                 </span>
-                <span class="flex items-center">
-                    <i class="fa-solid fa-ticket text-blue-500 mr-2"></i>
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-ticket text-blue-500"></i>
                     E-Ticket Instan
                 </span>
-                <span class="flex items-center">
-                    <i class="fa-solid fa-headset text-purple-500 mr-2"></i>
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-headset text-purple-500"></i>
                     Dukungan 24/7
                 </span>
-                <span class="flex items-center">
-                    <i class="fa-solid fa-percent text-red-500 mr-2"></i>
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-percent text-red-500"></i>
                     Harga Terbaik
                 </span>
             </div>

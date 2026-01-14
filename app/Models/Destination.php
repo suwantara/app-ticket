@@ -55,6 +55,14 @@ class Destination extends Model
     }
 
     /**
+     * Get gallery images for this destination
+     */
+    public function galleryImages(): HasMany
+    {
+        return $this->hasMany(GalleryImage::class, 'destination_id');
+    }
+
+    /**
      * Scope for active destinations
      */
     public function scopeActive($query)

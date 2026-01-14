@@ -6,6 +6,7 @@ use App\Models\Destination;
 use App\Models\Route;
 use App\Models\Schedule;
 use Carbon\Carbon;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class SearchBookingForm extends Component
@@ -16,11 +17,10 @@ class SearchBookingForm extends Component
     public $passengers = 1;
     public $returnTrip = false;
     public $returnDate = '';
-
     public $availableDestinations = [];
-    public $searchResults = [];
-    public $returnResults = [];
-    public $showResults = false;
+
+    // Track if search has been performed
+    public $hasSearched = false;
 
     public function mount()
     {
@@ -34,6 +34,14 @@ class SearchBookingForm extends Component
             ->get()
             ->groupBy('type')
             ->toArray();
+
+        // Pre-fill from query parameters (from schedule section)
+        if (request()->has('origin')) {
+            $this->origin = request()->query('origin');
+        }
+        if (request()->has('destination')) {
+            $this->destination = request()->query('destination');
+        }
     }
 
     public function updatedOrigin()
@@ -42,6 +50,48 @@ class SearchBookingForm extends Component
         if ($this->origin === $this->destination) {
             $this->destination = '';
         }
+    }
+
+    public function updatedPassengers()
+    {
+        // Ensure passengers is within bounds
+        $this->passengers = max(1, min(20, (int) $this->passengers));
+
+        // If search has been performed, re-search with new passenger count
+        if ($this->hasSearched && $this->origin && $this->destination && $this->date) {
+            $this->search();
+        }
+    }
+
+    public function updatedReturnTrip()
+    {
+        // If search has been performed, re-search when toggling return trip
+        if ($this->hasSearched && $this->origin && $this->destination && $this->date) {
+            $this->search();
+        }
+    }
+
+    public function updatedDate()
+    {
+        // If search has been performed, re-search when date changes
+        if ($this->hasSearched && $this->origin && $this->destination) {
+            $this->search();
+        }
+    }
+
+    public function updatedReturnDate()
+    {
+        // If search has been performed and return trip, re-search
+        if ($this->hasSearched && $this->returnTrip && $this->origin && $this->destination && $this->date) {
+            $this->search();
+        }
+    }
+
+    #[On('fill-route')]
+    public function fillRoute(int $originId, int $destinationId): void
+    {
+        $this->origin = (string) $originId;
+        $this->destination = (string) $destinationId;
     }
 
     public function search()
@@ -58,26 +108,41 @@ class SearchBookingForm extends Component
             'destination.different' => 'Tujuan harus berbeda dengan keberangkatan',
             'date.after_or_equal' => 'Tanggal tidak boleh di masa lalu',
             'returnDate.after' => 'Tanggal pulang harus setelah tanggal berangkat',
+            'passengers.min' => 'Minimal 1 penumpang',
+            'passengers.max' => 'Maksimal 20 penumpang',
         ]);
 
+        $this->hasSearched = true;
+
+        // Dispatch event to show loading skeleton
+        $this->dispatch('search-started');
+
         // Search outbound schedules
-        $this->searchResults = $this->findSchedules(
+        $searchResults = $this->findSchedules(
             $this->origin,
             $this->destination,
             $this->date
         );
 
         // Search return schedules if round trip
-        $this->returnResults = [];
+        $returnResults = [];
         if ($this->returnTrip && $this->returnDate) {
-            $this->returnResults = $this->findSchedules(
+            $returnResults = $this->findSchedules(
                 $this->destination,
                 $this->origin,
                 $this->returnDate
             );
         }
 
-        $this->showResults = true;
+        // Dispatch event to SearchResults component
+        $this->dispatch('search-completed', [
+            'searchResults' => $searchResults,
+            'returnResults' => $returnResults,
+            'returnTrip' => $this->returnTrip,
+            'passengers' => $this->passengers,
+            'date' => $this->date,
+            'returnDate' => $this->returnDate,
+        ]);
     }
 
     protected function findSchedules($originId, $destinationId, $date)
@@ -119,9 +184,9 @@ class SearchBookingForm extends Component
                 'arrival_time' => $schedule->arrival_time_formatted,
                 'duration' => $schedule->route->formatted_duration,
                 'price' => $schedule->price,
-                'price_formatted' => 'Rp ' . number_format($schedule->price, 0, ',', '.'),
+                'price_formatted' => 'Rp '.number_format($schedule->price, 0, ',', '.'),
                 'total_price' => $schedule->price * $this->passengers,
-                'total_price_formatted' => 'Rp ' . number_format($schedule->price * $this->passengers, 0, ',', '.'),
+                'total_price_formatted' => 'Rp '.number_format($schedule->price * $this->passengers, 0, ',', '.'),
                 'available_seats' => $schedule->available_seats,
             ];
         })->toArray();
@@ -129,10 +194,13 @@ class SearchBookingForm extends Component
 
     public function render()
     {
-        $destinations = Destination::active()
-            ->orderBy('type')
-            ->orderBy('order')
-            ->get();
+        // Cache destinations query to avoid repeated DB calls on re-render
+        $destinations = cache()->remember('active_destinations', 300, function () {
+            return Destination::active()
+                ->orderBy('type')
+                ->orderBy('order')
+                ->get();
+        });
 
         return view('livewire.search-booking-form', [
             'destinations' => $destinations,

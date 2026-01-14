@@ -11,8 +11,21 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Exclude payment webhook from CSRF verification
+        $middleware->validateCsrfTokens(except: [
+            'payment/notification',
+        ]);
+
+        // Add global security headers middleware
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
+        // Register middleware aliases
+        $middleware->alias([
+            'staff' => \App\Http\Middleware\EnsureUserIsStaff::class,
+            'throttle.custom' => \App\Http\Middleware\ThrottleRequests::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Parameter required by Laravel's withExceptions signature
+        unset($exceptions);
     })->create();

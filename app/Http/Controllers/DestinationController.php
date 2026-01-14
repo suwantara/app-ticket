@@ -3,10 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Destination;
-use Illuminate\Http\Request;
+use App\Repositories\GalleryRepository;
 
 class DestinationController extends Controller
 {
+    protected GalleryRepository $galleryRepository;
+
+    public function __construct(GalleryRepository $galleryRepository)
+    {
+        $this->galleryRepository = $galleryRepository;
+    }
+
     /**
      * Display a listing of destinations.
      */
@@ -34,7 +41,7 @@ class DestinationController extends Controller
         $islands = Destination::active()
             ->islands()
             ->orderBy('order')
-            ->get();
+            ->paginate(12);
 
         return view('destinations.islands', compact('islands'));
     }
@@ -47,7 +54,7 @@ class DestinationController extends Controller
         $harbors = Destination::active()
             ->harbors()
             ->orderBy('order')
-            ->get();
+            ->paginate(12);
 
         return view('destinations.harbors', compact('harbors'));
     }
@@ -82,6 +89,15 @@ class DestinationController extends Controller
             ->take(3)
             ->get();
 
-        return view('destinations.show', compact('destination', 'routesFrom', 'routesTo', 'relatedDestinations'));
+        // Get gallery images for this destination using repository
+        $galleryImages = $this->galleryRepository->getLatestForDestination($destination);
+
+        return view('destinations.show', compact(
+            'destination',
+            'routesFrom',
+            'routesTo',
+            'relatedDestinations',
+            'galleryImages'
+        ));
     }
 }

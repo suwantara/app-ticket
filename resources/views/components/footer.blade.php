@@ -1,27 +1,23 @@
 <footer class="bg-neutral-primary-soft shadow-xs border border-default">
-    <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+    <div class="w-full container mx-auto p-4 md:py-8">
         <div class="sm:flex sm:items-center sm:justify-between">
-            <a href="https://flowbite.com/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
-                <img src="https://flowbite.com/docs/images/logo.svg" class="h-7" alt="Flowbite Logo" />
-                <span class="text-heading self-center text-2xl font-semibold whitespace-nowrap">Flowbite</span>
+            <a href="{{ route('home') }}" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+                <img src="{{ asset('img/logo-semabu.png') }}" class="h-10" alt="SemabuHills Logo" />
             </a>
             <ul class="flex flex-wrap items-center mb-6 text-sm font-medium text-body sm:mb-0">
                 <li>
-                    <a href="#" class="hover:underline me-4 md:me-6">About</a>
+                    <a href="{{ route('home') }}" class="hover:underline me-4 md:me-6">Beranda</a>
                 </li>
                 <li>
-                    <a href="#" class="hover:underline me-4 md:me-6">Privacy Policy</a>
+                    <a href="{{ route('about') }}" class="hover:underline me-4 md:me-6">Tentang</a>
                 </li>
                 <li>
-                    <a href="#" class="hover:underline me-4 md:me-6">Licensing</a>
-                </li>
-                <li>
-                    <a href="#" class="hover:underline">Contact</a>
+                    <a href="{{ route('contact') }}" class="hover:underline me-4 md:me-6">Kontak</a>
                 </li>
             </ul>
         </div>
         <hr class="my-6 border-default sm:mx-auto lg:my-8" />
-        <span class="block text-sm text-body sm:text-center">© 2023 <a href="https://flowbite.com/" class="hover:underline">Flowbite™</a>. All Rights Reserved.</span>
+        <span class="block text-sm text-body sm:text-center">© {{ date('Y') }} <a href="{{ route('home') }}"
+                class="hover:underline">SemabuHills</a>. All Rights Reserved.</span>
     </div>
 </footer>
-

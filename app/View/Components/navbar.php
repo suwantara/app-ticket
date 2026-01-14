@@ -2,7 +2,7 @@
 
 namespace App\View\Components;
 
-use App\Models\Page;
+// Navbar uses static menu now; no cache lookup for pages
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
@@ -16,9 +16,8 @@ class Navbar extends Component
      */
     public function __construct()
     {
-        $this->navbarPages = Page::published()
-            ->inNavbar()
-            ->get();
+        // Static menu: no dynamic pages
+        $this->navbarPages = [];
     }
 
     /**
