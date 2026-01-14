@@ -6,6 +6,7 @@ use App\Models\Destination;
 use App\Models\Route;
 use App\Models\Schedule;
 use Carbon\Carbon;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class SearchBookingForm extends Component
@@ -33,6 +34,14 @@ class SearchBookingForm extends Component
             ->get()
             ->groupBy('type')
             ->toArray();
+
+        // Pre-fill from query parameters (from schedule section)
+        if (request()->has('origin')) {
+            $this->origin = request()->query('origin');
+        }
+        if (request()->has('destination')) {
+            $this->destination = request()->query('destination');
+        }
     }
 
     public function updatedOrigin()
@@ -78,6 +87,13 @@ class SearchBookingForm extends Component
         }
     }
 
+    #[On('fill-route')]
+    public function fillRoute(int $originId, int $destinationId): void
+    {
+        $this->origin = (string) $originId;
+        $this->destination = (string) $destinationId;
+    }
+
     public function search()
     {
         $this->validate([
@@ -97,6 +113,9 @@ class SearchBookingForm extends Component
         ]);
 
         $this->hasSearched = true;
+
+        // Dispatch event to show loading skeleton
+        $this->dispatch('search-started');
 
         // Search outbound schedules
         $searchResults = $this->findSchedules(

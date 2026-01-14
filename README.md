@@ -9,8 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Tests-23%20passed-success?style=flat-square" alt="Tests">
-  <img src="https://img.shields.io/badge/Assertions-64-blue?style=flat-square" alt="Assertions">
+  <img src="https://img.shields.io/badge/Tests-48%20passed-success?style=flat-square" alt="Tests">
   <img src="https://img.shields.io/badge/License-Proprietary-red?style=flat-square" alt="License">
 </p>
 
@@ -20,73 +19,84 @@ Sistem pemesanan tiket ferry online untuk rute **Bali - Nusa Penida, Lembongan, 
 
 ## ✨ Fitur Utama
 
-| Fitur | Deskripsi |
-|-------|-----------|
-| 🔍 **Pencarian Jadwal** | Cari jadwal kapal berdasarkan rute, tanggal, dan jumlah penumpang |
-| 🎫 **Pemesanan Online** | Multi-step booking dengan data penumpang |
-| 💳 **Pembayaran Midtrans** | VA Bank, E-Wallet (GoPay, ShopeePay), Credit Card |
-| 📱 **E-Ticket QR Code** | Tiket digital dengan QR code untuk boarding |
-| 📄 **PDF Download** | Download tiket dalam format PDF |
-| 🔐 **Boarding System** | QR Scanner untuk validasi tiket di pelabuhan |
-| ⚙️ **Admin Panel** | Kelola jadwal, kapal, rute, pesanan via Filament |
-| 📝 **CMS Pages** | Halaman dinamis untuk About, Contact, dll |
+| Fitur                      | Deskripsi                                                         |
+| -------------------------- | ----------------------------------------------------------------- |
+| 🔍 **Pencarian Jadwal**    | Cari jadwal kapal berdasarkan rute, tanggal, dan jumlah penumpang |
+| 🎫 **Pemesanan Online**    | Multi-step booking dengan data penumpang                          |
+| 💳 **Pembayaran Midtrans** | VA Bank, E-Wallet (GoPay, ShopeePay), Credit Card                 |
+| 📱 **E-Ticket QR Code**    | Tiket digital dengan QR code untuk boarding                       |
+| 📄 **PDF Download**        | Download tiket dalam format PDF                                   |
+| 🔐 **Boarding System**     | QR Scanner untuk validasi tiket di pelabuhan                      |
+| ⚙️ **Admin Panel**         | Kelola jadwal, kapal, rute, pesanan via Filament                  |
+| 🖼️ **Gallery Destinasi**   | Galeri foto untuk setiap destinasi                                |
+| 📬 **Contact Form**        | Form kontak dengan manajemen pesan di admin                       |
+| ⏰ **Auto-Expiration**     | Order yang tidak dibayar otomatis expired                         |
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Backend
-- **PHP 8.2+** - Server-side language
-- **Laravel 12** - PHP Framework
-- **Livewire 3** - Reactive components tanpa page reload
-- **Filament 4** - Admin panel
-- **MySQL 8** - Database
+
+-   **PHP 8.2+** - Server-side language
+-   **Laravel 12** - PHP Framework
+-   **Livewire 3** - Reactive components tanpa page reload
+-   **Filament 4** - Admin panel
+-   **MySQL 8** - Database
 
 ### Frontend
-- **Tailwind CSS 4** - Utility-first CSS framework
-- **Flowbite** - UI Component library
-- **Alpine.js** - Lightweight JavaScript (via Livewire)
-- **Vite 7** - Build tool
+
+-   **Tailwind CSS 4** - Utility-first CSS framework
+-   **Flowbite** - UI Component library
+-   **Alpine.js** - Lightweight JavaScript (via Livewire)
+-   **Vite 7** - Build tool
 
 ### External Services
-- **Midtrans** - Payment gateway
-- **SimpleSoftwareIO/QrCode** - QR code generation
-- **DomPDF** - PDF generation
+
+-   **Midtrans** - Payment gateway
+-   **SimpleSoftwareIO/QrCode** - QR code generation (SVG)
+-   **chillerlan/php-qrcode** - QR code generation (PNG/Base64)
+-   **DomPDF** - PDF generation
 
 ---
 
 ## 📋 Requirements
 
-- PHP >= 8.2
-- Composer >= 2.x
-- Node.js >= 18.x
-- MySQL >= 8.0
-- SSL Certificate (required untuk Midtrans production)
+-   PHP >= 8.2
+-   Composer >= 2.x
+-   Node.js >= 18.x
+-   MySQL >= 8.0
+-   SSL Certificate (required untuk Midtrans production)
 
 ---
 
 ## 🚀 Installation
 
 ### 1. Clone Repository
+
 ```bash
 git clone https://github.com/suwantara/app-ticket.git
 cd app-ticket
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 composer install
 npm install
 ```
 
 ### 3. Environment Setup
+
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
 ### 4. Configure Database
+
 Edit file `.env`:
+
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -97,6 +107,7 @@ DB_PASSWORD=
 ```
 
 ### 5. Configure Midtrans
+
 ```env
 MIDTRANS_MERCHANT_ID=your_merchant_id
 MIDTRANS_CLIENT_KEY=your_client_key
@@ -105,12 +116,14 @@ MIDTRANS_IS_PRODUCTION=false
 ```
 
 ### 6. Run Migrations & Seeders
+
 ```bash
 php artisan migrate
 php artisan db:seed
 ```
 
 ### 7. Build Assets
+
 ```bash
 npm run build
 # atau untuk development
@@ -118,11 +131,13 @@ npm run dev
 ```
 
 ### 8. Create Storage Link
+
 ```bash
 php artisan storage:link
 ```
 
 ### 9. Start Server
+
 ```bash
 php artisan serve
 ```
@@ -134,16 +149,20 @@ Akses aplikasi di: `http://127.0.0.1:8000`
 ## 🔑 Default Accounts
 
 ### Admin Panel
+
 ```
 URL: http://127.0.0.1:8000/admin
 ```
+
 Buat admin account via tinker:
+
 ```bash
 php artisan tinker
 >>> App\Models\User::create(['name'=>'Admin','email'=>'admin@example.com','password'=>bcrypt('password'),'role'=>'admin'])
 ```
 
 ### Staff (Boarding)
+
 ```
 URL: http://127.0.0.1:8000/staff/login
 ```
@@ -155,30 +174,65 @@ URL: http://127.0.0.1:8000/staff/login
 ```
 app-ticket/
 ├── app/
-│   ├── Filament/Admin/      # Admin panel resources
-│   ├── Http/Controllers/    # HTTP Controllers
-│   ├── Livewire/           # Livewire components
+│   ├── Console/Commands/       # Artisan commands
+│   │   ├── ExpireUnpaidOrders.php
+│   │   └── GenerateTickets.php
+│   ├── Filament/Admin/         # Admin panel resources
+│   ├── Http/Controllers/       # HTTP Controllers
+│   │   ├── AuthController.php
+│   │   ├── BoardingController.php
+│   │   ├── ContactController.php
+│   │   ├── DestinationController.php
+│   │   ├── GalleryController.php
+│   │   ├── PaymentController.php
+│   │   ├── ScheduleController.php
+│   │   ├── TicketController.php
+│   │   └── TicketPdfController.php
+│   ├── Livewire/               # Livewire components
 │   │   ├── BookingForm.php
+│   │   ├── DestinationSection.php
+│   │   ├── ScheduleSection.php
 │   │   ├── SearchBookingForm.php
+│   │   ├── SearchResults.php
 │   │   └── TicketPage.php
-│   ├── Models/             # Eloquent models
-│   └── Services/           # Business logic
+│   ├── Models/                 # Eloquent models
+│   │   ├── Destination.php
+│   │   ├── GalleryImage.php
+│   │   ├── Message.php
+│   │   ├── Order.php
+│   │   ├── Passenger.php
+│   │   ├── Route.php
+│   │   ├── Schedule.php
+│   │   ├── Ship.php
+│   │   ├── Ticket.php
+│   │   └── User.php
+│   ├── Observers/              # Model observers
+│   │   ├── DestinationObserver.php
+│   │   └── ScheduleObserver.php
+│   └── Services/               # Business logic
+│       ├── BoardingStatsService.php
+│       ├── CacheService.php
 │       ├── MidtransService.php
-│       └── TicketService.php
+│       ├── QrCodeParserService.php
+│       ├── QrCodeService.php
+│       ├── TicketPdfService.php
+│       ├── TicketService.php
+│       └── TicketValidationService.php
 ├── database/
 │   ├── migrations/
 │   └── seeders/
 ├── resources/views/
-│   ├── components/         # Blade components
-│   │   ├── ui/            # Reusable UI (alert, badge, button, card)
-│   │   └── ticket/        # Ticket components
-│   ├── livewire/          # Livewire views
-│   └── pages/             # Page templates
+│   ├── components/             # Blade components
+│   │   ├── ui/                 # Reusable UI (alert, badge, button, card)
+│   │   └── ticket/             # Ticket components
+│   ├── livewire/               # Livewire views
+│   └── pages/                  # Page templates
 ├── routes/
-│   └── web.php            # Web routes
+│   ├── console.php             # Scheduled commands
+│   └── web.php                 # Web routes
 └── tests/
-    ├── Feature/           # Feature tests
-    └── Unit/              # Unit tests
+    ├── Feature/                # Feature tests (13 files)
+    └── Unit/                   # Unit tests
 ```
 
 ---
@@ -186,46 +240,55 @@ app-ticket/
 ## 🧪 Testing
 
 ### Run All Tests
+
 ```bash
 php artisan test
 ```
 
 ### Run Specific Test
+
 ```bash
 php artisan test --filter=BookingFlowTest
 ```
 
-### Test Results
-```
-✓ Tests:    23 passed
-✓ Assertions: 64
-✓ Duration: ~17s
-```
+### Test Suites
 
-| Test Suite | Tests |
-|------------|-------|
-| BookingFlowTest | 7 |
-| QrTicketTest | 8 |
-| ScheduleSearchTest | 6 |
-| ExampleTest | 2 |
+| Test Suite         | Description                  |
+| ------------------ | ---------------------------- |
+| AuthenticationTest | User login, register, logout |
+| AutoBoardingTest   | Boarding system, QR scanning |
+| BookingFlowTest    | Complete booking process     |
+| GalleryTest        | Photo gallery functionality  |
+| QrTicketTest       | Ticket validation, QR codes  |
+| ScheduleSearchTest | Schedule search API          |
+| UserManagementTest | User CRUD operations         |
 
 ---
 
 ## 🔌 API Endpoints
 
 ### Schedule Search
+
 ```http
 GET /schedules/search?origin_id=1&destination_id=5&date=2026-01-04&passengers=2
 ```
 
 ### Ticket Validation
+
 ```http
 GET /api/ticket/validate/{qrCode}
 ```
 
 ### Mark Ticket as Used
+
 ```http
 POST /api/ticket/use/{ticket}
+```
+
+### Contact Form
+
+```http
+POST /contact
 ```
 
 Dokumentasi lengkap: [ARCHITECTURE.md](ARCHITECTURE.md)
@@ -238,41 +301,62 @@ Dokumentasi lengkap: [ARCHITECTURE.md](ARCHITECTURE.md)
 Booking → Payment Page → Midtrans Snap → Callback → Generate Ticket → E-Ticket Page
 ```
 
+### Auto-Expiration
+
+-   Order expire otomatis setelah **30 menit** jika tidak dibayar
+-   Background command berjalan setiap **5 menit**
+
 ### Supported Payment Methods
-- 💳 Credit/Debit Card (Visa, Mastercard)
-- 🏦 Bank Transfer (BCA, BNI, BRI, Mandiri, Permata)
-- 📱 E-Wallet (GoPay, ShopeePay, DANA, OVO)
-- 🏪 Retail (Alfamart, Indomaret)
+
+-   💳 Credit/Debit Card (Visa, Mastercard)
+-   🏦 Bank Transfer (BCA, BNI, BRI, Mandiri, Permata)
+-   📱 E-Wallet (GoPay, ShopeePay, DANA, OVO)
+-   🏪 Retail (Alfamart, Indomaret)
 
 ---
 
 ## 🚢 Available Routes
 
-| Route | From | To | Duration |
-|-------|------|-----|----------|
-| SAN-NP | Sanur | Nusa Penida | 45 min |
-| SAN-NL | Sanur | Nusa Lembongan | 30 min |
-| SAN-GT | Sanur | Gili Trawangan | 2.5 hours |
-| PB-GT | Padang Bai | Gili Trawangan | 1.5 hours |
-| PB-GA | Padang Bai | Gili Air | 1.5 hours |
+| Route  | From       | To             | Duration  |
+| ------ | ---------- | -------------- | --------- |
+| SAN-NP | Sanur      | Nusa Penida    | 45 min    |
+| SAN-NL | Sanur      | Nusa Lembongan | 30 min    |
+| SAN-GT | Sanur      | Gili Trawangan | 2.5 hours |
+| PB-GT  | Padang Bai | Gili Trawangan | 1.5 hours |
+| PB-GA  | Padang Bai | Gili Air       | 1.5 hours |
 
 ---
 
 ## 🔒 Security Features
 
-- ✅ CSRF Protection
-- ✅ IDOR Prevention (menggunakan order_number bukan ID)
-- ✅ Input Validation
-- ✅ Payment Verification via Midtrans API
-- ✅ Secure PDF Token Generation
-- ✅ Role-based Access Control
+-   ✅ CSRF Protection
+-   ✅ IDOR Prevention (menggunakan order_number bukan ID)
+-   ✅ Input Validation
+-   ✅ Payment Verification via Midtrans API
+-   ✅ Secure PDF Token Generation
+-   ✅ Role-based Access Control
+-   ✅ Rate Limiting (Login: 5/min, Register: 3/hour)
+-   ✅ Auto-expiration untuk order unpaid
+
+---
+
+## ⚙️ Scheduled Tasks
+
+```bash
+# Jalankan scheduler (production)
+* * * * * cd /path-to-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+| Command                | Schedule        | Purpose                   |
+| ---------------------- | --------------- | ------------------------- |
+| `orders:expire-unpaid` | Every 5 minutes | Auto-expire unpaid orders |
 
 ---
 
 ## 📚 Documentation
 
-- [ARCHITECTURE.md](ARCHITECTURE.md) - Dokumentasi arsitektur lengkap
-- [MVP_DOCUMENTATION.md](MVP_DOCUMENTATION.md) - Dokumentasi MVP
+-   [ARCHITECTURE.md](ARCHITECTURE.md) - Dokumentasi arsitektur lengkap
+-   [MVP_DOCUMENTATION.md](MVP_DOCUMENTATION.md) - Dokumentasi MVP
 
 ---
 

@@ -51,7 +51,7 @@ class MessagesTable
                     ->limit(50)
                     ->wrap(),
 
-                BadgeColumn::make('status')
+                TextColumn::make('status')
                     ->label('Status')
                     ->formatStateUsing(fn ($state) => match($state) {
                         'unread' => 'Belum Dibaca',

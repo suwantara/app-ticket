@@ -147,7 +147,7 @@
                                 <label for="name" class="block mb-2 text-sm font-medium text-gray-700">Nama Lengkap
                                     <span class="text-red-500">*</span></label>
                                 <input type="text" id="name" name="name" value="{{ old('name') }}"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 @error('name') border-red-500 @enderror"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 @error('name') !border-red-500 @enderror"
                                     placeholder="Masukkan nama Anda" required>
                                 @error('name')
                                     <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
@@ -158,7 +158,7 @@
                                 <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email <span
                                         class="text-red-500">*</span></label>
                                 <input type="email" id="email" name="email" value="{{ old('email') }}"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 @error('email') border-red-500 @enderror"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 @error('email') !border-red-500 @enderror"
                                     placeholder="email@example.com" required>
                                 @error('email')
                                     <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
@@ -169,7 +169,7 @@
                                 <label for="phone" class="block mb-2 text-sm font-medium text-gray-700">Nomor
                                     Telepon</label>
                                 <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 @error('phone') border-red-500 @enderror"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 @error('phone') !border-red-500 @enderror"
                                     placeholder="+62 xxx xxxx xxxx">
                                 @error('phone')
                                     <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
@@ -180,7 +180,7 @@
                                 <label for="subject" class="block mb-2 text-sm font-medium text-gray-700">Subjek <span
                                         class="text-red-500">*</span></label>
                                 <select id="subject" name="subject"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 @error('subject') border-red-500 @enderror"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 @error('subject') !border-red-500 @enderror"
                                     required>
                                     <option value="">Pilih Subjek</option>
                                     <option value="booking" {{ old('subject') == 'booking' ? 'selected' : '' }}>
@@ -203,7 +203,7 @@
                                 <label for="message" class="block mb-2 text-sm font-medium text-gray-700">Pesan <span
                                         class="text-red-500">*</span></label>
                                 <textarea id="message" name="message" rows="5"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 @error('message') border-red-500 @enderror"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 @error('message') !border-red-500 @enderror"
                                     placeholder="Tulis pesan Anda di sini..." required>{{ old('message') }}</textarea>
                                 @error('message')
                                     <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>

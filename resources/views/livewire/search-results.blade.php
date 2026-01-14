@@ -1,8 +1,45 @@
 <!-- Search Results Component -->
 <div>
-    @if ($showResults)
-        <div class="max-w-5xl mx-auto mt-8" id="search-results">
-            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden">
+    {{-- Loading State (during search) --}}
+    @if ($isSearching)
+        <div class="max-w-7xl mx-auto mt-8 px-4 lg:px-0">
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-md overflow-hidden p-6">
+                <div class="animate-pulse space-y-4">
+                    {{-- Header skeleton --}}
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-gray-200 rounded-lg"></div>
+                        <div class="h-6 bg-gray-200 rounded w-48"></div>
+                    </div>
+                    {{-- Schedule items skeleton --}}
+                    @for ($i = 0; $i < 3; $i++)
+                        <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                            <div class="w-5 h-5 bg-gray-200 rounded-full"></div>
+                            <div class="flex-1 space-y-2">
+                                <div class="h-4 bg-gray-200 rounded w-32"></div>
+                                <div class="h-3 bg-gray-200 rounded w-24"></div>
+                            </div>
+                            <div class="space-y-2 text-center">
+                                <div class="h-4 bg-gray-200 rounded w-24"></div>
+                                <div class="h-3 bg-gray-200 rounded w-16 mx-auto"></div>
+                            </div>
+                            <div class="space-y-2 text-right">
+                                <div class="h-5 bg-gray-200 rounded w-28 ml-auto"></div>
+                                <div class="h-3 bg-gray-200 rounded w-16 ml-auto"></div>
+                            </div>
+                        </div>
+                    @endfor
+                </div>
+                <div class="mt-4 flex items-center justify-center gap-2 text-blue-600">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <span class="text-sm font-medium">Mencari jadwal tersedia...</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Results State (after search) --}}
+    @elseif ($showResults)
+        <div class="max-w-7xl mx-auto mt-8 px-4 lg:px-0" id="search-results">
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-md overflow-hidden">
 
                 <!-- Flash Messages -->
                 @if (session()->has('error'))
@@ -33,7 +70,7 @@
                                 <div wire:click="selectSchedule({{ $schedule['id'] }}, false)"
                                     class="flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all duration-200
                                 {{ $selectedScheduleId == $schedule['id']
-                                    ? 'bg-blue-50 border-2 border-blue-500 shadow-sm'
+                                    ? 'bg-blue-50 border-2 border-blue-500 shadow-md'
                                     : 'bg-gray-50 border-2 border-transparent hover:bg-blue-50/50 hover:border-blue-200' }}">
 
                                     <!-- Selection Radio -->
@@ -109,7 +146,7 @@
                                     <div wire:click="selectSchedule({{ $schedule['id'] }}, true)"
                                         class="flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all duration-200
                                 {{ $selectedReturnScheduleId == $schedule['id']
-                                    ? 'bg-green-50 border-2 border-green-500 shadow-sm'
+                                    ? 'bg-green-50 border-2 border-green-500 shadow-md'
                                     : 'bg-gray-50 border-2 border-transparent hover:bg-green-50/50 hover:border-green-200' }}">
 
                                         <!-- Selection Radio -->
@@ -225,7 +262,8 @@
                                         <i
                                             class="fa-regular fa-calendar mr-1"></i>{{ \Carbon\Carbon::parse($returnDate)->translatedFormat('l, d M Y') }}
                                         <span class="mx-1">•</span>
-                                        <i class="fa-regular fa-clock mr-1"></i>{{ $selectedReturn['departure_time'] }}
+                                        <i
+                                            class="fa-regular fa-clock mr-1"></i>{{ $selectedReturn['departure_time'] }}
                                         - {{ $selectedReturn['arrival_time'] }}
                                     </div>
                                     <div class="text-sm text-gray-500">
@@ -270,6 +308,67 @@
                         </div>
                     </div>
                 @endif
+            </div>
+        </div>
+
+        {{-- Initial State (before search) --}}
+    @else
+        <div class="max-w-7xl mx-auto mt-8 px-4 lg:px-0">
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-md overflow-hidden p-8">
+                {{-- Engaging Visual --}}
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-4">
+                        <i class="fa-solid fa-ship text-blue-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Cari Jadwal Fast Boat</h3>
+                    <p class="text-gray-500">Isi form di atas untuk mencari jadwal keberangkatan yang tersedia</p>
+                </div>
+
+                {{-- Popular Routes --}}
+                @if (count($popularRoutes) > 0)
+                    <div class="border-t border-gray-100 pt-6">
+                        <h4 class="text-sm font-semibold text-gray-600 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-fire text-orange-500"></i>
+                            Rute Populer
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            @foreach ($popularRoutes as $route)
+                                <button type="button"
+                                    wire:click="selectPopularRoute({{ $route['origin_id'] }}, {{ $route['destination_id'] }})"
+                                    class="flex items-center gap-3 p-4 bg-gray-50 hover:bg-blue-50 border border-gray-100 hover:border-blue-200 rounded-xl transition-all duration-200 text-left group">
+                                    <div
+                                        class="w-10 h-10 bg-blue-100 group-hover:bg-blue-200 rounded-lg flex items-center justify-center transition-colors">
+                                        <i class="fa-solid fa-route text-blue-600"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div
+                                            class="font-semibold text-gray-800 group-hover:text-blue-700 transition-colors">
+                                            {{ $route['origin_name'] }}
+                                            <i class="fa-solid fa-arrow-right text-xs text-gray-400 mx-1"></i>
+                                            {{ $route['destination_name'] }}
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            <i class="fa-regular fa-clock mr-1"></i>{{ $route['duration'] }}
+                                        </div>
+                                    </div>
+                                    <i
+                                        class="fa-solid fa-chevron-right text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Tips --}}
+                <div class="mt-6 p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                    <div class="flex items-start gap-3">
+                        <i class="fa-solid fa-lightbulb text-amber-500 mt-0.5"></i>
+                        <div class="text-sm text-amber-800">
+                            <span class="font-medium">Tips:</span> Pilih tanggal keberangkatan minimal H-1 untuk
+                            mendapatkan harga terbaik dan ketersediaan kursi yang lebih banyak.
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     @endif

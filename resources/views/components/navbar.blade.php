@@ -81,7 +81,7 @@
                     <a href="{{ route('login') }}"
                         class="inline-flex items-center text-gray-700 hover:text-blue-900 font-medium text-sm px-4 py-2 transition-colors">Masuk</a>
                     <a href="{{ route('register') }}"
-                        class="inline-flex items-center text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">Daftar</a>
+                        class="inline-flex items-center text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">Daftar</a>
                 </div>
             @endauth
         </div>
@@ -113,8 +113,8 @@
                 <li>
                     <a href="{{ route('destinations.harbors') }}"
                         class="block p-3 rounded-lg hover:bg-neutral-secondary-medium">
-                        <div class="font-semibold">Port</div>
-                        <span class="text-sm text-body">Informasi dan fasilitas port.</span>
+                        <div class="font-semibold">Keberangkatan</div>
+                        <span class="text-sm text-body">Informasi dan fasilitas keberangkatan.</span>
                     </a>
                 </li>
             </ul>

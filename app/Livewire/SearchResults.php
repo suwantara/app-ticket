@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Route;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -11,6 +12,7 @@ class SearchResults extends Component
     public array $returnResults = [];
     public bool $showResults = false;
     public bool $returnTrip = false;
+    public bool $isSearching = false;
     public int $passengers = 1;
     public string $date = '';
     public string $returnDate = '';
@@ -18,6 +20,33 @@ class SearchResults extends Component
     // Selected schedules
     public ?int $selectedScheduleId = null;
     public ?int $selectedReturnScheduleId = null;
+
+    // Popular routes for quick suggestions
+    public array $popularRoutes = [];
+
+    public function mount(): void
+    {
+        // Load popular routes for suggestions
+        $this->popularRoutes = Route::with(['origin', 'destination'])
+            ->active()
+            ->take(4)
+            ->get()
+            ->map(fn($route) => [
+                'id' => $route->id,
+                'origin_id' => $route->origin_id,
+                'destination_id' => $route->destination_id,
+                'origin_name' => $route->origin->name ?? 'Origin',
+                'destination_name' => $route->destination->name ?? 'Destination',
+                'duration' => $route->formatted_duration,
+            ])
+            ->toArray();
+    }
+
+    #[On('search-started')]
+    public function handleSearchStarted(): void
+    {
+        $this->isSearching = true;
+    }
 
     #[On('search-completed')]
     public function handleSearchResults(array $data): void
@@ -29,6 +58,7 @@ class SearchResults extends Component
         $this->date = $data['date'] ?? '';
         $this->returnDate = $data['returnDate'] ?? '';
         $this->showResults = true;
+        $this->isSearching = false;
 
         // Reset selections
         $this->selectedScheduleId = null;
@@ -42,6 +72,11 @@ class SearchResults extends Component
         } else {
             $this->selectedScheduleId = $scheduleId;
         }
+    }
+
+    public function selectPopularRoute(int $originId, int $destinationId): void
+    {
+        $this->dispatch('fill-route', originId: $originId, destinationId: $destinationId);
     }
 
     public function getSelectedTotalProperty(): int
