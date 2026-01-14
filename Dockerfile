@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     nginx \
-    supervisor
+    supervisor \
+    gettext-base
 
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
@@ -50,8 +51,8 @@ RUN chown -R www-data:www-data /var/www/html \
 # Create storage directories
 RUN mkdir -p storage/framework/{sessions,views,cache} storage/logs bootstrap/cache
 
-# Copy Nginx configuration
-COPY nginx.conf /etc/nginx/sites-available/default
+# Copy Nginx config template (uses PORT variable)
+COPY nginx.conf.template /etc/nginx/nginx.conf.template
 
 # Copy Supervisor configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -59,9 +60,6 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-# Expose port (Railway uses $PORT)
-EXPOSE 80
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
