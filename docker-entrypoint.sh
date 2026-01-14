@@ -17,5 +17,8 @@ php artisan view:cache
 # Run migrations
 php artisan migrate --force
 
-# Start Apache
+# Create supervisor log directory
+mkdir -p /var/log/supervisor
+
+# Start supervisor (which manages nginx and php-fpm)
 exec "$@"

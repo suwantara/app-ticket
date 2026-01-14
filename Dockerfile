@@ -1,5 +1,5 @@
-# Use PHP 8.4 with Apache (required for Symfony 8.x packages)
-FROM php:8.4-apache
+# Use PHP 8.4 FPM with Nginx
+FROM php:8.4-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -12,18 +12,19 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     zip \
     unzip \
-    nodejs \
-    npm
+    nginx \
+    supervisor
+
+# Install Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-configure intl
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl
-
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+RUN docker-php-ext-configure intl \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -35,6 +36,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # Install dependencies
+ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-dev --optimize-autoloader
 
 # Install and build frontend assets
@@ -48,17 +50,18 @@ RUN chown -R www-data:www-data /var/www/html \
 # Create storage directories
 RUN mkdir -p storage/framework/{sessions,views,cache} storage/logs bootstrap/cache
 
-# Configure Apache DocumentRoot
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+# Copy Nginx configuration
+COPY nginx.conf /etc/nginx/sites-available/default
 
-# Expose port
-EXPOSE 80
+# Copy Supervisor configuration
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Start script
+# Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
+# Expose port (Railway uses $PORT)
+EXPOSE 80
+
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["apache2-foreground"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
