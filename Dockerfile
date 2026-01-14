@@ -1,7 +1,6 @@
-# Use PHP 8.4 FPM with Nginx
 FROM php:8.4-fpm
 
-# Install system dependencies
+# System dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -14,55 +13,53 @@ RUN apt-get update && apt-get install -y \
     unzip \
     nginx \
     supervisor \
-    gettext-base
+    gettext-base \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js
+# Node.js 20
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions
+# PHP extensions
 RUN docker-php-ext-configure intl \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl
+    && docker-php-ext-install \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    zip \
+    intl
 
-# Get latest Composer
+# Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
 WORKDIR /var/www/html
 
-# Copy application files
+# Copy source
 COPY . .
 
-# Install dependencies
+# Composer install
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-dev --optimize-autoloader
 
-# Create .env file from example (will be overwritten by Railway environment variables)
-RUN cp .env.example .env
-
-# Install and build frontend assets
+# Frontend build
 RUN npm install && npm run build
 
-# Set permissions
+# Permissions
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+    && chmod -R 755 storage bootstrap/cache
 
-# Create storage directories
-RUN mkdir -p storage/framework/{sessions,views,cache} storage/logs bootstrap/cache
+# Create runtime directories
+RUN mkdir -p storage/framework/{sessions,views,cache} storage/logs
 
-# Copy Nginx config template (uses PORT variable)
+# Config files
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
-
-# Copy Supervisor configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Copy entrypoint script
-COPY docker-entrypoint.sh /usr/local/bin/
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/usr/bin/supervisord","-c","/etc/supervisor/conf.d/supervisord.conf"]
