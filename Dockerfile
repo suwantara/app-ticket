@@ -40,6 +40,9 @@ COPY . .
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-dev --optimize-autoloader
 
+# Create .env file from example (will be overwritten by Railway environment variables)
+RUN cp .env.example .env
+
 # Install and build frontend assets
 RUN npm install && npm run build
 

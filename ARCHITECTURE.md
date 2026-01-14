@@ -37,7 +37,7 @@ Sistem pemesanan tiket ferry online untuk rute Bali - Nusa Penida, Lembongan, da
 
 | Technology | Version | Purpose              |
 | ---------- | ------- | -------------------- |
-| PHP        | ^8.2    | Server-side language |
+| PHP        | ^8.4    | Server-side language |
 | Laravel    | 12.x    | PHP Framework        |
 | Livewire   | 3.7     | Reactive components  |
 | Filament   | 4.4     | Admin panel          |
