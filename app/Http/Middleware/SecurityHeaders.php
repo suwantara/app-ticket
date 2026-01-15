@@ -51,11 +51,13 @@ class SecurityHeaders
             if (config('app.env') !== 'local') {
                 $csp = [
                     "default-src 'self'",
-                    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.sandbox.midtrans.com https://app.midtrans.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://kit.fontawesome.com https://ka-f.fontawesome.com",
+                    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.sandbox.midtrans.com https://app.midtrans.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://kit.fontawesome.com https://ka-f.fontawesome.com blob:",
                     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://ka-f.fontawesome.com",
                     "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://ka-f.fontawesome.com",
                     "img-src 'self' data: blob: https:",
-                    "connect-src 'self' https://app.sandbox.midtrans.com https://app.midtrans.com https://ka-f.fontawesome.com wss:",
+                    "media-src 'self' data: blob:",
+                    "worker-src 'self' blob:",
+                    "connect-src 'self' https://app.sandbox.midtrans.com https://app.midtrans.com https://ka-f.fontawesome.com wss: blob:",
                     "frame-src 'self' https://app.sandbox.midtrans.com https://app.midtrans.com",
                     "object-src 'none'",
                     "base-uri 'self'",
