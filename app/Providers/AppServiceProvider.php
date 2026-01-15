@@ -23,6 +23,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTPS in production (required for Heroku)
+        if (config('app.env') === 'production') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // Set Carbon locale to Indonesian
         \Carbon\Carbon::setLocale(config('app.locale', 'id'));
 
