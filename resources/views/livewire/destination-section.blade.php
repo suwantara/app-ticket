@@ -29,7 +29,7 @@
                         class="bg-neutral-primary-soft block max-w-sm p-4 border border-default rounded-base shadow-xs">
                         <a href="{{ route('destinations.show', $destination->slug) }}">
                             <img class="rounded-base w-full h-50 object-cover"
-                                src="{{ $destination->image ? asset('storage/' . $destination->image) : 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800' }}"
+                                src="{{ $destination->image ? (str_starts_with($destination->image, 'http') ? $destination->image : asset('storage/' . $destination->image)) : 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800' }}"
                                 alt="{{ $destination->name }}" />
                         </a>
                         <a href="{{ route('destinations.show', $destination->slug) }}">
