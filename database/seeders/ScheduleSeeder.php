@@ -79,7 +79,10 @@ class ScheduleSeeder extends Seeder
         ];
 
         foreach ($ships as $ship) {
-            Ship::create($ship);
+            Ship::updateOrCreate(
+                ['code' => $ship['code']],
+                $ship
+            );
         }
 
         // Get ships for scheduling
@@ -302,7 +305,14 @@ class ScheduleSeeder extends Seeder
 
         foreach ($schedules as $schedule) {
             if ($schedule['route_id'] && $schedule['ship_id']) {
-                Schedule::create($schedule);
+                Schedule::updateOrCreate(
+                    [
+                        'route_id' => $schedule['route_id'],
+                        'ship_id' => $schedule['ship_id'],
+                        'departure_time' => $schedule['departure_time'],
+                    ],
+                    $schedule
+                );
             }
         }
     }

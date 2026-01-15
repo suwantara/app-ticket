@@ -162,9 +162,12 @@ class DestinationSeeder extends Seeder
             ],
         ];
 
-        // Insert destinations
+        // Insert or update destinations (avoid duplicate key error)
         foreach (array_merge($harbors, $islands) as $destination) {
-            Destination::create($destination);
+            Destination::updateOrCreate(
+                ['slug' => $destination['slug']],
+                $destination
+            );
         }
 
         // Create routes
@@ -329,7 +332,10 @@ class DestinationSeeder extends Seeder
         ];
 
         foreach ($routes as $route) {
-            Route::create($route);
+            Route::updateOrCreate(
+                ['code' => $route['code']],
+                $route
+            );
         }
     }
 }
