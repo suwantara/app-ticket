@@ -1,5 +1,6 @@
-<x-layouts.app title="Login">
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+<x-layouts.app title="Login" :hideFooter="true" :hideNavbar="true">
+    <div
+        class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full">
             {{-- Logo & Title --}}
             <div class="text-center mb-8">
@@ -19,7 +20,7 @@
             {{-- Login Form --}}
             <div class="bg-white rounded-2xl shadow-xl p-8">
                 {{-- Error Alert --}}
-                @if($errors->any())
+                @if ($errors->any())
                     <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                         <div class="flex items-center">
                             <i class="fa-solid fa-circle-exclamation text-red-500 mr-2"></i>
@@ -29,7 +30,7 @@
                 @endif
 
                 {{-- Success Alert --}}
-                @if(session('success'))
+                @if (session('success'))
                     <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                         <div class="flex items-center">
                             <i class="fa-solid fa-circle-check text-green-500 mr-2"></i>
@@ -47,9 +48,8 @@
                             <i class="fa-solid fa-envelope mr-1 text-gray-400"></i> Email
                         </label>
                         <input type="email" name="email" id="email" value="{{ old('email') }}"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('email') border-red-500 @enderror"
-                               placeholder="nama@email.com"
-                               required autofocus autocomplete="email">
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors @error('email') border-red-500 @enderror"
+                            placeholder="nama@email.com" required autofocus autocomplete="email">
                     </div>
 
                     {{-- Password --}}
@@ -59,11 +59,10 @@
                         </label>
                         <div class="relative" x-data="{ show: false }">
                             <input :type="show ? 'text' : 'password'" name="password" id="password"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pr-12 @error('password') border-red-500 @enderror"
-                                   placeholder="••••••••"
-                                   required autocomplete="current-password">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pr-12 @error('password') border-red-500 @enderror"
+                                placeholder="••••••••" required autocomplete="current-password">
                             <button type="button" @click="show = !show"
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                                 <i x-show="!show" class="fa-solid fa-eye"></i>
                                 <i x-show="show" class="fa-solid fa-eye-slash"></i>
                             </button>
@@ -74,7 +73,7 @@
                     <div class="flex items-center justify-between">
                         <label class="flex items-center">
                             <input type="checkbox" name="remember"
-                                   class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
                             <span class="ml-2 text-sm text-gray-600">Ingat saya</span>
                         </label>
                         {{-- <a href="#" class="text-sm text-blue-600 hover:text-blue-500">
@@ -84,7 +83,7 @@
 
                     {{-- Submit Button --}}
                     <button type="submit"
-                            class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                         <i class="fa-solid fa-right-to-bracket mr-2"></i>
                         Masuk
                     </button>
@@ -105,7 +104,7 @@
                 {{-- Register Link --}}
                 <div class="mt-6 text-center">
                     <a href="{{ route('register') }}"
-                       class="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        class="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                         <i class="fa-solid fa-user-plus mr-2"></i>
                         Buat Akun Baru
                     </a>

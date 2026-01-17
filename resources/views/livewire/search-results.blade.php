@@ -292,18 +292,28 @@
                             </div>
 
                             @if (!$returnTrip || ($returnTrip && $selectedReturnScheduleId))
-                                <button x-data
-                                    @click="confirmAction('Lanjutkan ke halaman pemesanan?', 'Konfirmasi').then(confirmed => { if(confirmed) $wire.proceedToBooking(); })"
-                                    wire:loading.attr="disabled"
-                                    class="bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center gap-2">
-                                    <span wire:loading.remove wire:target="proceedToBooking">
+                                @auth
+                                    {{-- User sudah login - langsung ke pemesanan --}}
+                                    <button x-data
+                                        @click="confirmAction('Lanjutkan ke halaman pemesanan?', 'Konfirmasi').then(confirmed => { if(confirmed) $wire.proceedToBooking(); })"
+                                        wire:loading.attr="disabled"
+                                        class="bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center gap-2">
+                                        <span wire:loading.remove wire:target="proceedToBooking">
+                                            Lanjut ke Pemesanan
+                                            <i class="fa-solid fa-arrow-right ml-1"></i>
+                                        </span>
+                                        <span wire:loading wire:target="proceedToBooking">
+                                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Memproses...
+                                        </span>
+                                    </button>
+                                @else
+                                    {{-- User belum login - trigger modal login --}}
+                                    <button @click="$dispatch('open-login-modal')" type="button"
+                                        class="bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center gap-2">
                                         Lanjut ke Pemesanan
                                         <i class="fa-solid fa-arrow-right ml-1"></i>
-                                    </span>
-                                    <span wire:loading wire:target="proceedToBooking">
-                                        <i class="fa-solid fa-spinner fa-spin mr-2"></i> Memproses...
-                                    </span>
-                                </button>
+                                    </button>
+                                @endauth
                             @endif
                         </div>
                     </div>
@@ -372,4 +382,80 @@
             </div>
         </div>
     @endif
+
+    {{-- Login Required Modal - Full Page Overlay (tetap di dalam root div tapi dengan fixed positioning) --}}
+    @guest
+        <div x-data="{ showLoginModal: false }" x-on:open-login-modal.window="showLoginModal = true" x-cloak>
+
+            {{-- Modal Overlay --}}
+            <div x-show="showLoginModal" class="fixed inset-0 z-[9999] overflow-y-auto"
+                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+
+                {{-- Backdrop --}}
+                <div class="fixed inset-0 bg-black/70 backdrop-blur-sm" @click="showLoginModal = false"></div>
+
+                {{-- Modal Container --}}
+                <div class="flex items-center justify-center min-h-screen p-4">
+                    {{-- Modal Content --}}
+                    <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 z-10" x-show="showLoginModal"
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+                        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                        x-transition:leave-end="opacity-0 translate-y-4 scale-95" @click.stop>
+
+                        {{-- Close Button --}}
+                        <button @click="showLoginModal = false"
+                            class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all">
+                            <i class="fa-solid fa-times text-xl"></i>
+                        </button>
+
+                        {{-- Icon --}}
+                        <div class="text-center mb-6">
+                            <div
+                                class="inline-flex items-center justify-center w-20 h-20 bg-linear-to-br from-orange-100 to-amber-100 rounded-full mb-4">
+                                <i class="fa-solid fa-user-lock text-orange-500 text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800">Login Diperlukan</h3>
+                            <p class="text-gray-500 mt-2">Silakan login atau daftar terlebih dahulu untuk melanjutkan
+                                pemesanan
+                                tiket.</p>
+                        </div>
+
+                        {{-- Buttons --}}
+                        <div class="space-y-3">
+                            <a href="{{ route('login') }}?redirect={{ route('ticket') }}"
+                                class="block w-full text-center bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-4 rounded-xl font-bold transition-all duration-200 shadow-lg hover:shadow-xl">
+                                <i class="fa-solid fa-sign-in-alt mr-2"></i>
+                                Login
+                            </a>
+                            <a href="{{ route('register') }}?redirect={{ route('ticket') }}"
+                                class="block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-800 px-6 py-4 rounded-xl font-bold transition-all duration-200">
+                                <i class="fa-solid fa-user-plus mr-2"></i>
+                                Daftar Akun Baru
+                            </a>
+                        </div>
+
+                        {{-- Info --}}
+                        <div class="mt-6 p-4 bg-blue-50 rounded-xl">
+                            <div class="flex items-start gap-3">
+                                <i class="fa-solid fa-info-circle text-blue-500 mt-0.5"></i>
+                                <div class="text-sm text-blue-700">
+                                    <span class="font-medium">Mengapa harus login?</span>
+                                    <ul class="mt-1 space-y-1 text-blue-600">
+                                        <li>• Menyimpan riwayat pemesanan</li>
+                                        <li>• Akses e-ticket dengan mudah</li>
+                                        <li>• Proses booking lebih cepat</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endguest
 </div>

@@ -32,9 +32,11 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-// Booking routes (with rate limiting)
-Route::get('/booking', BookingForm::class)->name('booking.form');
-Route::get('/booking/confirmation/{order}', [PageController::class, 'bookingConfirmation'])->name('booking.confirmation');
+// Booking routes (require authentication)
+Route::middleware('auth')->group(function () {
+    Route::get('/booking', BookingForm::class)->name('booking.form');
+    Route::get('/booking/confirmation/{order}', [PageController::class, 'bookingConfirmation'])->name('booking.confirmation');
+});
 
 // Payment routes (with rate limiting for sensitive operations)
 Route::prefix('payment')->name('payment.')->group(function () {

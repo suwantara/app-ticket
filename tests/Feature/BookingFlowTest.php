@@ -257,11 +257,11 @@ test('schedule available seats decrease after booking', function () {
     expect($this->schedule->fresh()->available_seats)->toBe($initialSeats - 2);
 });
 
-test('booking page redirects without session data', function () {
+test('booking page redirects to login without authentication', function () {
     $response = $this->get('/booking');
 
-    // Should redirect to home because no booking session
-    $response->assertRedirect(route('home'));
+    // Should redirect to login because auth middleware is applied
+    $response->assertRedirect(route('login'));
 });
 
 test('can view ticket with order number', function () {

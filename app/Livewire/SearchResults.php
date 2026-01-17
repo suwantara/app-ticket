@@ -106,6 +106,12 @@ class SearchResults extends Component
 
     public function proceedToBooking()
     {
+        // Validate user is authenticated
+        if (!auth()->check()) {
+            session()->flash('error', 'Silakan login terlebih dahulu untuk melanjutkan pemesanan.');
+            return redirect()->route('login', ['redirect' => route('ticket')]);
+        }
+
         if (!$this->selectedScheduleId) {
             session()->flash('error', 'Pilih jadwal keberangkatan terlebih dahulu.');
             return null;
