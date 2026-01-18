@@ -1,4 +1,4 @@
-<div class="bg-neutral-primary-soft block max-w-sm p-4 border border-default rounded-base shadow-xs">
+<div class="bg-neutral-primary-soft p-4 border border-default rounded-base shadow-xs h-full flex flex-col">
     {{-- Image with Tag Overlay --}}
     <div class="relative">
         <a href="{{ route('destinations.show', $destination->slug) }}">
@@ -42,7 +42,7 @@
         <span>{{ $destination->location ?? 'Indonesia' }}</span>
     </div>
 
-    <p class="mb-4 text-body text-base">{{ Str::limit(strip_tags($destination->description), 120) }}</p>
+    <p class="mb-4 text-body text-base grow">{{ Str::limit(strip_tags($destination->description), 120) }}</p>
 
     {{-- Action Button --}}
     <a href="{{ route('destinations.show', $destination->slug) }}"
