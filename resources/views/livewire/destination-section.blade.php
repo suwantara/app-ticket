@@ -20,7 +20,7 @@
             </div>
 
             {{-- Single Row Horizontal Scroll --}}
-            <div class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide"
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide"
                 style="-webkit-overflow-scrolling: touch;">
 
                 @forelse($destinations as $destination)

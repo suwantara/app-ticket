@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>E-Ticket #{{ $order->order_number }}</title>
     <style>
         @page {
-            margin: 0;
-            padding: 0;
+            size: A4;
+            margin: 10mm;
         }
 
         * {
@@ -18,190 +19,236 @@
 
         body {
             font-family: 'DejaVu Sans', sans-serif;
-            font-size: 12px;
-            color: #333;
-            background: #f0f4f8;
+            font-size: 10px;
+            color: #1e293b;
+            background: #fff;
+            line-height: 1.3;
         }
 
         .ticket-page {
             width: 100%;
-            min-height: 100vh;
-            padding: 20px;
+            height: 277mm;
+            /* A4 height minus margins */
             page-break-after: always;
-            background: #f0f4f8;
+            page-break-inside: avoid;
+            display: table;
         }
 
         .ticket-page:last-child {
             page-break-after: auto;
         }
 
+        .ticket-wrapper {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
         .ticket-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #fff;
-            border-radius: 16px;
+            border: 2px solid #1e3a5f;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
         }
 
         /* Header */
         .ticket-header {
-            background: linear-gradient(135deg, #0066cc 0%, #0099ff 100%);
+            background: #1e3a5f;
             color: white;
-            padding: 25px;
-            text-align: center;
+            padding: 15px 20px;
+            position: relative;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .header-table td {
+            vertical-align: middle;
         }
 
         .company-name {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .company-tagline {
-            font-size: 11px;
-            opacity: 0.9;
+            font-size: 9px;
+            opacity: 0.85;
+            margin-top: 2px;
         }
 
-        .ticket-type {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            margin-top: 10px;
-            font-size: 11px;
+        .ticket-label {
+            background: #f59e0b;
+            color: #1e3a5f;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 9px;
+            font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-left: 10px;
+        }
+
+        .status-used {
+            background: #64748b;
+            color: white;
+        }
+
+        .status-cancelled {
+            background: #ef4444;
+            color: white;
         }
 
         /* Route Section */
         .route-section {
-            background: #f8fafc;
-            padding: 25px;
-            text-align: center;
-            border-bottom: 2px dashed #e2e8f0;
+            background: #f1f5f9;
+            padding: 15px 20px;
+            border-bottom: 2px dashed #94a3b8;
         }
 
-        .route-container {
-            display: table;
+        .route-table {
             width: 100%;
+            border-collapse: collapse;
         }
 
-        .route-point {
-            display: table-cell;
-            width: 35%;
+        .route-table td {
             vertical-align: middle;
-        }
-
-        .route-arrow {
-            display: table-cell;
-            width: 30%;
-            vertical-align: middle;
-            text-align: center;
         }
 
         .port-code {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
-            color: #0066cc;
+            color: #1e3a5f;
         }
 
         .port-name {
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 5px;
-        }
-
-        .arrow-icon {
-            font-size: 24px;
-            color: #0066cc;
-        }
-
-        .travel-duration {
             font-size: 10px;
-            color: #94a3b8;
-            margin-top: 5px;
+            color: #64748b;
         }
 
-        /* Info Grid */
-        .info-grid {
-            padding: 20px 25px;
+        .arrow-cell {
+            text-align: center;
+            width: 25%;
+        }
+
+        .arrow-box {
+            background: #1e3a5f;
+            color: #f59e0b;
+            padding: 6px 16px;
+            border-radius: 15px;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        .duration {
+            font-size: 8px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        /* Info Section */
+        .info-section {
+            padding: 12px 20px;
             border-bottom: 1px solid #e2e8f0;
         }
 
-        .info-row {
-            display: table;
+        .info-table {
             width: 100%;
-            margin-bottom: 15px;
+            border-collapse: collapse;
         }
 
-        .info-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .info-cell {
-            display: table-cell;
-            width: 50%;
-            padding-right: 10px;
+        .info-table td {
+            padding: 5px 0;
+            vertical-align: top;
         }
 
         .info-label {
-            font-size: 10px;
+            font-size: 8px;
             color: #94a3b8;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 3px;
+            letter-spacing: 0.3px;
         }
 
         .info-value {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
             color: #1e293b;
         }
 
-        .info-value-small {
-            font-size: 12px;
+        .info-sub {
+            font-size: 9px;
+            color: #64748b;
             font-weight: normal;
-            color: #475569;
         }
 
-        /* Passenger Section */
-        .passenger-section {
-            padding: 20px 25px;
-            background: #f8fafc;
-            border-bottom: 2px dashed #e2e8f0;
+        /* Main Content */
+        .main-content {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .main-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .main-table td {
+            vertical-align: top;
+        }
+
+        .passenger-col {
+            width: 55%;
+            padding: 15px 20px;
+            border-right: 2px dashed #94a3b8;
+        }
+
+        .qr-col {
+            width: 45%;
+            padding: 15px 20px;
+            text-align: center;
+            vertical-align: middle;
         }
 
         .section-title {
-            font-size: 11px;
+            font-size: 8px;
             color: #64748b;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
             font-weight: bold;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .passenger-name {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            color: #1e293b;
-            margin-bottom: 5px;
+            color: #1e3a5f;
+            margin-bottom: 4px;
         }
 
         .passenger-id {
-            font-size: 12px;
+            font-size: 10px;
             color: #64748b;
+            margin-bottom: 6px;
         }
 
-        .passenger-type-badge {
+        .type-badge {
             display: inline-block;
             padding: 3px 10px;
             border-radius: 12px;
-            font-size: 10px;
+            font-size: 8px;
             font-weight: bold;
             text-transform: uppercase;
-            margin-top: 8px;
         }
 
         .type-adult {
@@ -219,233 +266,256 @@
             color: #db2777;
         }
 
-        /* QR Section */
-        .qr-section {
-            padding: 25px;
-            text-align: center;
+        .highlight-box {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 5px;
+            padding: 8px 10px;
+            margin-top: 10px;
         }
 
-        .qr-code {
-            margin: 0 auto 15px;
+        .highlight-text {
+            font-size: 9px;
+            color: #92400e;
         }
 
-        .qr-code img, .qr-code svg {
-            width: 150px;
-            height: 150px;
+        .highlight-text strong {
+            color: #1e3a5f;
+        }
+
+        .qr-code img {
+            width: 120px;
+            height: 120px;
         }
 
         .ticket-number {
             font-family: 'DejaVu Sans Mono', monospace;
-            font-size: 14px;
+            font-size: 11px;
             font-weight: bold;
-            color: #1e293b;
+            color: #1e3a5f;
             background: #f1f5f9;
-            padding: 8px 15px;
-            border-radius: 8px;
+            padding: 5px 10px;
+            border-radius: 5px;
             display: inline-block;
-            letter-spacing: 1px;
+            margin-top: 8px;
+            letter-spacing: 0.5px;
         }
 
-        .qr-instruction {
-            font-size: 10px;
+        .scan-text {
+            font-size: 8px;
             color: #94a3b8;
-            margin-top: 10px;
+            margin-top: 6px;
         }
 
         /* Footer */
         .ticket-footer {
-            background: #1e293b;
-            color: white;
-            padding: 15px 25px;
-            font-size: 10px;
+            background: #f8fafc;
+            padding: 10px 20px;
         }
 
-        .footer-row {
-            display: table;
+        .footer-table {
             width: 100%;
+            border-collapse: collapse;
         }
 
-        .footer-cell {
-            display: table-cell;
-            width: 50%;
-        }
-
-        .footer-cell.right {
-            text-align: right;
+        .footer-table td {
+            vertical-align: middle;
+            font-size: 9px;
         }
 
         .order-number {
             font-weight: bold;
-            font-size: 11px;
+            color: #1e3a5f;
+        }
+
+        .print-info {
+            text-align: right;
+            color: #94a3b8;
+            font-size: 8px;
         }
 
         /* Terms */
         .terms-section {
-            padding: 20px 25px;
-            background: #fff;
+            padding: 10px 20px;
             border-top: 1px solid #e2e8f0;
         }
 
         .terms-title {
-            font-size: 10px;
+            font-size: 8px;
             font-weight: bold;
-            color: #64748b;
-            margin-bottom: 8px;
+            color: #1e3a5f;
+            margin-bottom: 4px;
             text-transform: uppercase;
         }
 
         .terms-list {
-            font-size: 9px;
-            color: #94a3b8;
-            line-height: 1.5;
+            margin: 0;
+            padding-left: 12px;
         }
 
         .terms-list li {
-            margin-bottom: 3px;
-            list-style-position: inside;
+            font-size: 7px;
+            color: #64748b;
+            margin-bottom: 1px;
         }
 
-        /* Status Badge */
-        .status-badge {
-            position: absolute;
-            top: 80px;
-            right: 25px;
-            background: #22c55e;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .status-used {
-            background: #94a3b8;
-        }
-
-        .status-cancelled {
-            background: #ef4444;
-        }
-
-        /* Page Number */
+        /* Page Info */
         .page-info {
             text-align: center;
-            padding: 15px;
-            font-size: 10px;
+            padding: 8px 0;
+            font-size: 8px;
             color: #94a3b8;
         }
     </style>
 </head>
+
 <body>
-    @foreach($tickets as $index => $ticket)
-    <div class="ticket-page">
-        <div class="ticket-container">
-            <!-- Header -->
-            <div class="ticket-header" style="position: relative;">
-                <div class="company-name">🚢 KAPAL CEPAT</div>
-                <div class="company-tagline">Fast Boat Ticket - Bali & Nusa Penida</div>
-                <div class="ticket-type">E-Ticket / Boarding Pass</div>
-                @if($ticket->status !== 'unused')
-                <div class="status-badge {{ $ticket->status === 'used' ? 'status-used' : ($ticket->status === 'cancelled' ? 'status-cancelled' : '') }}">
-                    {{ $ticket->status === 'used' ? 'SUDAH DIGUNAKAN' : ($ticket->status === 'cancelled' ? 'DIBATALKAN' : strtoupper($ticket->status)) }}
-                </div>
-                @endif
-            </div>
+    @foreach ($tickets as $index => $ticket)
+        <div class="ticket-page">
+            <div class="ticket-wrapper">
+                <div class="ticket-container">
+                    <!-- Header -->
+                    <div class="ticket-header">
+                        <table class="header-table">
+                            <tr>
+                                <td style="width: 70%;">
+                                    <div class="company-name">SEMABUHILLS</div>
+                                    <div class="company-tagline">Fast Boat Ticket • Nusa Penida & Bali</div>
+                                </td>
+                                <td style="text-align: right;">
+                                    <span class="ticket-label">E-TICKET</span>
+                                    @if ($ticket->status !== 'unused')
+                                        <span
+                                            class="status-badge {{ $ticket->status === 'used' ? 'status-used' : 'status-cancelled' }}">
+                                            {{ $ticket->status === 'used' ? 'USED' : 'CANCELLED' }}
+                                        </span>
+                                    @endif
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
 
-            <!-- Route Section -->
-            <div class="route-section">
-                <div class="route-container">
-                    <div class="route-point" style="text-align: left;">
-                        <div class="port-code">{{ strtoupper(substr($order->schedule->route->origin->name, 0, 3)) }}</div>
-                        <div class="port-name">{{ $order->schedule->route->origin->name }}</div>
+                    <!-- Route Section -->
+                    <div class="route-section">
+                        <table class="route-table">
+                            <tr>
+                                <td style="width: 37%;">
+                                    <div class="port-code">
+                                        {{ strtoupper(substr($order->schedule->route->origin->name, 0, 3)) }}</div>
+                                    <div class="port-name">{{ $order->schedule->route->origin->name }}</div>
+                                </td>
+                                <td class="arrow-cell">
+                                    <div class="arrow-box">→</div>
+                                    <div class="duration">{{ $order->schedule->route->duration }} menit</div>
+                                </td>
+                                <td style="width: 37%; text-align: right;">
+                                    <div class="port-code">
+                                        {{ strtoupper(substr($order->schedule->route->destination->name, 0, 3)) }}</div>
+                                    <div class="port-name">{{ $order->schedule->route->destination->name }}</div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="route-arrow">
-                        <div class="arrow-icon">→</div>
-                        <div class="travel-duration">{{ $order->schedule->route->duration }} menit</div>
-                    </div>
-                    <div class="route-point" style="text-align: right;">
-                        <div class="port-code">{{ strtoupper(substr($order->schedule->route->destination->name, 0, 3)) }}</div>
-                        <div class="port-name">{{ $order->schedule->route->destination->name }}</div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Travel Info -->
-            <div class="info-grid">
-                <div class="info-row">
-                    <div class="info-cell">
-                        <div class="info-label">Tanggal Keberangkatan</div>
-                        <div class="info-value">{{ $order->travel_date->translatedFormat('l, d F Y') }}</div>
+                    <!-- Travel Info -->
+                    <div class="info-section">
+                        <table class="info-table">
+                            <tr>
+                                <td style="width: 30%;">
+                                    <div class="info-label">Tanggal</div>
+                                    <div class="info-value">{{ $order->travel_date->translatedFormat('d M Y') }}</div>
+                                    <div class="info-sub">{{ $order->travel_date->translatedFormat('l') }}</div>
+                                </td>
+                                <td style="width: 20%;">
+                                    <div class="info-label">Berangkat</div>
+                                    <div class="info-value">
+                                        {{ \Carbon\Carbon::parse($order->schedule->departure_time)->format('H:i') }}
+                                    </div>
+                                    <div class="info-sub">WITA</div>
+                                </td>
+                                <td style="width: 20%;">
+                                    <div class="info-label">Tiba</div>
+                                    <div class="info-value">
+                                        {{ \Carbon\Carbon::parse($order->schedule->arrival_time)->format('H:i') }}
+                                    </div>
+                                    <div class="info-sub">WITA</div>
+                                </td>
+                                <td style="width: 30%;">
+                                    <div class="info-label">Kapal</div>
+                                    <div class="info-value">{{ $order->schedule->ship->name }}</div>
+                                    <div class="info-sub">{{ $order->schedule->ship->operator ?? '' }}</div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="info-cell">
-                        <div class="info-label">Jam Keberangkatan</div>
-                        <div class="info-value">{{ \Carbon\Carbon::parse($order->schedule->departure_time)->format('H:i') }} WIB</div>
-                    </div>
-                </div>
-                <div class="info-row">
-                    <div class="info-cell">
-                        <div class="info-label">Kapal</div>
-                        <div class="info-value">{{ $order->schedule->ship->name }}</div>
-                        <div class="info-value-small">{{ $order->schedule->ship->operator ?? 'Fast Boat' }}</div>
-                    </div>
-                    <div class="info-cell">
-                        <div class="info-label">Estimasi Tiba</div>
-                        <div class="info-value">{{ \Carbon\Carbon::parse($order->schedule->arrival_time)->format('H:i') }} WIB</div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Passenger Section -->
-            <div class="passenger-section">
-                <div class="section-title">Data Penumpang</div>
-                <div class="passenger-name">{{ $ticket->passenger->name }}</div>
-                <div class="passenger-id">
-                    {{ strtoupper($ticket->passenger->id_type) }}: {{ $ticket->passenger->id_number }}
-                </div>
-                <span class="passenger-type-badge type-{{ $ticket->passenger->type }}">
-                    {{ $ticket->passenger->type === 'adult' ? 'Dewasa' : ($ticket->passenger->type === 'child' ? 'Anak-anak' : 'Bayi') }}
-                </span>
-            </div>
+                    <!-- Main Content -->
+                    <div class="main-content">
+                        <table class="main-table">
+                            <tr>
+                                <td class="passenger-col">
+                                    <div class="section-title">Data Penumpang</div>
+                                    <div class="passenger-name">{{ $ticket->passenger->name }}</div>
+                                    <div class="passenger-id">
+                                        {{ strtoupper($ticket->passenger->id_type) }}:
+                                        {{ $ticket->passenger->id_number }}
+                                    </div>
+                                    <span class="type-badge type-{{ $ticket->passenger->type }}">
+                                        {{ $ticket->passenger->type === 'adult' ? 'Dewasa' : ($ticket->passenger->type === 'child' ? 'Anak' : 'Bayi') }}
+                                    </span>
 
-            <!-- QR Code Section -->
-            <div class="qr-section">
-                <div class="qr-code">
-                    <img src="{{ $ticket->qr_base64 }}" alt="QR Code" style="width: 150px; height: 150px;">
-                </div>
-                <div class="ticket-number">{{ $ticket->ticket_number }}</div>
-                <div class="qr-instruction">Tunjukkan QR code ini saat boarding</div>
-            </div>
-
-            <!-- Footer -->
-            <div class="ticket-footer">
-                <div class="footer-row">
-                    <div class="footer-cell">
-                        <div class="order-number">Order: {{ $order->order_number }}</div>
-                        <div>{{ $order->contact_email }}</div>
+                                    <div class="highlight-box">
+                                        <div class="highlight-text">
+                                            <strong>Penting:</strong> Hadir di pelabuhan <strong>30 menit</strong>
+                                            sebelum keberangkatan. Bawa identitas asli.
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="qr-col">
+                                    <div class="section-title">Boarding Pass</div>
+                                    <div class="qr-code">
+                                        <img src="{{ $ticket->qr_base64 }}" alt="QR">
+                                    </div>
+                                    <div class="ticket-number">{{ $ticket->ticket_number }}</div>
+                                    <div class="scan-text">Scan QR saat boarding</div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="footer-cell right">
-                        <div>Dicetak: {{ now()->translatedFormat('d M Y H:i') }}</div>
-                        <div>Tiket {{ $index + 1 }} dari {{ $tickets->count() }}</div>
+
+                    <!-- Footer -->
+                    <div class="ticket-footer">
+                        <table class="footer-table">
+                            <tr>
+                                <td>
+                                    Order: <span class="order-number">{{ $order->order_number }}</span> &bull;
+                                    {{ $order->contact_email }}
+                                </td>
+                                <td class="print-info">
+                                    Tiket {{ $index + 1 }}/{{ $tickets->count() }} &bull;
+                                    {{ now()->translatedFormat('d M Y H:i') }}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Terms -->
+                    <div class="terms-section">
+                        <div class="terms-title">Syarat & Ketentuan</div>
+                        <ul class="terms-list">
+                            <li>Tiket berlaku untuk tanggal dan jadwal yang tertera</li>
+                            <li>Tiket tidak dapat dipindahtangankan ke orang lain</li>
+                            <li>Pembatalan mengikuti kebijakan refund yang berlaku</li>
+                        </ul>
                     </div>
                 </div>
-            </div>
 
-            <!-- Terms -->
-            <div class="terms-section">
-                <div class="terms-title">Syarat & Ketentuan</div>
-                <ul class="terms-list">
-                    <li>Hadir di pelabuhan minimal 30 menit sebelum keberangkatan</li>
-                    <li>Tunjukkan e-ticket dan identitas yang valid saat check-in</li>
-                    <li>Tiket tidak dapat dipindahtangankan</li>
-                    <li>Pembatalan tiket mengikuti kebijakan yang berlaku</li>
-                </ul>
+                <div class="page-info">
+                    SemabuHills &bull; semabuhills.com &bull; Halaman {{ $index + 1 }} dari {{ $tickets->count() }}
+                </div>
             </div>
         </div>
-
-        <div class="page-info">
-            Halaman {{ $index + 1 }} dari {{ $tickets->count() }} • {{ config('app.name', 'Kapal Cepat') }}
-        </div>
-    </div>
     @endforeach
 </body>
+
 </html>
