@@ -20,7 +20,8 @@ class ShipsTable
                     ->searchable(),
                 TextColumn::make('code')
                     ->searchable(),
-                ImageColumn::make('image'),
+                ImageColumn::make('image')
+                    ->disk(env('CLOUDINARY_URL') ? 'cloudinary' : 'public'),
                 TextColumn::make('capacity')
                     ->numeric()
                     ->sortable(),

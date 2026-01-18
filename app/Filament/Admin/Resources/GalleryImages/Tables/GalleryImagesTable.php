@@ -19,6 +19,7 @@ class GalleryImagesTable
             ->columns([
                 ImageColumn::make('image_path')
                     ->label('Gambar')
+                    ->disk(env('CLOUDINARY_URL') ? 'cloudinary' : 'public')
                     ->square()
                     ->size(80),
                 TextColumn::make('caption')

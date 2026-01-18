@@ -21,7 +21,7 @@ class DestinationsTable
             ->columns([
                 ImageColumn::make('image')
                     ->label('Foto')
-                    ->disk('public')
+                    ->disk(env('CLOUDINARY_URL') ? 'cloudinary' : 'public')
                     ->circular(),
                 TextColumn::make('name')
                     ->label('Nama')
