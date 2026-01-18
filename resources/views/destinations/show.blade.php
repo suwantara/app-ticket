@@ -3,9 +3,8 @@
 
     <!-- Hero Section - Full Width -->
     <section class="relative h-[50vh] md:h-[60vh] overflow-hidden">
-        @if ($destination->image)
-            <img src="{{ str_starts_with($destination->image, 'http') ? $destination->image : Storage::url($destination->image) }}"
-                alt="{{ $destination->name }}" class="w-full h-full object-cover">
+        @if ($destination->image_url)
+            <img src="{{ $destination->image_url }}" alt="{{ $destination->name }}" class="w-full h-full object-cover">
         @else
             <div class="w-full h-full bg-linear-to-br from-blue-600 to-blue-900"></div>
         @endif
@@ -304,9 +303,8 @@
                                         <a href="{{ route('destinations.show', $related->slug) }}"
                                             class="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors group">
                                             <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0">
-                                                @if ($related->image)
-                                                    <img src="{{ str_starts_with($related->image, 'http') ? $related->image : Storage::url($related->image) }}"
-                                                        alt="{{ $related->name }}"
+                                                @if ($related->image_url)
+                                                    <img src="{{ $related->image_url }}" alt="{{ $related->name }}"
                                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                                                 @else
                                                     <div
