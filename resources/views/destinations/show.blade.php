@@ -72,7 +72,7 @@
                             Tentang {{ $destination->name }}
                         </h2>
                         <div class="prose prose-lg max-w-none text-body leading-relaxed">
-                            {!! nl2br(e($destination->description)) !!}
+                            {!! $destination->description !!}
                         </div>
                     </div>
 
