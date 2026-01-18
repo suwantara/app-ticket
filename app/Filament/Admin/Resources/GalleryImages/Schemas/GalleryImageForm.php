@@ -26,7 +26,12 @@ class GalleryImageForm
                             ->imageEditor()
                             ->required()
                             ->helperText('Unggah gambar untuk galeri.')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->afterStateHydrated(function ($component, $state) {
+                                if ($state && (str_starts_with($state, 'http://') || str_starts_with($state, 'https://'))) {
+                                    $component->state(null);
+                                }
+                            }),
                         Textarea::make('caption')
                             ->label('Keterangan')
                             ->rows(3)

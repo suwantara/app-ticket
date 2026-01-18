@@ -79,7 +79,14 @@ class DestinationForm
                             ->openable()
                             ->downloadable()
                             ->helperText('Unggah gambar utama destinasi.')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->afterStateHydrated(function ($component, $state, $record) {
+                                // If state is an external URL, clear it to prevent Cloudinary lookup
+                                if ($state && (str_starts_with($state, 'http://') || str_starts_with($state, 'https://'))) {
+                                    // Store original URL for reference but clear state for FileUpload
+                                    $component->state(null);
+                                }
+                            }),
                         FileUpload::make('gallery')
                             ->label('Galeri Foto')
                             ->image()
@@ -93,7 +100,16 @@ class DestinationForm
                             ->downloadable()
                             ->maxFiles(10)
                             ->helperText('Unggah maksimal 10 gambar.')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->afterStateHydrated(function ($component, $state, $record) {
+                                // Filter out external URLs from gallery
+                                if ($state && is_array($state)) {
+                                    $filtered = array_filter($state, function($item) {
+                                        return !str_starts_with($item, 'http://') && !str_starts_with($item, 'https://');
+                                    });
+                                    $component->state(array_values($filtered));
+                                }
+                            }),
                     ]),
 
                 Section::make('Lokasi')

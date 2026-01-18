@@ -67,7 +67,12 @@ class ShipForm
                                     ->visibility('public')
                                     ->maxSize(2048)
                                     ->imageEditor()
-                                    ->helperText('Unggah foto kapal'),
+                                    ->helperText('Unggah foto kapal')
+                                    ->afterStateHydrated(function ($component, $state) {
+                                        if ($state && (str_starts_with($state, 'http://') || str_starts_with($state, 'https://'))) {
+                                            $component->state(null);
+                                        }
+                                    }),
 
                                 FileUpload::make('operator_logo')
                                     ->label('Logo Operator')
@@ -76,7 +81,12 @@ class ShipForm
                                     ->directory('operators')
                                     ->visibility('public')
                                     ->maxSize(1024)
-                                    ->helperText('Unggah logo operator'),
+                                    ->helperText('Unggah logo operator')
+                                    ->afterStateHydrated(function ($component, $state) {
+                                        if ($state && (str_starts_with($state, 'http://') || str_starts_with($state, 'https://'))) {
+                                            $component->state(null);
+                                        }
+                                    }),
                             ]),
                     ]),
 

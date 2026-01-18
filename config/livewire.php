@@ -64,9 +64,10 @@ return [
     */
 
     'temporary_file_upload' => [
-        'disk' => null,  // Use default disk
-        'rules' => null,       // Example: ['file', 'mimes:png,jpg']  | Default: ['required', 'file', 'max:12288'] (12MB)
-        'directory' => null,   // Example: 'tmp'                      | Default: 'livewire-tmp'
+        // Use Cloudinary for temp uploads in production (Heroku ephemeral filesystem)
+        'disk' => env('CLOUDINARY_URL') ? 'cloudinary' : 'public',
+        'rules' => null, // Use default validation, let FileUpload handle it
+        'directory' => 'livewire-tmp',   // Temp directory
         'middleware' => 'throttle:60,1', // Only throttle, no auth requirement for upload endpoint
         'preview_mimes' => [   // Supported file types for temporary pre-signed file URLs...
             'png', 'gif', 'bmp', 'svg', 'wav', 'mp4',
