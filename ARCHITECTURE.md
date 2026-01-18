@@ -39,8 +39,8 @@ Sistem pemesanan tiket ferry online untuk rute Bali - Nusa Penida, Lembongan, da
 | ---------- | ------- | -------------------- |
 | PHP        | ^8.2    | Server-side language |
 | Laravel    | 12.x    | PHP Framework        |
-| Livewire   | 3.7     | Reactive components  |
-| Filament   | 4.4     | Admin panel          |
+| Livewire   | 4.0     | Reactive components  |
+| Filament   | 5.0     | Admin panel          |
 | MySQL      | 8.x     | Database             |
 
 ### Frontend
@@ -60,8 +60,8 @@ Sistem pemesanan tiket ferry online untuk rute Bali - Nusa Penida, Lembongan, da
 | Package                            | Version | Purpose                             |
 | ---------------------------------- | ------- | ----------------------------------- |
 | `laravel/framework`                | ^12.0   | Laravel core framework              |
-| `livewire/livewire`                | ^3.7    | Reactive PHP components             |
-| `filament/filament`                | ~4.4.0  | Admin panel & form builder          |
+| `livewire/livewire`                | ^4.0    | Reactive PHP components             |
+| `filament/filament`                | ~5.0    | Admin panel & form builder          |
 | `barryvdh/laravel-dompdf`          | ^3.1    | PDF generation                      |
 | `simplesoftwareio/simple-qrcode`   | ^4.2    | QR code generation (SVG)            |
 | `midtrans/midtrans-php`            | ^2.6    | Payment gateway integration         |

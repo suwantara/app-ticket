@@ -1,17 +1,7 @@
 <x-layouts.app :title="$page->meta_title ?? 'Hubungi Kami'">
     {{-- Page Header --}}
-    <section class="bg-linear-to-r from-blue-600 to-blue-800 py-20">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
-                {{ $page->title }}
-            </h1>
-            @if ($page->meta_description)
-                <p class="text-lg text-blue-100 max-w-2xl mx-auto">
-                    {{ $page->meta_description }}
-                </p>
-            @endif
-        </div>
-    </section>
+    <x-header-section title="Hubungi Kami"
+        subtitle="Hubungi kami untuk informasi lebih lanjut atau pertanyaan yang Anda miliki" />
 
     {{-- Contact Section --}}
     <section class="py-16 bg-gray-50">
@@ -211,7 +201,7 @@
                             </div>
 
                             <button type="submit"
-                                class="w-full text-white bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-base px-6 py-4 text-center transition-all shadow-lg hover:shadow-xl">
+                                class="w-full text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-base px-6 py-4 text-center transition-all shadow-lg hover:shadow-xl">
                                 <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Pesan
                             </button>
                         </form>
@@ -220,20 +210,6 @@
             </div>
         </div>
     </section>
-
-    {{-- CMS Content --}}
-    @if ($page->content)
-        <section class="py-16 bg-white">
-            <div class="container mx-auto px-4">
-                <div class="max-w-4xl mx-auto">
-                    <article
-                        class="prose prose-lg max-w-none prose-headings:text-gray-800 prose-p:text-gray-600 prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-ul:text-gray-600 prose-ol:text-gray-600 prose-strong:text-gray-700">
-                        {!! $page->content !!}
-                    </article>
-                </div>
-            </div>
-        </section>
-    @endif
 
     {{-- Map Section --}}
     <section class="h-96 bg-gray-300">
