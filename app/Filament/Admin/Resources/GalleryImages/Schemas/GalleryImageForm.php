@@ -20,7 +20,7 @@ class GalleryImageForm
                         FileUpload::make('image_path')
                             ->label('File Gambar')
                             ->image()
-                            ->disk(env('CLOUDINARY_URL') ? 'cloudinary' : 'public')
+                            ->disk('public')
                             ->directory('gallery')
                             ->visibility('public')
                             ->imageEditor()

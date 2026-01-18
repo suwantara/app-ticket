@@ -64,7 +64,7 @@ return [
     */
 
     'temporary_file_upload' => [
-        'disk' => env('CLOUDINARY_URL') ? 'local' : null,  // Use local for temp, then move to cloudinary
+        'disk' => null,  // Use default disk
         'rules' => null,       // Example: ['file', 'mimes:png,jpg']  | Default: ['required', 'file', 'max:12288'] (12MB)
         'directory' => null,   // Example: 'tmp'                      | Default: 'livewire-tmp'
         'middleware' => 'throttle:60,1', // Only throttle, no auth requirement for upload endpoint
