@@ -37,7 +37,7 @@ Sistem pemesanan tiket ferry online untuk rute Bali - Nusa Penida, Lembongan, da
 
 | Technology | Version | Purpose              |
 | ---------- | ------- | -------------------- |
-| PHP        | ^8.4    | Server-side language |
+| PHP        | ^8.2    | Server-side language |
 | Laravel    | 12.x    | PHP Framework        |
 | Livewire   | 3.7     | Reactive components  |
 | Filament   | 4.4     | Admin panel          |
@@ -51,85 +51,242 @@ Sistem pemesanan tiket ferry online untuk rute Bali - Nusa Penida, Lembongan, da
 | Flowbite     | 4.0     | UI Components                       |
 | Alpine.js    | 3.x     | JavaScript framework (via Livewire) |
 | Vite         | 7.x     | Build tool                          |
+| Axios        | 1.11    | HTTP client                         |
+
+### PHP Dependencies (composer.json)
+
+#### Production Dependencies
+
+| Package                            | Version | Purpose                             |
+| ---------------------------------- | ------- | ----------------------------------- |
+| `laravel/framework`                | ^12.0   | Laravel core framework              |
+| `livewire/livewire`                | ^3.7    | Reactive PHP components             |
+| `filament/filament`                | ~4.4.0  | Admin panel & form builder          |
+| `barryvdh/laravel-dompdf`          | ^3.1    | PDF generation                      |
+| `simplesoftwareio/simple-qrcode`   | ^4.2    | QR code generation (SVG)            |
+| `midtrans/midtrans-php`            | ^2.6    | Payment gateway integration         |
+| `cloudinary-labs/cloudinary-laravel` | ^3.0  | Cloud image storage                 |
+| `intervention/image`               | ^3.11   | Image manipulation                  |
+| `laravel/tinker`                   | ^2.10   | REPL for Laravel                    |
+
+#### Development Dependencies
+
+| Package                      | Version | Purpose                       |
+| ---------------------------- | ------- | ----------------------------- |
+| `fakerphp/faker`             | ^1.23   | Fake data generation          |
+| `pestphp/pest`               | ^4.3    | Testing framework             |
+| `pestphp/pest-plugin-laravel`| ^4.0    | Laravel Pest integration      |
+| `laravel/pint`               | ^1.24   | Code style fixer              |
+| `laravel/sail`               | ^1.41   | Docker development            |
+| `laravel/pail`               | ^1.2    | Log viewer                    |
+| `laravel/boost`              | ^1.8    | Performance optimization      |
+| `mockery/mockery`            | ^1.6    | Mocking library               |
+| `nunomaduro/collision`       | ^8.6    | Error handling                |
+
+### Node.js Dependencies (package.json)
+
+| Package              | Version | Purpose                    |
+| -------------------- | ------- | -------------------------- |
+| `vite`               | ^7.0.7  | Build tool                 |
+| `tailwindcss`        | ^4.0.0  | CSS framework              |
+| `@tailwindcss/vite`  | ^4.0.0  | Tailwind Vite plugin       |
+| `laravel-vite-plugin`| ^2.0.0  | Laravel Vite integration   |
+| `flowbite`           | ^4.0.1  | UI component library       |
+| `axios`              | ^1.11.0 | HTTP client                |
+| `concurrently`       | ^9.0.1  | Run multiple commands      |
 
 ### External Services
 
 | Service                 | Purpose                         |
 | ----------------------- | ------------------------------- |
 | Midtrans                | Payment Gateway                 |
-| SimpleSoftwareIO/QrCode | QR Code Generation (SVG)        |
-| chillerlan/php-qrcode   | QR Code Generation (PNG/Base64) |
-| DomPDF                  | PDF Generation                  |
+| Cloudinary              | Cloud image/file storage        |
+| Heroku                  | Cloud hosting platform          |
+| ClearDB/JawsDB          | Managed MySQL database          |
 
 ---
 
 ## Backend Architecture
 
-### Directory Structure
+### Complete Project Structure
 
 ```
-app/
-├── Console/Commands/           # Artisan commands
-│   ├── ExpireUnpaidOrders.php  # Auto-expire unpaid orders
-│   └── GenerateTickets.php     # Ticket generation command
-├── Filament/Admin/Resources/   # Filament admin resources
-│   ├── Destinations/
-│   ├── GalleryImages/
-│   ├── Messages/
-│   ├── Orders/
-│   ├── Routes/
-│   ├── Schedules/
-│   ├── Ships/
-│   ├── Tickets/
-│   └── Users/
-├── Http/
-│   ├── Controllers/
-│   │   ├── AuthController.php         # User authentication
-│   │   ├── BoardingController.php     # QR scanning, boarding system
-│   │   ├── ContactController.php      # Contact form handling
-│   │   ├── DestinationController.php  # Destination listings
-│   │   ├── GalleryController.php      # Photo gallery
-│   │   ├── PageController.php         # Static pages
-│   │   ├── PaymentController.php      # Payment flow, Midtrans
-│   │   ├── ScheduleController.php     # Schedule search API
-│   │   ├── StaffAuthController.php    # Staff authentication
-│   │   ├── TicketController.php       # Ticket display, validation
-│   │   └── TicketPdfController.php    # PDF generation & download
-│   └── Middleware/
-│       └── EnsureUserIsStaff.php
-├── Livewire/                    # Livewire components
-│   ├── BookingForm.php          # Multi-step booking
-│   ├── DestinationSection.php   # Destination display
-│   ├── ScheduleSection.php      # Schedule display
-│   ├── SearchBookingForm.php    # Schedule search
-│   ├── SearchResults.php        # Search results display
-│   └── TicketPage.php           # Ticket display (SPA-like)
-├── Models/
-│   ├── Destination.php
-│   ├── GalleryImage.php         # Photo gallery images
-│   ├── Message.php              # Contact form messages
-│   ├── Order.php
-│   ├── Passenger.php
-│   ├── Route.php
-│   ├── Schedule.php
-│   ├── Ship.php
-│   ├── Ticket.php
-│   └── User.php
-├── Observers/
-│   ├── DestinationObserver.php  # Cache invalidation
-│   └── ScheduleObserver.php     # Cache invalidation
-├── Providers/
-│   └── Filament/
-├── Repositories/                 # Future repository pattern
-└── Services/                     # Business logic services
-    ├── BoardingStatsService.php      # Boarding statistics
-    ├── CacheService.php              # Application caching
-    ├── MidtransService.php           # Payment integration
-    ├── QrCodeParserService.php       # QR code parsing
-    ├── QrCodeService.php             # QR code generation
-    ├── TicketPdfService.php          # PDF generation
-    ├── TicketService.php             # Ticket management
-    └── TicketValidationService.php   # Ticket validation
+app-ticket/
+├── .github/                      # GitHub workflows
+├── app/                          # Application code
+│   ├── Console/
+│   │   └── Commands/             # Artisan commands
+│   │       ├── ExpireUnpaidOrders.php  # Auto-expire unpaid orders
+│   │       └── GenerateTickets.php     # Ticket generation
+│   ├── Filament/
+│   │   └── Admin/
+│   │       ├── Pages/            # Custom admin pages
+│   │       └── Resources/        # Filament resources
+│   │           ├── Destinations/
+│   │           │   ├── Pages/
+│   │           │   └── Schemas/
+│   │           ├── GalleryImages/
+│   │           ├── Messages/
+│   │           ├── Orders/
+│   │           ├── Routes/
+│   │           ├── Schedules/
+│   │           ├── Ships/
+│   │           ├── Tickets/
+│   │           └── Users/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── AuthController.php
+│   │   │   ├── BoardingController.php
+│   │   │   ├── ContactController.php
+│   │   │   ├── DestinationController.php
+│   │   │   ├── GalleryController.php
+│   │   │   ├── PageController.php
+│   │   │   ├── PaymentController.php
+│   │   │   ├── ScheduleController.php
+│   │   │   ├── StaffAuthController.php
+│   │   │   ├── TicketController.php
+│   │   │   └── TicketPdfController.php
+│   │   └── Middleware/
+│   │       ├── EnsureUserIsStaff.php
+│   │       └── SecurityHeaders.php
+│   ├── Livewire/                 # Livewire components
+│   │   ├── BookingForm.php
+│   │   ├── DestinationSection.php
+│   │   ├── ScheduleSection.php
+│   │   ├── SearchBookingForm.php
+│   │   ├── SearchResults.php
+│   │   └── TicketPage.php
+│   ├── Models/                   # Eloquent models
+│   │   ├── Destination.php
+│   │   ├── GalleryImage.php
+│   │   ├── Message.php
+│   │   ├── Order.php
+│   │   ├── Passenger.php
+│   │   ├── Route.php
+│   │   ├── Schedule.php
+│   │   ├── Ship.php
+│   │   ├── Ticket.php
+│   │   └── User.php
+│   ├── Observers/                # Model observers
+│   │   ├── DestinationObserver.php
+│   │   └── ScheduleObserver.php
+│   ├── Providers/
+│   │   └── Filament/
+│   │       └── AdminPanelProvider.php
+│   ├── Repositories/             # Repository pattern (future)
+│   ├── Services/                 # Business logic services
+│   │   ├── BoardingStatsService.php
+│   │   ├── CacheService.php
+│   │   ├── MidtransService.php
+│   │   ├── QrCodeParserService.php
+│   │   ├── QrCodeService.php
+│   │   ├── TicketPdfService.php
+│   │   ├── TicketService.php
+│   │   └── TicketValidationService.php
+│   └── View/
+│       └── Components/           # Blade view components
+│           ├── CtaSection.php
+│           ├── DestinationCard.php
+│           ├── FaqSection.php
+│           ├── FeatureSection.php
+│           ├── Footer.php
+│           ├── HeaderSection.php
+│           ├── HeroSection.php
+│           ├── Layouts/
+│           │   └── App.php
+│           ├── Navbar.php
+│           └── TicketStepSection.php
+├── bootstrap/
+│   ├── app.php                   # Application bootstrap
+│   ├── cache/
+│   └── providers.php
+├── config/                       # Configuration files
+│   ├── app.php
+│   ├── auth.php
+│   ├── cache.php
+│   ├── cloudinary.php            # Cloudinary config
+│   ├── database.php
+│   ├── filesystems.php           # Storage disks config
+│   ├── livewire.php
+│   ├── midtrans.php              # Midtrans config
+│   ├── queue.php
+│   ├── session.php
+│   └── ...
+├── database/
+│   ├── factories/                # Model factories
+│   │   ├── DestinationFactory.php
+│   │   ├── GalleryImageFactory.php
+│   │   ├── OrderFactory.php
+│   │   ├── PassengerFactory.php
+│   │   ├── RouteFactory.php
+│   │   ├── ScheduleFactory.php
+│   │   ├── ShipFactory.php
+│   │   ├── TicketFactory.php
+│   │   └── UserFactory.php
+│   ├── migrations/               # Database migrations
+│   └── seeders/                  # Database seeders
+│       ├── DatabaseSeeder.php
+│       ├── DestinationSeeder.php
+│       ├── ScheduleSeeder.php
+│       └── StaffSeeder.php
+├── docs/                         # Additional documentation
+├── public/                       # Public assets
+│   ├── build/                    # Compiled assets (Vite)
+│   ├── fonts/
+│   ├── images/
+│   └── storage/                  # Symlink to storage/app/public
+├── resources/
+│   ├── css/
+│   │   └── app.css               # Main stylesheet
+│   ├── js/
+│   │   └── app.js                # Main JavaScript
+│   └── views/
+│       ├── auth/                 # Authentication views
+│       ├── boarding/             # Boarding system views
+│       ├── components/           # Blade components
+│       │   ├── layouts/
+│       │   │   └── app.blade.php
+│       │   ├── ticket/
+│       │   └── ui/
+│       ├── destinations/         # Destination pages
+│       ├── errors/               # Error pages
+│       ├── filament/             # Filament customizations
+│       ├── livewire/             # Livewire component views
+│       ├── pages/                # Page templates
+│       │   ├── about.blade.php
+│       │   ├── booking-confirmation.blade.php
+│       │   ├── contact.blade.php
+│       │   ├── destinations/
+│       │   ├── home.blade.php
+│       │   ├── payment.blade.php
+│       │   └── ticket.blade.php
+│       ├── pdf/                  # PDF templates
+│       ├── staff/                # Staff views
+│       └── tickets/              # Ticket views
+├── routes/
+│   ├── console.php               # Scheduled commands
+│   └── web.php                   # Web routes
+├── storage/
+│   ├── app/
+│   │   └── public/               # Public uploaded files
+│   ├── framework/
+│   └── logs/
+├── tests/
+│   ├── Feature/                  # Feature tests
+│   ├── Unit/                     # Unit tests
+│   ├── Pest.php
+│   └── TestCase.php
+├── vendor/                       # Composer dependencies
+├── .env                          # Environment variables
+├── .env.example                  # Example environment
+├── ARCHITECTURE.md               # This file
+├── Dockerfile                    # Docker configuration
+├── Procfile                      # Heroku process file
+├── README.md                     # Project readme
+├── composer.json                 # PHP dependencies
+├── package.json                  # Node.js dependencies
+├── phpunit.xml                   # PHPUnit configuration
+└── vite.config.js                # Vite configuration
 ```
 
 ### Controllers
@@ -870,4 +1027,4 @@ This project is proprietary software. All rights reserved.
 
 ---
 
-_Documentation last updated: January 14, 2026_
+_Documentation last updated: January 18, 2026_

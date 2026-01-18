@@ -1,0 +1,345 @@
+{
+	"info": {
+		"_postman_id": "ferry-ticket-api-collection",
+		"name": "Ferry Ticket API",
+		"description": "API Collection untuk Ferry Ticket Booking System\n\nBase URL:\n- Production: https://app-tickets-244be60c2a8e.herokuapp.com\n- Local: http://localhost:8000",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://app-tickets-244be60c2a8e.herokuapp.com",
+			"type": "string"
+		},
+		{
+			"key": "local_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Schedule",
+			"description": "Schedule search endpoints",
+			"item": [
+				{
+					"name": "Search Schedules",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/schedules/search?origin_id=1&destination_id=2&date=2026-01-20&passengers=2",
+							"host": ["{{base_url}}"],
+							"path": ["schedules", "search"],
+							"query": [
+								{
+									"key": "origin_id",
+									"value": "1",
+									"description": "Origin destination ID"
+								},
+								{
+									"key": "destination_id",
+									"value": "2",
+									"description": "Destination ID"
+								},
+								{
+									"key": "date",
+									"value": "2026-01-20",
+									"description": "Travel date (YYYY-MM-DD)"
+								},
+								{
+									"key": "passengers",
+									"value": "2",
+									"description": "Number of passengers (optional, default: 1)"
+								}
+							]
+						},
+						"description": "Search available ferry schedules for a specific route and date"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Destinations",
+			"description": "Destination endpoints",
+			"item": [
+				{
+					"name": "Get All Destinations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/destinations",
+							"host": ["{{base_url}}"],
+							"path": ["destinations"]
+						},
+						"description": "Get list of all destinations (islands and harbors)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Destination by Slug",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/destinations/nusa-penida",
+							"host": ["{{base_url}}"],
+							"path": ["destinations", "nusa-penida"]
+						},
+						"description": "Get destination details by slug"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ticket",
+			"description": "Ticket validation and boarding endpoints",
+			"item": [
+				{
+					"name": "Validate Ticket",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ticket/validate/TKT-20260115-ABC12",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ticket", "validate", "TKT-20260115-ABC12"]
+						},
+						"description": "Validate a ticket by QR code content"
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Ticket as Used",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"used_by\": \"Staff Name\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/ticket/use/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ticket", "use", "1"]
+						},
+						"description": "Mark a ticket as used (boarded). Requires staff authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Process Validation (Combined)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"qr_code\": \"TKT-20260115-ABC12\",\n    \"action\": \"validate\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/ticket/process-validation",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ticket", "process-validation"]
+						},
+						"description": "Validate or use a ticket in one request. Action can be 'validate' or 'use'."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contact",
+			"description": "Contact form endpoints",
+			"item": [
+				{
+					"name": "Submit Contact Form",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"subject\": \"Pertanyaan tentang jadwal\",\n    \"message\": \"Apakah ada jadwal untuk rute Sanur - Nusa Penida pada hari Minggu?\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/contact",
+							"host": ["{{base_url}}"],
+							"path": ["contact"]
+						},
+						"description": "Submit a contact form message"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"description": "Payment related endpoints",
+			"item": [
+				{
+					"name": "Check Payment Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/payment/ORD-20260118-XXXXX/status",
+							"host": ["{{base_url}}"],
+							"path": ["payment", "ORD-20260118-XXXXX", "status"]
+						},
+						"description": "Check payment status for an order"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Boarding",
+			"description": "Boarding system endpoints (requires staff auth)",
+			"item": [
+				{
+					"name": "Get Boarding Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/boarding/stats",
+							"host": ["{{base_url}}"],
+							"path": ["boarding", "stats"]
+						},
+						"description": "Get real-time boarding statistics. Requires staff authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Boarding Stats by Schedule",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/boarding/stats?schedule_id=1",
+							"host": ["{{base_url}}"],
+							"path": ["boarding", "stats"],
+							"query": [
+								{
+									"key": "schedule_id",
+									"value": "1",
+									"description": "Filter by schedule ID"
+								}
+							]
+						},
+						"description": "Get boarding statistics for a specific schedule"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gallery",
+			"description": "Gallery endpoints",
+			"item": [
+				{
+					"name": "Get Gallery Images",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/gallery",
+							"host": ["{{base_url}}"],
+							"path": ["gallery"]
+						},
+						"description": "Get all gallery images"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Gallery by Destination",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/gallery/nusa-penida",
+							"host": ["{{base_url}}"],
+							"path": ["gallery", "nusa-penida"]
+						},
+						"description": "Get gallery images for a specific destination"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
