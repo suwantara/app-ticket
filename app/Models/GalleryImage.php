@@ -35,6 +35,11 @@ class GalleryImage extends Model
             return asset('images/placeholder.png');
         }
 
+        // If already a full URL, return as-is
+        if (str_starts_with($this->image_path, 'http://') || str_starts_with($this->image_path, 'https://')) {
+            return $this->image_path;
+        }
+
         return Storage::disk($this->getImageDisk())->url($this->image_path);
     }
 }

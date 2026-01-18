@@ -56,6 +56,11 @@ class Destination extends Model
             return null;
         }
 
+        // If already a full URL, return as-is
+        if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://')) {
+            return $this->image;
+        }
+
         return Storage::disk($this->getImageDisk())->url($this->image);
     }
 
@@ -69,7 +74,13 @@ class Destination extends Model
         }
 
         $disk = Storage::disk($this->getImageDisk());
-        return array_map(fn($path) => $disk->url($path), $this->gallery);
+        return array_map(function($path) use ($disk) {
+            // If already a full URL, return as-is
+            if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+                return $path;
+            }
+            return $disk->url($path);
+        }, $this->gallery);
     }
 
     /**

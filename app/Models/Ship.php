@@ -62,6 +62,11 @@ class Ship extends Model
             return null;
         }
 
+        // If already a full URL, return as-is
+        if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://')) {
+            return $this->image;
+        }
+
         return Storage::disk($this->getImageDisk())->url($this->image);
     }
 
@@ -72,6 +77,11 @@ class Ship extends Model
     {
         if (!$this->operator_logo) {
             return null;
+        }
+
+        // If already a full URL, return as-is
+        if (str_starts_with($this->operator_logo, 'http://') || str_starts_with($this->operator_logo, 'https://')) {
+            return $this->operator_logo;
         }
 
         return Storage::disk($this->getImageDisk())->url($this->operator_logo);
