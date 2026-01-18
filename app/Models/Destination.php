@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Destination extends Model
 {
@@ -37,6 +38,39 @@ class Destination extends Model
         'latitude' => 'decimal:8',
         'longitude' => 'decimal:8',
     ];
+
+    /**
+     * Get the disk used for image storage
+     */
+    protected function getImageDisk(): string
+    {
+        return env('CLOUDINARY_URL') ? 'cloudinary' : 'public';
+    }
+
+    /**
+     * Get the full URL for the main image
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        if (!$this->image) {
+            return null;
+        }
+
+        return Storage::disk($this->getImageDisk())->url($this->image);
+    }
+
+    /**
+     * Get gallery image URLs
+     */
+    public function getGalleryUrlsAttribute(): array
+    {
+        if (!$this->gallery || !is_array($this->gallery)) {
+            return [];
+        }
+
+        $disk = Storage::disk($this->getImageDisk());
+        return array_map(fn($path) => $disk->url($path), $this->gallery);
+    }
 
     /**
      * Get routes originating from this destination

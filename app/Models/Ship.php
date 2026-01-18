@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Ship extends Model
 {
@@ -26,6 +27,14 @@ class Ship extends Model
         'capacity' => 'integer',
     ];
 
+    /**
+     * Get the disk used for image storage
+     */
+    protected function getImageDisk(): string
+    {
+        return env('CLOUDINARY_URL') ? 'cloudinary' : 'public';
+    }
+
     // Scopes
     public function scopeActive($query)
     {
@@ -42,5 +51,29 @@ class Ship extends Model
     public function getCapacityLabelAttribute(): string
     {
         return $this->capacity . ' penumpang';
+    }
+
+    /**
+     * Get the full URL for the ship image
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        if (!$this->image) {
+            return null;
+        }
+
+        return Storage::disk($this->getImageDisk())->url($this->image);
+    }
+
+    /**
+     * Get the full URL for the operator logo
+     */
+    public function getOperatorLogoUrlAttribute(): ?string
+    {
+        if (!$this->operator_logo) {
+            return null;
+        }
+
+        return Storage::disk($this->getImageDisk())->url($this->operator_logo);
     }
 }
