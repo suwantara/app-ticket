@@ -2,7 +2,7 @@
     <div class="flex items-center justify-between mx-auto container p-4">
         {{-- Logo (hidden when mobile menu is open) --}}
         <a href="{{ route('home') }}" id="navbar-logo" class="flex items-center space-x-3 rtl:space-x-reverse">
-            <img src="{{ asset('img/logo-semabu.webp') }}" class="h-8" alt="{{ config('app.name') }} Logo" width="157"
+            <img src="{{ asset('img/logo-semabu.png') }}" class="h-8" alt="{{ config('app.name') }} Logo" width="157"
                 height="32" />
         </a>
 
