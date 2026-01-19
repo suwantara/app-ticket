@@ -1,45 +1,36 @@
 {{-- Alpine.js Alert/Confirmation Modal Component --}}
-<div x-data="alertModal()"
-     x-on:show-alert.window="showAlert($event.detail)"
-     x-on:show-confirm.window="showConfirm($event.detail)">
+<div x-data="alertModal()" x-on:show-alert.window="showAlert($event.detail)"
+    x-on:show-confirm.window="showConfirm($event.detail)">
 
     {{-- Alert Modal --}}
     <template x-teleport="body">
-        <div x-show="isOpen"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 z-99999 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-             style="display: none;">
+        <div x-show="isOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-99999 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            style="display: none;">
 
-            <div x-show="isOpen"
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 scale-95"
-                 x-transition:enter-end="opacity-100 scale-100"
-                 x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-start="opacity-100 scale-100"
-                 x-transition:leave-end="opacity-0 scale-95"
-                 @click.away="close()"
-                 class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <div x-show="isOpen" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95" @click.away="close()"
+                class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
 
                 {{-- Icon Header --}}
                 <div class="p-6 text-center"
-                     :class="{
-                         'bg-linear-to-br from-green-50 to-green-100': type === 'success',
-                         'bg-linear-to-br from-red-50 to-red-100': type === 'error',
-                         'bg-linear-to-br from-yellow-50 to-yellow-100': type === 'warning',
-                         'bg-linear-to-br from-blue-50 to-blue-100': type === 'info' || type === 'confirm',
-                     }">
+                    :class="{
+                        'bg-linear-to-br from-green-50 to-green-100': type === 'success',
+                        'bg-linear-to-br from-red-50 to-red-100': type === 'error',
+                        'bg-linear-to-br from-yellow-50 to-yellow-100': type === 'warning',
+                        'bg-linear-to-br from-blue-50 to-blue-100': type === 'info' || type === 'confirm',
+                    }">
                     <div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center"
-                         :class="{
-                             'bg-green-100 text-green-600': type === 'success',
-                             'bg-red-100 text-red-600': type === 'error',
-                             'bg-yellow-100 text-yellow-600': type === 'warning',
-                             'bg-blue-100 text-blue-600': type === 'info' || type === 'confirm',
-                         }">
+                        :class="{
+                            'bg-green-100 text-green-600': type === 'success',
+                            'bg-red-100 text-red-600': type === 'error',
+                            'bg-yellow-100 text-yellow-600': type === 'warning',
+                            'bg-blue-100 text-blue-600': type === 'info' || type === 'confirm',
+                        }">
                         <template x-if="type === 'success'">
                             <i class="fa-solid fa-check text-3xl"></i>
                         </template>
@@ -69,20 +60,20 @@
                     {{-- Cancel Button (for confirm) --}}
                     <template x-if="isConfirm">
                         <button @click="cancel()"
-                                class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors cursor-pointer">
+                            class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors cursor-pointer">
                             <span x-text="cancelText"></span>
                         </button>
                     </template>
 
                     {{-- OK/Confirm Button --}}
                     <button @click="confirm()"
-                            class="px-6 py-2.5 font-medium rounded-lg transition-colors cursor-pointer"
-                            :class="{
-                                'bg-green-600 hover:bg-green-700 text-white': type === 'success',
-                                'bg-red-600 hover:bg-red-700 text-white': type === 'error',
-                                'bg-yellow-500 hover:bg-yellow-600 text-white': type === 'warning',
-                                'bg-blue-600 hover:bg-blue-700 text-white': type === 'info' || type === 'confirm',
-                            }">
+                        class="px-6 py-2.5 font-medium rounded-lg transition-colors cursor-pointer"
+                        :class="{
+                            'bg-green-600 hover:bg-green-700 text-white': type === 'success',
+                            'bg-red-600 hover:bg-red-700 text-white': type === 'error',
+                            'bg-yellow-400 hover:bg-yellow-500 text-gray-700': type === 'warning',
+                            'bg-blue-600 hover:bg-blue-700 text-white': type === 'info' || type === 'confirm',
+                        }">
                         <span x-text="confirmText"></span>
                     </button>
                 </div>
@@ -153,7 +144,9 @@
 
     // Global helper functions
     window.showAlert = function(options) {
-        window.dispatchEvent(new CustomEvent('show-alert', { detail: options }));
+        window.dispatchEvent(new CustomEvent('show-alert', {
+            detail: options
+        }));
     };
 
     window.showConfirm = function(options) {
@@ -163,32 +156,53 @@
                 onConfirm: () => resolve(true),
                 onCancel: () => resolve(false),
             };
-            window.dispatchEvent(new CustomEvent('show-confirm', { detail }));
+            window.dispatchEvent(new CustomEvent('show-confirm', {
+                detail
+            }));
         });
     };
 
     // Success alert shorthand
     window.alertSuccess = function(message, title = 'Berhasil!') {
-        showAlert({ type: 'success', title, message });
+        showAlert({
+            type: 'success',
+            title,
+            message
+        });
     };
 
     // Error alert shorthand
     window.alertError = function(message, title = 'Error!') {
-        showAlert({ type: 'error', title, message });
+        showAlert({
+            type: 'error',
+            title,
+            message
+        });
     };
 
     // Warning alert shorthand
     window.alertWarning = function(message, title = 'Perhatian!') {
-        showAlert({ type: 'warning', title, message });
+        showAlert({
+            type: 'warning',
+            title,
+            message
+        });
     };
 
     // Info alert shorthand
     window.alertInfo = function(message, title = 'Informasi') {
-        showAlert({ type: 'info', title, message });
+        showAlert({
+            type: 'info',
+            title,
+            message
+        });
     };
 
     // Confirm shorthand
     window.confirmAction = async function(message, title = 'Konfirmasi') {
-        return showConfirm({ title, message });
+        return showConfirm({
+            title,
+            message
+        });
     };
 </script>

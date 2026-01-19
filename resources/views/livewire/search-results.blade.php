@@ -70,14 +70,14 @@
                                 <div wire:click="selectSchedule({{ $schedule['id'] }}, false)"
                                     class="flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all duration-200
                                 {{ $selectedScheduleId == $schedule['id']
-                                    ? 'bg-blue-50 border-2 border-blue-500 shadow-md'
-                                    : 'bg-gray-50 border-2 border-transparent hover:bg-blue-50/50 hover:border-blue-200' }}">
+                                    ? 'bg-yellow-50 border-2 border-yellow-500 shadow-md'
+                                    : 'bg-gray-50 border-2 border-transparent hover:bg-yellow-50/50 hover:border-yellow-200' }}">
 
                                     <!-- Selection Radio -->
                                     <div class="shrink-0">
                                         <div
                                             class="w-5 h-5 rounded-full border-2 flex items-center justify-center
-                                        {{ $selectedScheduleId == $schedule['id'] ? 'border-blue-500 bg-blue-500' : 'border-gray-300' }}">
+                                        {{ $selectedScheduleId == $schedule['id'] ? 'border-yellow-500 bg-yellow-500' : 'border-gray-300' }}">
                                             @if ($selectedScheduleId == $schedule['id'])
                                                 <i class="fa-solid fa-check text-white text-xs"></i>
                                             @endif
@@ -212,9 +212,9 @@
                             ? collect($returnResults)->firstWhere('id', $selectedReturnScheduleId)
                             : null;
                     @endphp
-                    <div class="p-6 bg-linear-to-r from-blue-50 to-green-50">
+                    <div class="p-6 bg-neutral-primary border border-gray-200 rounded-xl">
                         <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-clipboard-list text-blue-600"></i>
+                            <i class="fa-solid fa-clipboard-list text-blue-900"></i>
                             Ringkasan Pemesanan
                         </h4>
 
@@ -241,7 +241,7 @@
                                 <div class="text-sm text-gray-500">
                                     <i class="fa-solid fa-users mr-1"></i>{{ $passengers }} penumpang
                                 </div>
-                                <div class="mt-2 font-bold text-blue-600">
+                                <div class="mt-2 font-bold text-blue-900">
                                     {{ $selectedOutbound['total_price_formatted'] }}</div>
                             </div>
 
@@ -269,7 +269,7 @@
                                     <div class="text-sm text-gray-500">
                                         <i class="fa-solid fa-users mr-1"></i>{{ $passengers }} penumpang
                                     </div>
-                                    <div class="mt-2 font-bold text-green-600">
+                                    <div class="mt-2 font-bold text-green-900">
                                         {{ $selectedReturn['total_price_formatted'] }}</div>
                                 </div>
                             @elseif($returnTrip && !$selectedReturn)
@@ -297,7 +297,7 @@
                                     <button x-data
                                         @click="confirmAction('Lanjutkan ke halaman pemesanan?', 'Konfirmasi').then(confirmed => { if(confirmed) $wire.proceedToBooking(); })"
                                         wire:loading.attr="disabled"
-                                        class="bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center gap-2">
+                                        class="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center gap-2">
                                         <span wire:loading.remove wire:target="proceedToBooking">
                                             Lanjut ke Pemesanan
                                             <i class="fa-solid fa-arrow-right ml-1"></i>
@@ -309,7 +309,7 @@
                                 @else
                                     {{-- User belum login - trigger modal login --}}
                                     <button @click="$dispatch('open-login-modal')" type="button"
-                                        class="bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center gap-2">
+                                        class="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center gap-2">
                                         Lanjut ke Pemesanan
                                         <i class="fa-solid fa-arrow-right ml-1"></i>
                                     </button>

@@ -131,7 +131,7 @@
                 {{-- Login Link --}}
                 <div class="mt-6 text-center">
                     <a href="{{ route('login') }}"
-                        class="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        class="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                         <i class="fa-solid fa-right-to-bracket mr-2"></i>
                         Sudah Punya Akun? Masuk
                     </a>

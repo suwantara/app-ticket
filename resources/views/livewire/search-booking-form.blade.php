@@ -21,7 +21,7 @@
                     </button>
                     <button type="button" wire:click="$set('returnTrip', true)"
                         class="px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2
-                                   {{ $returnTrip ? 'bg-yellow-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200' }}">
+                                   {{ $returnTrip ? 'bg-yellow-400 text-black shadow-md' : 'text-gray-600 hover:bg-gray-200' }}">
                         <i class="fa-solid fa-rotate"></i>
                         Pulang Pergi
                     </button>

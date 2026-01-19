@@ -92,7 +92,7 @@
                 {{-- Register Link --}}
                 <div class="mt-6 text-center">
                     <a href="{{ route('register') }}"
-                        class="w-full inline-flex justify-center items-center py-3 px-4 border border-yellow-500 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors">
+                        class="w-full inline-flex justify-center items-center py-3 px-4 border border-yellow-500 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors">
                         Buat Akun Baru
                     </a>
                 </div>
