@@ -34,7 +34,7 @@
         <div class="items-center justify-between hidden md:flex md:w-auto md:order-1">
             <ul class="flex flex-col mt-4 font-medium md:flex-row md:mt-0 md:space-x-8 rtl:space-x-reverse">
                 <li>
-                    <a href="{{ route('home') }}"
+                    <a href="{{ route('home') }}" wire:navigate
                         class="block py-2 px-3 text-heading hover:text-blue-900 border-b border-light hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
                         aria-current="page">Beranda</a>
                 </li>
@@ -47,15 +47,15 @@
                     </button>
                 </li>
                 <li>
-                    <a href="{{ route('ticket') }}"
+                    <a href="{{ route('ticket') }}" wire:navigate
                         class="block py-2 px-3 text-heading hover:text-blue-900 border-b border-light hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Tiket</a>
                 </li>
                 <li>
-                    <a href="{{ route('about') }}"
+                    <a href="{{ route('about') }}" wire:navigate
                         class="block py-2 px-3 text-heading hover:text-blue-900 border-b border-light hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Tentang</a>
                 </li>
                 <li>
-                    <a href="{{ route('contact') }}"
+                    <a href="{{ route('contact') }}" wire:navigate
                         class="block py-2 px-3 text-heading hover:text-blue-900 border-b border-light hover:bg-neutral-secondary-soft md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">Kontak</a>
                 </li>
             </ul>
@@ -107,7 +107,7 @@
         <div class="container mx-auto px-4 py-4">
             <ul class="flex flex-col font-medium space-y-2">
                 <li>
-                    <a href="{{ route('home') }}"
+                    <a href="{{ route('home') }}" wire:navigate
                         class="block py-3 px-4 text-heading hover:text-blue-900 rounded-lg hover:bg-neutral-secondary-soft"
                         aria-current="page">Beranda</a>
                 </li>
@@ -131,15 +131,15 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="{{ route('ticket') }}"
+                    <a href="{{ route('ticket') }}" wire:navigate
                         class="block py-3 px-4 text-heading hover:text-blue-900 rounded-lg hover:bg-neutral-secondary-soft">Tiket</a>
                 </li>
                 <li>
-                    <a href="{{ route('about') }}"
+                    <a href="{{ route('about') }}" wire:navigate
                         class="block py-3 px-4 text-heading hover:text-blue-900 rounded-lg hover:bg-neutral-secondary-soft">Tentang</a>
                 </li>
                 <li>
-                    <a href="{{ route('contact') }}"
+                    <a href="{{ route('contact') }}" wire:navigate
                         class="block py-3 px-4 text-heading hover:text-blue-900 rounded-lg hover:bg-neutral-secondary-soft">Kontak</a>
                 </li>
                 @guest
@@ -194,23 +194,27 @@
 </nav>
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('livewire:navigated', function() {
             // Mobile menu toggle
             const mobileMenuBtn = document.getElementById('mobile-menu-toggle');
             const mobileMenu = document.getElementById('mega-menu-full');
             const logo = document.getElementById('navbar-logo');
 
             if (mobileMenuBtn && mobileMenu && logo) {
-                mobileMenuBtn.addEventListener('click', function() {
+                // Remove old event listeners to prevent duplication if re-initialized (though navigated usually clears dom)
+                const newBtn = mobileMenuBtn.cloneNode(true);
+                mobileMenuBtn.parentNode.replaceChild(newBtn, mobileMenuBtn);
+
+                newBtn.addEventListener('click', function() {
                     const isHidden = mobileMenu.classList.contains('hidden');
                     if (isHidden) {
                         mobileMenu.classList.remove('hidden');
                         logo.classList.add('hidden');
-                        mobileMenuBtn.setAttribute('aria-expanded', 'true');
+                        newBtn.setAttribute('aria-expanded', 'true');
                     } else {
                         mobileMenu.classList.add('hidden');
                         logo.classList.remove('hidden');
-                        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                        newBtn.setAttribute('aria-expanded', 'false');
                     }
                 });
             }
@@ -221,7 +225,10 @@
             const mobileAngleIcon = document.getElementById('mobile-angle-icon');
 
             if (mobileDestBtn && mobileDestMenu) {
-                mobileDestBtn.addEventListener('click', () => {
+                const newDestBtn = mobileDestBtn.cloneNode(true);
+                mobileDestBtn.parentNode.replaceChild(newDestBtn, mobileDestBtn);
+
+                newDestBtn.addEventListener('click', () => {
                     mobileDestMenu.classList.toggle('hidden');
                     mobileAngleIcon.classList.toggle('rotate-180');
                 });
@@ -254,11 +261,15 @@
                 if (desktopIcon) desktopIcon.classList.remove('rotate-180');
             }
 
-            btn.addEventListener('mouseenter', () => {
+            // Clear existing listeners by cloning
+            const newBtnDesktop = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtnDesktop, btn);
+
+            newBtnDesktop.addEventListener('mouseenter', () => {
                 clearTimeout(hoverTimeout);
                 open();
             });
-            btn.addEventListener('focus', () => open());
+            newBtnDesktop.addEventListener('focus', () => open());
 
             dropdown.addEventListener('mouseenter', () => {
                 clearTimeout(hoverTimeout);
@@ -268,7 +279,7 @@
                 hoverTimeout = setTimeout(close, 150);
             });
 
-            const nav = btn.closest('nav');
+            const nav = newBtnDesktop.closest('nav');
             if (nav) {
                 nav.addEventListener('mouseleave', () => {
                     hoverTimeout = setTimeout(close, 150);

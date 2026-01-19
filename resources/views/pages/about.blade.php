@@ -1,4 +1,4 @@
-<x-layouts.app :title="$page->meta_title ?? 'Tentang Kami'">
+<x-layouts.app :title="$page->meta_title ?? 'Tentang Kami'" :description="$page->meta_description ?? null">
     {{-- Hero Section --}}
     <x-header-section title="Tentang Kami"
         subtitle="Temukan jadwal terbaik dan pesan tiket perjalanan Anda dengan mudah" />

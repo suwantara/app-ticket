@@ -6,7 +6,7 @@
             <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
                 <div class="mb-4 md:mb-0">
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
+                        <span class="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
                             <i class="fa-solid fa-circle text-[8px] mr-1"></i> HARI INI
                         </span>
                         <span class="text-gray-500 text-sm">{{ $today->translatedFormat('l, d F Y') }}</span>

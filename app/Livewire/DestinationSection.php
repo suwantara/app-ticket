@@ -24,8 +24,12 @@ class DestinationSection extends Component
 
     public function render()
     {
+        $destinations = \Illuminate\Support\Facades\Cache::remember('popular_destinations', 3600, function () {
+            return Destination::active()->popular()->orderBy('order')->take(4)->get();
+        });
+
         return view('livewire.destination-section', [
-            'destinations' => Destination::active()->popular()->orderBy('order')->take(4)->get(),
+            'destinations' => $destinations,
         ]);
     }
 }

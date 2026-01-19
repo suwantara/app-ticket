@@ -1,4 +1,4 @@
-<x-layouts.app :title="$page->meta_title ?? 'Hubungi Kami'">
+<x-layouts.app :title="$page->meta_title ?? 'Hubungi Kami'" :description="$page->meta_description ?? null">
     {{-- Page Header --}}
     <x-header-section title="Hubungi Kami"
         subtitle="Hubungi kami untuk informasi lebih lanjut atau pertanyaan yang Anda miliki" />

@@ -1,4 +1,4 @@
-<x-layouts.app :title="'Pesan Tiket - ' . config('app.name')">
+<x-layouts.app :title="$page->meta_title ?? 'Pesan Tiket'" :description="$page->meta_description ?? null">
     {{-- Hero Section --}}
     <x-header-section title="Pesan Tiket Fast Boat"
         subtitle="Temukan jadwal terbaik dan pesan tiket perjalanan Anda dengan mudah" />

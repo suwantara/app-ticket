@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{{ $title ?? config('app.name') }}</title>
+    @if (isset($description))
+        <meta name="description" content="{{ $description }}">
+    @endif
 
     {{-- Preconnect to external domains for faster loading --}}
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>

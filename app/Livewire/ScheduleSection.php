@@ -48,40 +48,52 @@ class ScheduleSection extends Component
         $today = Carbon::today();
         $dayOfWeek = $today->dayOfWeek;
 
-        // Base query
-        $query = Schedule::with(['route.origin', 'route.destination', 'ship'])
-            ->active()
-            ->validOn($today)
-            ->onDay($dayOfWeek);
+        // Generate cache key based on filters and date
+        $cacheKey = 'schedules_home_' . implode('_', [
+            $today->format('Y-m-d'),
+            $this->originId ?? 'all',
+            $this->destinationId ?? 'all',
+            $this->sortBy
+        ]);
 
-        // Apply origin filter
-        if ($this->originId) {
-            $query->whereHas('route', function ($q) {
-                $q->where('origin_id', $this->originId);
-            });
-        }
+        $schedules = \Illuminate\Support\Facades\Cache::remember($cacheKey, 60, function () use ($today, $dayOfWeek) {
+            // Base query
+            $query = Schedule::with(['route.origin', 'route.destination', 'ship'])
+                ->active()
+                ->validOn($today)
+                ->onDay($dayOfWeek);
 
-        // Apply destination filter
-        if ($this->destinationId) {
-            $query->whereHas('route', function ($q) {
-                $q->where('destination_id', $this->destinationId);
-            });
-        }
+            // Apply origin filter
+            if ($this->originId) {
+                $query->whereHas('route', function ($q) {
+                    $q->where('origin_id', $this->originId);
+                });
+            }
 
-        // Apply sorting
-        $query = match ($this->sortBy) {
-            'price_asc' => $query->orderBy('price', 'asc'),
-            'price_desc' => $query->orderBy('price', 'desc'),
-            default => $query->orderBy('departure_time', 'asc'),
-        };
+            // Apply destination filter
+            if ($this->destinationId) {
+                $query->whereHas('route', function ($q) {
+                    $q->where('destination_id', $this->destinationId);
+                });
+            }
 
-        $schedules = $query->take(6)->get();
+            // Apply sorting
+            match ($this->sortBy) {
+                'price_asc' => $query->orderBy('price', 'asc'),
+                'price_desc' => $query->orderBy('price', 'desc'),
+                default => $query->orderBy('departure_time', 'asc'),
+            };
+
+            return $query->take(6)->get();
+        });
 
         // Get destinations for filter dropdowns (only harbors with active routes)
-        $destinations = Destination::active()
-            ->harbors()
-            ->orderBy('name')
-            ->get();
+        $destinations = \Illuminate\Support\Facades\Cache::remember('harbor_destinations', 3600, function () {
+            return Destination::active()
+                ->harbors()
+                ->orderBy('name')
+                ->get();
+        });
 
         // Count active filters
         $activeFilterCount = collect([

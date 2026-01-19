@@ -1,5 +1,7 @@
-<section class="relative bg-center bg-no-repeat bg-cover min-h-125 flex items-center"
-    style="background-image: url({{ asset('img/hero-section.webp') }})">
+<section class="relative min-h-125 flex items-center">
+    {{-- LCP Optimization: Use img tag instead of background-image for faster discovery --}}
+    <img src="{{ asset('img/hero-section.webp') }}" alt="Layanan Fast Boat Bali"
+        class="absolute inset-0 w-full h-full object-cover -z-10" fetchpriority="high" loading="eager">
 
     <!-- Gradient overlay: dark on left, transparent on right -->
     <div class="absolute inset-0 bg-linear-to-r from-blue-900/40 via-blue-800/20 to-transparent"></div>

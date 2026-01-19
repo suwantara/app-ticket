@@ -28,7 +28,16 @@ class PageController extends Controller
      */
     public function ticket()
     {
-        return view('pages.ticket');
+        // Static fallback for ticket page
+        $page = (object) [
+            'title' => 'Pesan Tiket',
+            'meta_title' => 'Pesan Tiket Fast Boat',
+            'meta_description' => 'Cari dan pesan tiket fast boat ke Nusa Penida, Gili, dan Lembongan dengan mudah.',
+            'featured_image' => null,
+            'content' => null,
+        ];
+
+        return view('pages.ticket', compact('page'));
     }
 
     /**
