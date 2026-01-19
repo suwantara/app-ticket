@@ -24,8 +24,8 @@
                     <div class="bg-neutral-primary-soft p-4 border border-default rounded-base shadow-xs">
                         <a href="{{ route('destinations.show', $destination->slug) }}">
                             <img class="rounded-base w-full h-48 object-cover"
-                                src="{{ $destination->image_url ?? 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800' }}"
-                                alt="{{ $destination->name }}" />
+                                src="{{ str_replace('/upload/', '/upload/f_auto,q_auto,w_400/', $destination->image_url ?? 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=400') }}"
+                                alt="{{ $destination->name }}" width="400" height="192" loading="lazy" />
                         </a>
                         <a href="{{ route('destinations.show', $destination->slug) }}">
                             <h5 class="mt-4 mb-2 text-xl font-semibold tracking-tight text-heading">

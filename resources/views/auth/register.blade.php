@@ -3,7 +3,8 @@
         <div class="max-w-md w-full">
             {{-- Logo & Title --}}
             <div class="text-center mb-8">
-                <img src="{{ asset('img/logo-semabu.png') }}" alt="logo-semabu" class="h-12 mx-auto">
+                <img src="{{ asset('img/logo-semabu.png') }}" alt="logo-semabu" class="h-12 mx-auto" width="235"
+                    height="48">
             </div>
 
             {{-- Register Form --}}

@@ -8,6 +8,15 @@
 
     <title>{{ $title ?? config('app.name') }}</title>
 
+    {{-- Preconnect to external domains for faster loading --}}
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+    <link rel="preconnect" href="https://ka-f.fontawesome.com" crossorigin>
+    <link rel="preconnect" href="https://kit.fontawesome.com" crossorigin>
+    <link rel="dns-prefetch" href="https://images.unsplash.com">
+
+    {{-- FontAwesome - defer to prevent render blocking --}}
+    <script src="https://kit.fontawesome.com/260ad600f6.js" crossorigin="anonymous" defer></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @livewireStyles
@@ -71,7 +80,7 @@
 
     @stack('scripts')
 
-    <script src="https://kit.fontawesome.com/260ad600f6.js" crossorigin="anonymous"></script>
+
     <script>
         document.addEventListener('livewire:init', () => {
             Livewire.hook('commit', () => {
