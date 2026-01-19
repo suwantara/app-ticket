@@ -7,6 +7,7 @@ use App\Models\Schedule;
 use Carbon\Carbon;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Illuminate\Support\Facades\Cache;
 
 class ScheduleSection extends Component
 {
@@ -56,7 +57,7 @@ class ScheduleSection extends Component
             $this->sortBy
         ]);
 
-        $schedules = \Illuminate\Support\Facades\Cache::remember($cacheKey, 60, function () use ($today, $dayOfWeek) {
+        $schedules = Cache::remember($cacheKey, 60, function () use ($today, $dayOfWeek) {
             // Base query
             $query = Schedule::with(['route.origin', 'route.destination', 'ship'])
                 ->active()
